@@ -9,5 +9,3 @@ years = 30
 amortization_table = calc.mortgage_amortization(price, down_payment, interest_rate, years)
 
 print(amortization_table)
-
-print('test')
