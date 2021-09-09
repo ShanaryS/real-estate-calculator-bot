@@ -1,1 +1,1 @@
-# rental-property-calculator
+# Rental Property Calculator
