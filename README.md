@@ -1,1 +1,1 @@
-# Rental Property Cashflow Calculator
+# Real Estate Cashflow Calculator
