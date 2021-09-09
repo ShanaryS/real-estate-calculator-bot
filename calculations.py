@@ -1,7 +1,8 @@
 import numpy_financial as npf
 
 
-def mortgage_amortization(price, down_payment, interest_rate, years):
+def mortgage_amortization(price, down_payment_percent, interest_rate, years):
+    down_payment = price * down_payment_percent
     loan = price - down_payment
     interest_rate_monthly = interest_rate / 12
     months = years * 12
