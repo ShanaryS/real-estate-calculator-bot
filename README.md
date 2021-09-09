@@ -1,1 +1,1 @@
-# Rental Property Calculator
+# Rental Property Deal Finder
