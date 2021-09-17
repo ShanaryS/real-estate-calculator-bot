@@ -1,11 +1,69 @@
 import numpy_financial as npf
 
 
-def mortgage_amortization(price, down_payment_percent, interest_rate, years):
+# Default values used for calculator. Variables will be updated when performing real world calculations.
+price = 200000
+down_payment_percent = 0.20
+interest_rate = 0.04
+years = 30
+
+# Calculated values from above.
+down_payment = price * down_payment_percent
+loan = price - down_payment
+interest_rate_monthly = interest_rate / 12
+months = years * 12
+
+# Calculated after mortgage_amortization(), defined here for visibility
+amortization_table: dict
+
+
+def show_analysis() -> None:
+    """Calls required functions needed for analysis. Returns mortgage amortization."""
+
+    global amortization_table
+
+    amortization_table = mortgage_amortization()
+    purchase_analysis()
+    income_analysis()
+    expenses_analysis()
+    depreciation_analysis()
+    returns_analysis()
+
+    # TODO add show GUI here?
+
+
+# TODO Different interest rates based on years
+def update_values(new_price=price,
+                  new_down_payment_percent=down_payment_percent,
+                  new_interest_rate=interest_rate,
+                  new_years=years) \
+                  -> None:
+
+    """Updates the values when a new property is being evaluated."""
+
+    # Updating variables from outside the function
+    global price, down_payment_percent, interest_rate, years
+    global down_payment, loan, interest_rate_monthly, months
+
+    price = new_price
+    down_payment_percent = new_down_payment_percent
+    interest_rate = new_interest_rate
+    years = new_years
+
     down_payment = price * down_payment_percent
     loan = price - down_payment
     interest_rate_monthly = interest_rate / 12
     months = years * 12
+
+    # Updating analysis
+    show_analysis()
+
+
+def mortgage_amortization() -> dict:
+    """Returns amortization table for given args. If no args, defaults to constants in calculations.py
+
+    Table includes: 'Period', 'Payment', 'Principal Payment', 'Interest Payment', 'Loan Balance', 'Loan Constant'
+    """
 
     period = 1
     monthly_payment = npf.pmt(interest_rate_monthly, months, loan)
@@ -32,3 +90,37 @@ def mortgage_amortization(price, down_payment_percent, interest_rate, years):
         amortization['Loan Constant'].append(loan_constant)
 
     return amortization
+
+
+# Storing amortization table here for easy updating
+amortization_table = mortgage_amortization()
+
+
+def purchase_analysis() -> dict:
+    """Analysis regarding purchase of the property"""
+
+    pass
+
+
+def income_analysis() -> dict:
+    """Analysis regarding income potential of the property"""
+
+    pass
+
+
+def expenses_analysis() -> dict:
+    """Analysis regarding expenses of the property"""
+
+    pass
+
+
+def depreciation_analysis() -> dict:
+    """Analysis regarding depreciation of the property"""
+
+    pass
+
+
+def returns_analysis() -> dict:
+    """Analysis regarding final returns of the property"""
+
+    pass
