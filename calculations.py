@@ -85,7 +85,7 @@ def mortgage_amortization() -> dict:
 def purchase_analysis() -> float:
     """Amount required to purchase the property"""
 
-    closing_cost = loan * user.closing_percentage
+    closing_cost = loan * user.closing_percent
 
     return down_payment + user.fix_up_cost + closing_cost
 
@@ -159,7 +159,7 @@ def returns_analysis() -> dict:
     caprate = user.price / net_operating_income
     cashflow_per_month = cashflow / 12
     max_offer = ((effective_gross_income * 0.75 + -user.property_taxes - 600) * (0.37/0.12))\
-        / (user.closing_percentage + user.down_payment_percent) - user.fix_up_cost
+        / (user.closing_percent + user.down_payment_percent) - user.fix_up_cost
     emergency_fund = yearly_cost / 2 if user.is_first_rental else yearly_cost / 4
 
     final_returns = {'Return On Investment': return_on_investment,
