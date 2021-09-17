@@ -1,3 +1,6 @@
+"""Hub for all the calculations needed"""
+
+
 import numpy_financial as npf
 import user
 
@@ -23,6 +26,8 @@ def get_analysis() -> dict:
 
 def get_amortization_table() -> dict:
     """Get the mortgage amortization table. Second function to interact with."""
+
+    _update_values()
 
     return amortization_table
 
@@ -51,11 +56,11 @@ def mortgage_amortization() -> dict:
     """
 
     period = 1
-    monthly_payment = npf.pmt(interest_rate_monthly, months, user.loan)
-    monthly_principal = npf.ppmt(interest_rate_monthly, period, months, user.loan)
-    monthly_interest = npf.ipmt(interest_rate_monthly, period, months, user.loan)
-    loan_balance = npf.fv(interest_rate_monthly, period, monthly_payment, user.loan)
-    loan_constant = monthly_payment / user.loan
+    monthly_payment = npf.pmt(interest_rate_monthly, months, loan)
+    monthly_principal = npf.ppmt(interest_rate_monthly, period, months, loan)
+    monthly_interest = npf.ipmt(interest_rate_monthly, period, months, loan)
+    loan_balance = npf.fv(interest_rate_monthly, period, monthly_payment, loan)
+    loan_constant = monthly_payment / loan
 
     amortization = {'Period': [period], 'Monthly Payment': [monthly_payment],
                     'Principal Payment': [monthly_principal], 'Interest Payment': [monthly_interest],
@@ -63,9 +68,9 @@ def mortgage_amortization() -> dict:
 
     for i in range(2, months+1):
         period = i
-        monthly_principal = npf.ppmt(interest_rate_monthly, period, months, user.loan)
-        monthly_interest = npf.ipmt(interest_rate_monthly, period, months, user.loan)
-        loan_balance = npf.fv(interest_rate_monthly, period, monthly_payment, user.loan)
+        monthly_principal = npf.ppmt(interest_rate_monthly, period, months, loan)
+        monthly_interest = npf.ipmt(interest_rate_monthly, period, months, loan)
+        loan_balance = npf.fv(interest_rate_monthly, period, monthly_payment, loan)
 
         amortization['Period'].append(period)
         amortization['Monthly Payment'].append(monthly_payment)
@@ -80,9 +85,9 @@ def mortgage_amortization() -> dict:
 def purchase_analysis() -> float:
     """Amount required to purchase the property"""
 
-    closing_cost = user.loan * user.closing_percentage
+    closing_cost = loan * user.closing_percentage
 
-    return user.down_payment + user.fix_up_cost + closing_cost
+    return down_payment + user.fix_up_cost + closing_cost
 
 
 def income_analysis() -> float:
@@ -140,7 +145,7 @@ def depreciation_analysis() -> float:
 
 
 def returns_analysis() -> dict:
-    """Yearly returns of the property"""
+    """Yearly returns of the property along with extra details"""
 
     capital_required = purchase_analysis()
     cashflow, net_operating_income, yearly_cost = profit_analysis()
