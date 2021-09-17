@@ -1,4 +1,4 @@
-from calculations import show_analysis, amortization_table
+from calculations import update_analysis, amortization_table
 
 
 # Print amortization table

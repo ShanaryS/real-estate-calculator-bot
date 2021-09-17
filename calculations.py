@@ -1,79 +1,46 @@
 import numpy_financial as npf
+import user
 
 
-# Default values used for calculator. Variables will be updated when performing real world calculations.
-price = 200000
-down_payment_percent = 0.20
-interest_rate = 0.04
-years = 30
-property_taxes = 3000
-closing_percentage = 0.03
-fix_up_cost = 5000
-num_units = 3
-rent_per_unit = 700
-vacancy_percent = 0.08
-maintenance_percent = 0.15
-management_percent = 0.10
-depreciation_short_percent = 0.08
-depreciation_long_percent = 0.75
-tax_bracket = 0.24
+# Basic calculations necessary module wide
+down_payment = user.price * user.down_payment_percent
+loan = user.price - down_payment
+interest_rate_monthly = user.interest_rate / 12
+months = user.years * 12
+property_taxes_monthly = user.property_taxes / 12
 
-# Calculated values from above.
-down_payment = price * down_payment_percent
-loan = price - down_payment
-interest_rate_monthly = interest_rate / 12
-months = years * 12
-property_taxes_monthly = property_taxes / 12
-
-# Calculated after mortgage_amortization(), defined here for visibility
+# Defined here for visibility
 amortization_table: dict
 
-# Extra information from user
-is_first_rental = True
+
+def get_analysis() -> dict:
+    """Calls required functions needed for analysis. Main function to interact with."""
+
+    _update_values()
+
+    return returns_analysis()
 
 
-def show_analysis() -> None:
-    """Calls required functions needed for analysis. Returns mortgage amortization."""
+def get_amortization_table() -> dict:
+    """Get the mortgage amortization table. Second function to interact with."""
 
-    global amortization_table
-
-    amortization_table = mortgage_amortization()
-    returns_analysis()
-
-    # TODO add show GUI here?
+    return amortization_table
 
 
 # TODO Different interest rates based on years
-def update_values(new_price=price,
-                  new_down_payment_percent=down_payment_percent,
-                  new_interest_rate=interest_rate,
-                  new_years=years) \
-                  -> None:
+def _update_values() -> None:
 
     """Updates the values when a new property is being evaluated."""
 
-    # Updating variables from outside the function
-    global price, down_payment_percent, interest_rate, years, property_taxes, fix_up_cost, num_units, rent_per_unit
-    global down_payment, loan, interest_rate_monthly, months, property_taxes_monthly
+    global down_payment, loan, interest_rate_monthly, months, property_taxes_monthly, amortization_table
 
-    # TODO negative values for ones that need to be negative
-    price = new_price
-    down_payment_percent = new_down_payment_percent
-    interest_rate = new_interest_rate
-    years = new_years
-    property_taxes = 3000
-    fix_up_cost = 5000
-    num_units = 3
-    rent_per_unit = 700
+    down_payment = user.price * user.down_payment_percent
+    loan = user.price - down_payment
+    interest_rate_monthly = user.interest_rate / 12
+    months = user.years * 12
+    property_taxes_monthly = user.property_taxes / 12
 
-    down_payment = price * down_payment_percent
-    loan = price - down_payment
-    interest_rate_monthly = interest_rate / 12
-    months = years * 12
-    property_taxes_monthly = property_taxes / 12
-
-    # Updating analysis
-    show_analysis()
+    amortization_table = mortgage_amortization()
 
 
 def mortgage_amortization() -> dict:
@@ -84,11 +51,11 @@ def mortgage_amortization() -> dict:
     """
 
     period = 1
-    monthly_payment = npf.pmt(interest_rate_monthly, months, loan)
-    monthly_principal = npf.ppmt(interest_rate_monthly, period, months, loan)
-    monthly_interest = npf.ipmt(interest_rate_monthly, period, months, loan)
-    loan_balance = npf.fv(interest_rate_monthly, period, monthly_payment, loan)
-    loan_constant = monthly_payment / loan
+    monthly_payment = npf.pmt(interest_rate_monthly, months, user.loan)
+    monthly_principal = npf.ppmt(interest_rate_monthly, period, months, user.loan)
+    monthly_interest = npf.ipmt(interest_rate_monthly, period, months, user.loan)
+    loan_balance = npf.fv(interest_rate_monthly, period, monthly_payment, user.loan)
+    loan_constant = monthly_payment / user.loan
 
     amortization = {'Period': [period], 'Monthly Payment': [monthly_payment],
                     'Principal Payment': [monthly_principal], 'Interest Payment': [monthly_interest],
@@ -96,9 +63,9 @@ def mortgage_amortization() -> dict:
 
     for i in range(2, months+1):
         period = i
-        monthly_principal = npf.ppmt(interest_rate_monthly, period, months, loan)
-        monthly_interest = npf.ipmt(interest_rate_monthly, period, months, loan)
-        loan_balance = npf.fv(interest_rate_monthly, period, monthly_payment, loan)
+        monthly_principal = npf.ppmt(interest_rate_monthly, period, months, user.loan)
+        monthly_interest = npf.ipmt(interest_rate_monthly, period, months, user.loan)
+        loan_balance = npf.fv(interest_rate_monthly, period, monthly_payment, user.loan)
 
         amortization['Period'].append(period)
         amortization['Monthly Payment'].append(monthly_payment)
@@ -110,24 +77,20 @@ def mortgage_amortization() -> dict:
     return amortization
 
 
-# Storing amortization table here for easy updating
-amortization_table = mortgage_amortization()
-
-
 def purchase_analysis() -> float:
     """Amount required to purchase the property"""
 
-    closing_cost = loan * closing_percentage
+    closing_cost = user.loan * user.closing_percentage
 
-    return down_payment + fix_up_cost + closing_cost
+    return user.down_payment + user.fix_up_cost + closing_cost
 
 
 def income_analysis() -> float:
     """Effective gross income of the property"""
 
-    rent = rent_per_unit * num_units
+    rent = user.rent_per_unit * user.num_units
     gross_potential_income = rent * 12
-    vacancy_cost = -(gross_potential_income * vacancy_percent)
+    vacancy_cost = -(gross_potential_income * user.vacancy_percent)
     effective_gross_income = gross_potential_income - vacancy_cost
 
     return effective_gross_income
@@ -138,10 +101,10 @@ def expenses_analysis() -> float:
 
     effective_gross_income = income_analysis()
 
-    maintenance_cost = -(effective_gross_income * maintenance_percent)
-    management_cost = -(effective_gross_income * management_percent)
-    property_taxes_cost = -property_taxes
-    insurance_cost = -(price * 0.00425)
+    maintenance_cost = -(effective_gross_income * user.maintenance_percent)
+    management_cost = -(effective_gross_income * user.management_percent)
+    property_taxes_cost = -user.property_taxes
+    insurance_cost = -(user.price * 0.00425)
     total_cost = maintenance_cost + management_cost + property_taxes_cost + insurance_cost
 
     return total_cost
@@ -163,15 +126,15 @@ def profit_analysis() -> tuple:
 
 
 def depreciation_analysis() -> float:
-    """Analysis regarding depreciation of the property"""
+    """Taxes saved by depreciation of the property"""
 
-    depreciation_short_total = (price + fix_up_cost) * depreciation_short_percent
+    depreciation_short_total = (user.price + user.fix_up_cost) * user.depreciation_short_percent
     depreciation_short_yearly = depreciation_short_total / 5
 
-    depreciation_long_total = (price + fix_up_cost) * depreciation_long_percent
+    depreciation_long_total = (user.price + user.fix_up_cost) * user.depreciation_long_percent
     depreciation_long_yearly = depreciation_long_total / 27.5
 
-    depreciation_total = (depreciation_short_yearly + depreciation_long_yearly) * tax_bracket
+    depreciation_total = (depreciation_short_yearly + depreciation_long_yearly) * user.tax_bracket
 
     return depreciation_total
 
@@ -182,18 +145,17 @@ def returns_analysis() -> dict:
     capital_required = purchase_analysis()
     cashflow, net_operating_income, yearly_cost = profit_analysis()
     effective_gross_income = income_analysis()
-
-    principal_paydown = -sum(amortization_table['Principal Payment'][0:12])
     tax_exposure_decrease = depreciation_analysis()
-    total_return = cashflow + principal_paydown + tax_exposure_decrease
+    principal_paydown = -sum(amortization_table['Principal Payment'][0:12])
+    total_return = cashflow + tax_exposure_decrease + principal_paydown
 
     return_on_investment = total_return / capital_required
     c_on_c_return = cashflow / capital_required
-    caprate = price / net_operating_income
+    caprate = user.price / net_operating_income
     cashflow_per_month = cashflow / 12
-    max_offer = ((effective_gross_income * 0.75 + -property_taxes - 600) * (0.37/0.12))\
-        / (closing_percentage + down_payment_percent) - fix_up_cost
-    emergency_fund = yearly_cost / 2 if is_first_rental else yearly_cost / 4
+    max_offer = ((effective_gross_income * 0.75 + -user.property_taxes - 600) * (0.37/0.12))\
+        / (user.closing_percentage + user.down_payment_percent) - user.fix_up_cost
+    emergency_fund = yearly_cost / 2 if user.is_first_rental else yearly_cost / 4
 
     final_returns = {'Return On Investment': return_on_investment,
                      'Cash on Cash Return': c_on_c_return,
