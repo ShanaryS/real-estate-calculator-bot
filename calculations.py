@@ -7,9 +7,16 @@ down_payment_percent = 0.20
 interest_rate = 0.04
 years = 30
 property_taxes = 3000
-fixup_cost = 5000
+closing_percentage = 0.03
+fix_up_cost = 5000
 num_units = 3
 rent_per_unit = 700
+vacancy_percent = 0.08
+maintenance_percent = 0.15
+management_percent = 0.10
+depreciation_short_percent = 0.08
+depreciation_long_percent = 0.75
+tax_bracket = 0.24
 
 # Calculated values from above.
 down_payment = price * down_payment_percent
@@ -21,6 +28,9 @@ property_taxes_monthly = property_taxes / 12
 # Calculated after mortgage_amortization(), defined here for visibility
 amortization_table: dict
 
+# Extra information from user
+is_first_rental = True
+
 
 def show_analysis() -> None:
     """Calls required functions needed for analysis. Returns mortgage amortization."""
@@ -28,10 +38,6 @@ def show_analysis() -> None:
     global amortization_table
 
     amortization_table = mortgage_amortization()
-    purchase_analysis()
-    income_analysis()
-    expenses_analysis()
-    depreciation_analysis()
     returns_analysis()
 
     # TODO add show GUI here?
@@ -47,15 +53,16 @@ def update_values(new_price=price,
     """Updates the values when a new property is being evaluated."""
 
     # Updating variables from outside the function
-    global price, down_payment_percent, interest_rate, years, property_taxes, fixup_cost, num_units, rent_per_unit
+    global price, down_payment_percent, interest_rate, years, property_taxes, fix_up_cost, num_units, rent_per_unit
     global down_payment, loan, interest_rate_monthly, months, property_taxes_monthly
 
+    # TODO negative values for ones that need to be negative
     price = new_price
     down_payment_percent = new_down_payment_percent
     interest_rate = new_interest_rate
     years = new_years
     property_taxes = 3000
-    fixup_cost = 5000
+    fix_up_cost = 5000
     num_units = 3
     rent_per_unit = 700
 
@@ -72,7 +79,8 @@ def update_values(new_price=price,
 def mortgage_amortization() -> dict:
     """Returns amortization table for given args. If no args, defaults to constants in calculations.py
 
-    Table includes: 'Period', 'Monthly Payment', 'Principal Payment', 'Interest Payment', 'Loan Balance', 'Loan Constant'
+    Table includes: 'Period', 'Monthly Payment', 'Principal Payment', 'Interest Payment', 'Loan Balance',
+    and 'Loan Constant'
     """
 
     period = 1
@@ -106,31 +114,92 @@ def mortgage_amortization() -> dict:
 amortization_table = mortgage_amortization()
 
 
-def purchase_analysis() -> dict:
-    """Analysis regarding purchase of the property"""
+def purchase_analysis() -> float:
+    """Amount required to purchase the property"""
 
-    pass
+    closing_cost = loan * closing_percentage
 
-
-def income_analysis() -> dict:
-    """Analysis regarding income potential of the property"""
-
-    pass
+    return down_payment + fix_up_cost + closing_cost
 
 
-def expenses_analysis() -> dict:
-    """Analysis regarding expenses of the property"""
+def income_analysis() -> float:
+    """Effective gross income of the property"""
 
-    pass
+    rent = rent_per_unit * num_units
+    gross_potential_income = rent * 12
+    vacancy_cost = -(gross_potential_income * vacancy_percent)
+    effective_gross_income = gross_potential_income - vacancy_cost
+
+    return effective_gross_income
 
 
-def depreciation_analysis() -> dict:
+def expenses_analysis() -> float:
+    """Cost of owning of the property"""
+
+    effective_gross_income = income_analysis()
+
+    maintenance_cost = -(effective_gross_income * maintenance_percent)
+    management_cost = -(effective_gross_income * management_percent)
+    property_taxes_cost = -property_taxes
+    insurance_cost = -(price * 0.00425)
+    total_cost = maintenance_cost + management_cost + property_taxes_cost + insurance_cost
+
+    return total_cost
+
+
+def profit_analysis() -> tuple:
+    """Cashflow, net income, and yearly cost of property"""
+
+    effective_gross_income = income_analysis()
+    total_cost = expenses_analysis()
+    net_operating_income = effective_gross_income - total_cost
+
+    debt_service = amortization_table['Monthly Payment'][0] * 12
+    cashflow = net_operating_income - debt_service
+
+    yearly_cost = total_cost + debt_service
+
+    return cashflow, net_operating_income, yearly_cost
+
+
+def depreciation_analysis() -> float:
     """Analysis regarding depreciation of the property"""
 
-    pass
+    depreciation_short_total = (price + fix_up_cost) * depreciation_short_percent
+    depreciation_short_yearly = depreciation_short_total / 5
+
+    depreciation_long_total = (price + fix_up_cost) * depreciation_long_percent
+    depreciation_long_yearly = depreciation_long_total / 27.5
+
+    depreciation_total = (depreciation_short_yearly + depreciation_long_yearly) * tax_bracket
+
+    return depreciation_total
 
 
 def returns_analysis() -> dict:
-    """Analysis regarding final returns of the property"""
+    """Yearly returns of the property"""
 
-    pass
+    capital_required = purchase_analysis()
+    cashflow, net_operating_income, yearly_cost = profit_analysis()
+    effective_gross_income = income_analysis()
+
+    principal_paydown = -sum(amortization_table['Principal Payment'][0:12])
+    tax_exposure_decrease = depreciation_analysis()
+    total_return = cashflow + principal_paydown + tax_exposure_decrease
+
+    return_on_investment = total_return / capital_required
+    c_on_c_return = cashflow / capital_required
+    caprate = price / net_operating_income
+    cashflow_per_month = cashflow / 12
+    max_offer = ((effective_gross_income * 0.75 + -property_taxes - 600) * (0.37/0.12))\
+        / (closing_percentage + down_payment_percent) - fix_up_cost
+    emergency_fund = yearly_cost / 2 if is_first_rental else yearly_cost / 4
+
+    final_returns = {'Return On Investment': return_on_investment,
+                     'Cash on Cash Return': c_on_c_return,
+                     'Caprate': caprate,
+                     'Cashflow per month': cashflow_per_month,
+                     'Max Offer': max_offer,
+                     'Emergency Fund': emergency_fund}
+
+    return final_returns
