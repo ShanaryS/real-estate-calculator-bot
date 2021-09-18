@@ -1,7 +1,7 @@
-# Real Estate Cash Flow Calculator
+# Real Estate Calculator Bot
 
-This is currently being worked on. Expected features are using Zillow's API or Webscrape Zillow for information on houses. Then runs calculations using data from places such as https://www.countyoffice.org/tax-records/ to see if it would be a good rental purchase.
+Work in progress... A webscraper for anlyzing real estate properties. Currently fully functional for analyzing deals if given an https://www.zillow.com/homedetails/* url. Gets property data from zillow and property taxes from countyoffice.org/tax-records/ if not on zillow. Mortage interest rates scraped from nerdwallet.com/mortgages/mortgage-rates.
 
-Ability to input mortgage information, expected rent, repair cost, maintenance, and more.
+Returns color coded information in terminal such as Return on Investment, Cash on Cash Return, Caprate, Cashflow, Maximum Suggested Offer, and recomended emergency fund.
 
-Returns information such as C on C Return, Caprate, Cashflow, Maximum Suggested Offer, and more.
+(Overfitted to multi-family properties in CT. To fix: user.RENT_PER_UNIT, a default value, would need to double or even triple for some areas.)
