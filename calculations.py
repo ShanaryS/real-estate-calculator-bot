@@ -96,7 +96,7 @@ def income_analysis() -> float:
     rent = user.rent_per_unit * user.num_units
     gross_potential_income = rent * 12
     vacancy_cost = -(gross_potential_income * user.vacancy_percent)
-    effective_gross_income = gross_potential_income - vacancy_cost
+    effective_gross_income = gross_potential_income + vacancy_cost
 
     return effective_gross_income
 
@@ -120,10 +120,10 @@ def profit_analysis() -> tuple:
 
     effective_gross_income = income_analysis()
     total_cost = expenses_analysis()
-    net_operating_income = effective_gross_income - total_cost
+    net_operating_income = effective_gross_income + total_cost
 
     debt_service = amortization_table['Monthly Payment'][0] * 12
-    cashflow = net_operating_income - debt_service
+    cashflow = net_operating_income + debt_service
 
     yearly_cost = total_cost + debt_service
 
@@ -139,9 +139,9 @@ def depreciation_analysis() -> float:
     depreciation_long_total = (user.price + user.fix_up_cost) * user.depreciation_long_percent
     depreciation_long_yearly = depreciation_long_total / 27.5
 
-    depreciation_total = (depreciation_short_yearly + depreciation_long_yearly) * user.tax_bracket
+    tax_exposure_decrease = (depreciation_short_yearly + depreciation_long_yearly) * user.tax_bracket
 
-    return depreciation_total
+    return tax_exposure_decrease
 
 
 def returns_analysis() -> dict:
@@ -154,19 +154,26 @@ def returns_analysis() -> dict:
     principal_paydown = -sum(amortization_table['Principal Payment'][0:12])
     total_return = cashflow + tax_exposure_decrease + principal_paydown
 
-    return_on_investment = total_return / capital_required
-    c_on_c_return = cashflow / capital_required
-    caprate = user.price / net_operating_income
+    return_on_investment_percent = round(total_return / capital_required * 100, 2)
+    c_on_c_return_percent = round(cashflow / capital_required * 100, 2)
+    caprate_percent = round(net_operating_income / user.price * 100, 2)
     cashflow_per_month = cashflow / 12
     max_offer = ((effective_gross_income * 0.75 + -user.property_taxes - 600) * (0.37/0.12))\
         / (user.closing_percent + user.down_payment_percent) - user.fix_up_cost
-    emergency_fund = yearly_cost / 2 if user.is_first_rental else yearly_cost / 4
+    emergency_fund = -yearly_cost / 2 if user.is_first_rental else -yearly_cost / 4
 
-    final_returns = {'Return On Investment': return_on_investment,
-                     'Cash on Cash Return': c_on_c_return,
-                     'Caprate': caprate,
-                     'Cashflow per month': cashflow_per_month,
-                     'Max Offer': max_offer,
-                     'Emergency Fund': emergency_fund}
+    return_on_investment_string = f"{return_on_investment_percent}%"
+    c_on_c_return_string = f"{c_on_c_return_percent}%"
+    caprate_string = f"{caprate_percent}%"
+    cashflow_per_month_string = f"${cashflow_per_month:.2f}"
+    max_offer_string = f"${max_offer:.2f}"
+    emergency_fund_string = f"${emergency_fund:.2f}"
+
+    final_returns = {'Return On Investment': return_on_investment_string,
+                     'Cash on Cash Return': c_on_c_return_string,
+                     'Caprate': caprate_string,
+                     'Cashflow per month': cashflow_per_month_string,
+                     'Max Offer': max_offer_string,
+                     'Emergency Fund': emergency_fund_string}
 
     return final_returns
