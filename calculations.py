@@ -11,6 +11,7 @@ loan = user.price - down_payment
 interest_rate_monthly = user.interest_rate / 12
 months = user.years * 12
 property_taxes_monthly = user.property_taxes / 12
+insurance_cost: float
 
 # Defined here for visibility
 amortization_table: dict
@@ -104,6 +105,8 @@ def income_analysis() -> float:
 def expenses_analysis() -> float:
     """Cost of owning of the property"""
 
+    global insurance_cost
+
     effective_gross_income = income_analysis()
 
     maintenance_cost = -(effective_gross_income * user.maintenance_percent)
@@ -180,6 +183,8 @@ def returns_analysis() -> dict:
 
 
 def print_amortization_table() -> None:
+    print("Amortization Table:")
+    print()
     d = {'Period': [], 'Monthly Payment': [],
          'Principal Payment': [], 'Interest Payment': [],
          'Loan Balance': []}
@@ -193,10 +198,23 @@ def print_amortization_table() -> None:
 
     for each_row in zip(*([key] + value for key, value in d.items())):
         print(*each_row, " ")
-    print()
+    print("--------------------------------------------")
 
 
 def print_analysis() -> None:
-    for key, value in get_analysis().items():
-        print(f"{key}: {value}")
+    analysis = get_analysis()
+
+    print("Info used for calculations:")
     print()
+    print(f"Price: ${user.price} - Down Payment: {user.down_payment_percent * 100:.0f}%"
+          f"- Fix Up Cost: ${user.fix_up_cost}")
+    print(f"Loan: ${loan:.0f} - Interest Rate: {user.interest_rate * 100:.2f}% - Loan Length: {user.years} years")
+    print(f"Mortgage Payment: ${-amortization_table['Monthly Payment'][0]:.2f}"
+          f"- Property Taxes: ${user.property_taxes} - Insurance: ${-insurance_cost:.2f}")
+    print(f"Units: {user.num_units} - Rent: ${user.rent_per_unit} - Vacancy: {user.vacancy_percent * 100:.0f}%")
+    print("--------------------------------------------")
+    print("Analysis of property:")
+    print()
+    for item in analysis:
+        print(f"{item}: {analysis[item]}")
+    print("--------------------------------------------")
