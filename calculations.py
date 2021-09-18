@@ -47,7 +47,6 @@ def get_amortization_table() -> dict:
     return amortization_table
 
 
-# TODO Different interest rates based on years
 def _update_values() -> None:
 
     """Updates the values when a new property is being evaluated."""
@@ -197,6 +196,8 @@ def returns_analysis() -> dict:
 
 
 def print_amortization_table() -> None:
+    """Prints amortization table to terminal"""
+
     print("Amortization Table:")
     print()
     d = {'Period': [], 'Monthly Payment': [],
@@ -216,6 +217,8 @@ def print_amortization_table() -> None:
 
 
 def print_analysis() -> None:
+    """Prints analysis results to terminal"""
+
     analysis = get_analysis()
 
     # Print analysis output along with relevant info used

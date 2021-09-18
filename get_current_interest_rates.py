@@ -5,23 +5,19 @@ from bs4 import BeautifulSoup
 import requests
 
 
-url = 'https://www.nerdwallet.com/mortgages/mortgage-rates'
-page = requests.get(url).text
-doc = BeautifulSoup(page, 'html.parser')
+def get_current_interest_rates() -> dict:
+    """Returns web scraped current interest rates"""
 
-table = doc.find('tbody')
+    url = 'https://www.nerdwallet.com/mortgages/mortgage-rates'
+    page = requests.get(url).text
+    doc = BeautifulSoup(page, 'html.parser')
 
-interest_rates = []
-for index, tr in enumerate(table.find_all('tr')):
-    if index == 4 or index == 5 or index == 6:
-        continue
+    table = doc.find('tbody')
 
-    td = float(str(tr.find('td')).split('>')[-2].split('%')[0]) / 100
-    interest_rates.append(td)
+    interest_rates = {}
+    for index, tr in enumerate(table.find_all('tr')):
+        loan_type = tr.find('th').string
+        rate = float(str(tr.find('td').string).split('%')[0]) / 100
+        interest_rates[loan_type] = rate
 
-interest_rate_30_years = interest_rates[0]
-interest_rate_20_years = interest_rates[1]
-interest_rate_15_years = interest_rates[2]
-interest_rate_10_years = interest_rates[3]
-interest_rate_30_years_FHA = interest_rates[4]
-interest_rate_30_years_VA = interest_rates[5]
+    return interest_rates

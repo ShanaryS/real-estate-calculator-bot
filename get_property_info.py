@@ -6,6 +6,8 @@ import requests
 
 
 def set_url_property() -> str:
+    """Gets zillow url from user"""
+
     url = str(input("Enter full url for zillow property:\n"))
 
     while url[:35] != 'https://www.zillow.com/homedetails/':

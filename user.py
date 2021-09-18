@@ -1,8 +1,7 @@
 """Handles updating necessary variables per user input"""
 
 
-from get_current_interest_rates import interest_rate_30_years, interest_rate_20_years,\
-    interest_rate_15_years, interest_rate_10_years, interest_rate_30_years_FHA, interest_rate_30_years_VA
+from get_current_interest_rates import get_current_interest_rates
 from get_property_info import get_address, get_price, get_property_taxes, get_num_units, get_rent_per_unit
 
 
@@ -10,7 +9,7 @@ from get_property_info import get_address, get_price, get_property_taxes, get_nu
 DOWN_PAYMENT_PERCENT = 0.20
 YEARS = 30
 LOAN_TYPE = 'Conventional'
-PROPERTY_TAXES = 5000
+PROPERTY_TAXES = 4000
 FIX_UP_COST = 10000
 NUM_UNITS = 2
 RENT_PER_UNIT = 700
@@ -30,22 +29,24 @@ found = {}
 
 
 # These functions handle not finding certain values that are web scraped
-def use_default_property_taxes():
+def use_default_property_taxes() -> int:
+    """Returns default value for property_taxes and adjusts relevant variables. Use if property_taxes not found."""
     global found_property_taxes
     found_property_taxes = False
     return PROPERTY_TAXES
 
 
-def use_default_num_units(_num_units):
+def use_default_num_units(_num_units) -> int:
+    """Returns default value for num_units and adjusts relevant variables. Use if num_units not found."""
     global found_num_units
     found_num_units = False
-
     if _num_units > 0:
         return _num_units
     return NUM_UNITS
 
 
-def use_default_rent_per_unit():
+def use_default_rent_per_unit() -> int:
+    """Returns default value for rent_per_unit and adjusts relevant variables. Use if rent_per_unit not found."""
     global found_rent_per_unit
     found_rent_per_unit = False
     return RENT_PER_UNIT
@@ -88,26 +89,27 @@ def set_interest_rate() -> None:
     """Sets interest rate based on loan length"""
 
     global interest_rate
+    interest_rates = get_current_interest_rates()
 
     if loan_type == 'Conventional':
         if years == 30:
-            interest_rate = interest_rate_30_years
+            interest_rate = interest_rates['30-year fixed-rate']
         elif years == 20:
-            interest_rate = interest_rate_20_years
+            interest_rate = interest_rates['20-year fixed-rate']
         elif years == 15:
-            interest_rate = interest_rate_15_years
+            interest_rate = interest_rates['15-year fixed-rate']
         elif years == 10:
-            interest_rate = interest_rate_10_years
+            interest_rate = interest_rates['10-year fixed-rate']
         else:
             raise ValueError(f"Invalid combination of loan type '{loan_type}' and years '{years}'.")
     elif loan_type == 'FHA':
         if years == 30:
-            interest_rate = interest_rate_30_years_FHA
+            interest_rate = interest_rates['30-year fixed-rate FHA']
         else:
             raise ValueError(f"Invalid combination of loan type '{loan_type}' and years '{years}'.")
     elif loan_type == 'VA':
         if years == 30:
-            interest_rate = interest_rate_30_years_VA
+            interest_rate = interest_rates['30-year fixed-rate VA']
         else:
             raise ValueError(f"Invalid combination of loan type '{loan_type}' and years '{years}'.")
 
