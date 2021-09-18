@@ -12,6 +12,7 @@ YEARS = 30
 LOAN_TYPE = 'Conventional'
 PROPERTY_TAXES = 5000
 FIX_UP_COST = 10000
+NUM_UNITS = 2
 RENT_PER_UNIT = 700
 VACANCY_PERCENT = 0.08
 MAINTENANCE_PERCENT = 0.15
@@ -21,12 +22,43 @@ DEPRECIATION_LONG_PERCENT = 0.75
 TAX_BRACKET = 0.24
 IS_FIRST_RENTAL = True
 
+# Variables to keep track if values could not be found and thus used a default value
+found_property_taxes = True
+found_num_units = True
+found_rent_per_unit = True
+found = {}
+
+
+# These functions handle not finding certain values that are web scraped
+def use_default_property_taxes():
+    global found_property_taxes
+    found_property_taxes = False
+    return PROPERTY_TAXES
+
+
+def use_default_num_units():
+    global found_num_units
+    found_num_units = False
+    return NUM_UNITS
+
+
+def use_default_rent_per_unit():
+    global found_rent_per_unit
+    found_rent_per_unit = False
+    return RENT_PER_UNIT
+
+
 # Values from web scraper.
 address = get_address()
 price = get_price()
-property_taxes = get_property_taxes() if get_property_taxes() != 0 else PROPERTY_TAXES
-num_units = get_num_units()
-rent_per_unit = get_rent_per_unit() if get_rent_per_unit() != 0 else RENT_PER_UNIT
+property_taxes = get_property_taxes() if get_property_taxes() > 0 else use_default_property_taxes()
+num_units = get_num_units() if get_num_units() > 0 else use_default_num_units()
+rent_per_unit = get_rent_per_unit() if get_rent_per_unit() > 0 else use_default_rent_per_unit()
+
+# Handling if some values above were found or is using default
+found['Property Taxes'] = (found_property_taxes, property_taxes)
+found['Units'] = (found_num_units, num_units)
+found['Rent per unit'] = (found_rent_per_unit, rent_per_unit)
 
 # (INPUT REQUIRED) Default values used for calculator. Variables will be updated when performing real world calculations
 # Removed price and num_units to place in web scraper at top of module

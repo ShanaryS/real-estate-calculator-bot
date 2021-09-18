@@ -5,6 +5,18 @@ import numpy_financial as npf
 import user
 
 
+class PrintColors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
 # Basic calculations necessary module wide
 down_payment = user.price * user.down_payment_percent
 loan = user.price - down_payment
@@ -206,15 +218,24 @@ def print_analysis() -> None:
 
     print("Info used for calculations:")
     print()
-    print(f"Price: ${user.price} - Down Payment: {user.down_payment_percent * 100:.0f}%"
+    print(f"Address: {user.address}")
+    print(f"Price: ${user.price} - Down Payment: {user.down_payment_percent * 100:.0f}% "
           f"- Fix Up Cost: ${user.fix_up_cost}")
     print(f"Loan: ${loan:.0f} - Interest Rate: {user.interest_rate * 100:.2f}% - Loan Length: {user.years} years")
-    print(f"Mortgage Payment: ${-amortization_table['Monthly Payment'][0]:.2f}"
+    print(f"Mortgage Payment: ${-amortization_table['Monthly Payment'][0]:.2f} "
           f"- Property Taxes: ${user.property_taxes} - Insurance: ${-insurance_cost:.2f}")
-    print(f"Units: {user.num_units} - Rent: ${user.rent_per_unit} - Vacancy: {user.vacancy_percent * 100:.0f}%")
+    print(f"Units: {user.num_units} - Rent per unit: ${user.rent_per_unit} "
+          f"- Vacancy: {user.vacancy_percent * 100:.0f}%")
     print("--------------------------------------------")
     print("Analysis of property:")
     print()
     for item in analysis:
         print(f"{item}: {analysis[item]}")
+
+    if not all([values[0] for values in user.found.values()]):
+        print()
+        print("WARNING: THESE ITEMS COULD NOT BE FOUND AND MAY BE WRONG. DEFAULTED TO AN ESTIMATE VALUE:")
+        for item, value in user.found.items():
+            if value[0] is False:
+                print(f"{PrintColors.WARNING}{item}: {user.found[item][1]}{PrintColors.ENDC}")
     print("--------------------------------------------")

@@ -79,7 +79,19 @@ def get_address() -> str:
     # Saves address into county office url in case zillow has no property taxes and need to access it from here.
     _set_url_property_taxes(house_number, street_name, city, state)
 
-    return f"{house_number} {street_name}, {city}, {state} {zip_code}"
+    _street_name = ""
+    for index, word in enumerate(street_name_):
+        _street_name += word
+        if index != street_name_length - 1:
+            _street_name += ' '
+
+    _city = ""
+    for index, word in enumerate(city_):
+        _city += word
+        if index != city_length - 1:
+            _city += ' '
+
+    return f"{house_number} {_street_name}, {_city}, {state} {zip_code}"
 
 
 def get_price() -> int:
@@ -96,7 +108,7 @@ def get_property_taxes() -> int:
 
     temp = page.find('-->$')
 
-    if temp != -1:
+    if temp > -1:
         property_taxes = int(page[temp+4:temp+9].replace(',', ''))
     else:
         try:
@@ -125,7 +137,7 @@ def get_num_units() -> int:
     else:
         temp = page.find('Full bathrooms:')
 
-        if temp != -1:
+        if temp > -1:
             num_units = int(page[temp+24:temp+25])
         else:
             num_units = 0
@@ -138,7 +150,7 @@ def get_rent_per_unit() -> int:
 
     temp = page.find('"pricePerSquareFoot\\":null')-7
 
-    if temp != -1:
+    if temp > -1:
         rent_per_unit = int(page[temp:temp+7].lstrip('"').lstrip(':').rstrip('\\').rstrip(','))
     else:
         rent_per_unit = 0
