@@ -6,10 +6,11 @@ import requests
 
 
 def set_url_property() -> str:
-    url = str(input('Enter url for zillow property:'))
+    url = str(input('Enter url for zillow property:\n'))
 
     while url[:11] != 'zillow.com/' and url[:23] != 'https://www.zillow.com/':
-        url = str(input('Enter url for zillow property:'))
+        url = str(input('Enter url for zillow property:\n'))
+    print()
 
     return url
 
@@ -103,10 +104,11 @@ def get_price() -> int:
     return price
 
 
-def get_property_taxes() -> int:
+def get_property_taxes() -> tuple:
     """Try to get property tax from zillow if it exist. Else use county_office. Must call get_address() prior."""
 
     temp = page.find('-->$')
+    found_property_taxes = True
 
     if temp > -1:
         property_taxes = int(page[temp+4:temp+9].replace(',', ''))
@@ -115,16 +117,17 @@ def get_property_taxes() -> int:
             property_taxes = str(county_office.find_all('tbody')[2]).split('<td>$')[1].split('<')[0].replace(',', '')
             property_taxes = int(property_taxes)
         except TypeError:
+            found_property_taxes = False
             property_taxes = 0
 
-    return property_taxes
+    return property_taxes, found_property_taxes
 
 
-# TODO Add notifier when this fall back to bathrooms as it may silently invalidate results.
-def get_num_units() -> int:
+def get_num_units() -> tuple:
     """Try to get number of units from zillow. Fall backs to full bathrooms as units."""
 
     house_type = str(zillow.find(class_="ds-home-fact-list-item")).split('>')[-3].split('<')[0]
+    found_num_units = True
 
     if house_type == 'Single Family Residence':
         num_units = 1
@@ -135,6 +138,7 @@ def get_num_units() -> int:
     elif house_type == 'Quadruplex':
         num_units = 4
     else:
+        found_num_units = False
         temp = page.find('Full bathrooms:')
 
         if temp > -1:
@@ -142,17 +146,19 @@ def get_num_units() -> int:
         else:
             num_units = 0
 
-    return num_units
+    return num_units, found_num_units
 
 
-def get_rent_per_unit() -> int:
+def get_rent_per_unit() -> tuple:
     """Try to get rent per unit from zillow. If it does not exist, returns 0."""
 
     temp = page.find('"pricePerSquareFoot\\":null')-7
+    found_rent_per_unit = True
 
     if temp > -1:
         rent_per_unit = int(page[temp:temp+7].lstrip('"').lstrip(':').rstrip('\\').rstrip(','))
     else:
+        found_rent_per_unit = False
         rent_per_unit = 0
 
-    return rent_per_unit
+    return rent_per_unit, found_rent_per_unit

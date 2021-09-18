@@ -36,9 +36,12 @@ def use_default_property_taxes():
     return PROPERTY_TAXES
 
 
-def use_default_num_units():
+def use_default_num_units(_num_units):
     global found_num_units
     found_num_units = False
+
+    if _num_units > 0:
+        return _num_units
     return NUM_UNITS
 
 
@@ -51,9 +54,9 @@ def use_default_rent_per_unit():
 # Values from web scraper.
 address = get_address()
 price = get_price()
-property_taxes = get_property_taxes() if get_property_taxes() > 0 else use_default_property_taxes()
-num_units = get_num_units() if get_num_units() > 0 else use_default_num_units()
-rent_per_unit = get_rent_per_unit() if get_rent_per_unit() > 0 else use_default_rent_per_unit()
+property_taxes = get_property_taxes()[0] if get_property_taxes()[1] else use_default_property_taxes()
+num_units = get_num_units()[0] if get_num_units()[1] else use_default_num_units(get_num_units()[0])
+rent_per_unit = get_rent_per_unit()[0] if get_rent_per_unit()[1] else use_default_rent_per_unit()
 
 # Handling if some values above were found or is using default
 found['Property Taxes'] = (found_property_taxes, property_taxes)

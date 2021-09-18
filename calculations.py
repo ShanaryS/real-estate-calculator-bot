@@ -218,6 +218,7 @@ def print_amortization_table() -> None:
 def print_analysis() -> None:
     analysis = get_analysis()
 
+    # Print analysis output along with relevant info used
     print("Info used for calculations:")
     print()
     print(f"Address: {user.address}")
@@ -225,18 +226,84 @@ def print_analysis() -> None:
           f"- Fix Up Cost: ${user.fix_up_cost}")
     print(f"Loan: ${loan:.0f} - Interest Rate: {user.interest_rate * 100:.2f}% - Loan Length: {user.years} years")
     print(f"Mortgage Payment: ${-amortization_table['Monthly Payment'][0]:.2f} "
-          f"- Property Taxes: ${user.property_taxes} - Insurance: ${-insurance_cost:.2f}")
+          f"- Property Taxes: ${property_taxes_monthly:.2f} - Insurance: ${-insurance_cost/12:.2f}")
     print(f"Units: {user.num_units} - Rent per unit: ${user.rent_per_unit} "
           f"- Vacancy: {user.vacancy_percent * 100:.0f}%")
     print("--------------------------------------------")
     print("Analysis of property:")
     print()
+
+    # Handles printing analysis with color coded results based on how good of a deal it is
     for item in analysis:
-        print(f"{item}: {analysis[item]}")
+        value = analysis[item]
+        color = ""
+        BAD, OK, GOOD, GREAT = PrintColors.FAIL, PrintColors.WARNING, PrintColors.OKCYAN, PrintColors.OKGREEN
+
+        if item == 'Return On Investment':
+            value_check = float(value.rstrip('%'))
+
+            if value_check < 12:
+                color = BAD
+            if 12 <= value_check < 20:
+                color = OK
+            if 20 <= value_check < 25:
+                color = GOOD
+            if value_check >= 25:
+                color = GREAT
+
+        elif item == 'Cash on Cash Return':
+            value_check = float(value.rstrip('%'))
+
+            if value_check < 8:
+                color = BAD
+            if 8 <= value_check < 10:
+                color = OK
+            if 10 <= value_check < 12:
+                color = GOOD
+            if value_check >= 12:
+                color = GREAT
+
+        elif item == 'Caprate':
+            value_check = float(value.rstrip('%'))
+
+            if value_check < 5:
+                color = BAD
+            if 5 <= value_check < 7:
+                color = OK
+            if 7 <= value_check < 8:
+                color = GOOD
+            if value_check >= 8:
+                color = GREAT
+
+        elif item == 'Cashflow per month':
+            value_check = float(value.lstrip('$'))
+
+            if value_check < 150:
+                color = BAD
+            elif 150 <= value_check < 300:
+                color = OK
+            elif 300 <= value_check < 500:
+                color = GOOD
+            elif value_check >= 500:
+                color = GREAT
+
+        elif item == 'Max Offer (Approximately)':
+            value_check = float(value.lstrip('$'))
+
+            if value_check < user.price * 0.95:
+                color = BAD
+            elif user.price * 0.95 <= value_check < user.price * 1.05:
+                color = OK
+            elif user.price * 1.05 <= value_check < user.price * 1.1:
+                color = GOOD
+            elif value_check >= user.price * 1.1:
+                color = GREAT
+
+        print(f"{item}: {color}{value}{PrintColors.ENDC}")
 
     if not all([values[0] for values in user.found.values()]):
         print()
-        print("WARNING: THESE ITEMS COULD NOT BE FOUND AND MAY BE WRONG. DEFAULTED TO AN ESTIMATE VALUE:")
+        print("WARNING: THESE ITEMS COULD NOT BE FOUND AND MAY BE WRONG. DEFAULTED TO AN ESTIMATE VALUE.")
         for item, value in user.found.items():
             if value[0] is False:
                 print(f"{PrintColors.WARNING}{item}: {user.found[item][1]}{PrintColors.ENDC}")
