@@ -9,6 +9,7 @@ from get_current_interest_rate import interest_rate_30_years, interest_rate_20_y
 price = 200000
 down_payment_percent = 0.20
 years = 30
+interest_rate = 0.04  # Varies depending on years, defined in function below
 loan_type = 'Conventional'
 property_taxes = 5300
 closing_percent = 0.03
@@ -23,10 +24,7 @@ depreciation_long_percent = 0.75
 tax_bracket = 0.24
 
 # Extra information from user
-is_first_rental = True  # TODO put this in UI file, update in returns_analysis()
-
-# Varies depending on years, defined in function below
-interest_rate = 0.04
+is_first_rental = True
 
 
 # TODO make sure the string is being handled correctly, string should never happen as UI should prevent it
