@@ -27,7 +27,7 @@ tax_bracket = 0.24
 is_first_rental = True
 
 
-# TODO make sure the string is being handled correctly, string should never happen as UI should prevent it
+# TODO UI should handle ValueError and display the message
 def set_interest_rate() -> None:
     """Sets interest rate based on loan length"""
 
@@ -43,17 +43,17 @@ def set_interest_rate() -> None:
         elif years == 10:
             interest_rate = interest_rate_10_years
         else:
-            interest_rate = "Invalid combination of loan type and years."
+            raise ValueError(f"Invalid combination of loan type '{loan_type}' and years '{years}'.")
     elif loan_type == 'FHA':
         if years == 30:
             interest_rate = interest_rate_30_years_FHA
         else:
-            interest_rate = "Invalid combination of loan type and years."
+            raise ValueError(f"Invalid combination of loan type '{loan_type}' and years '{years}'.")
     elif loan_type == 'VA':
         if years == 30:
             interest_rate = interest_rate_30_years_VA
         else:
-            interest_rate = "Invalid combination of loan type and years."
+            raise ValueError(f"Invalid combination of loan type '{loan_type}' and years '{years}'.")
 
 
 def update_price(new_price) -> None:
