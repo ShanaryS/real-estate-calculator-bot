@@ -1,7 +1,7 @@
 """Handles updating necessary variables per user input"""
 
 
-from get_current_interest_rates import get_current_interest_rates
+from get_current_interest_rates import interest_rates
 from get_property_info import get_address, get_price, get_property_taxes, get_num_units, get_rent_per_unit
 
 
@@ -89,7 +89,6 @@ def set_interest_rate() -> None:
     """Sets interest rate based on loan length"""
 
     global interest_rate
-    interest_rates = get_current_interest_rates()
 
     if loan_type == 'Conventional':
         if years == 30:
