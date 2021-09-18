@@ -9,8 +9,8 @@ from get_current_interest_rates import interest_rate_30_years, interest_rate_20_
 DOWN_PAYMENT_PERCENT = 0.20
 YEARS = 30
 LOAN_TYPE = 'Conventional'
-PROPERTY_TAXES = 4000
-FIX_UP_COST = 5000
+PROPERTY_TAXES = 5000
+FIX_UP_COST = 10000
 RENT_PER_UNIT = 700
 VACANCY_PERCENT = 0.08
 MAINTENANCE_PERCENT = 0.15
