@@ -8,7 +8,7 @@ import requests
 def set_url_property() -> str:
     url = str(input('Enter url for zillow property:\n'))
 
-    while url[:11] != 'zillow.com/' and url[:23] != 'https://www.zillow.com/':
+    while url.rstrip("?")[-6:] != '_zpid/':
         url = str(input('Enter url for zillow property:\n'))
     print()
 
