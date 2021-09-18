@@ -29,7 +29,7 @@ is_first_rental = True  # TODO put this in UI file, update in returns_analysis()
 interest_rate = 0.04
 
 
-# TODO make sure the string is being handled correctly
+# TODO make sure the string is being handled correctly, string should never happen as UI should prevent it
 def set_interest_rate() -> None:
     """Sets interest rate based on loan length"""
 
