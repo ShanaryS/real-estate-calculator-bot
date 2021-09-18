@@ -16,61 +16,122 @@ req_headers = {
 }
 with requests.Session() as s:
     url_property = 'https://www.zillow.com/homedetails/21-Harvard-St-Waterbury-CT-06704/58007082_zpid/'
-    page = s.get(url_property, headers=req_headers).text
+    url_property_taxes = 'https://www.countyoffice.org/property-records-search/?q='  # Completed by get_address()
+    zillow_page = s.get(url_property, headers=req_headers).text
+    page = zillow_page  # Hoping this reduces unnecessary calls to zillow for certain functions
 
 
 # TODO Set url based on user link, later do it automatically whenever new listings get posted or price updates
 # Creates beautiful soup object
-url_property = 'https://www.zillow.com/homedetails/21-Harvard-St-Waterbury-CT-06704/58007082_zpid/'
-doc = BeautifulSoup(page, 'html.parser')
-
-# Parses html for address
-raw_address = str(doc.find(id="ds-chip-property-address").span).split('>')[1].split(',')[0].split()
-city_state_zip = str(doc.find(id="ds-chip-property-address")).split('-->')[-1].split('<')[0].split()
-
-house_number = raw_address[0]
-street_name = ''  # Handled below
-state = city_state_zip.pop(-2)
-zip_code = city_state_zip.pop(-1)
-city = ''  # Handled below
-
-# street_name can be multiple words, handling it here
-street_name_ = raw_address[1:]
-street_name_length = len(street_name_)
-for index, word in enumerate(street_name_):
-    street_name += word
-    if index != street_name_length - 1:
-        street_name += '+'
-
-# city can be multiple words, handling it here
-city_ = city_state_zip
-city_[-1] = city_[-1].rstrip(',')
-city_length = len(city_)
-for index, word in enumerate(city_):
-    city += word
-    if index != city_length - 1:
-        city += '+'
-
-# Saves address into county office url in case zillow has no property taxes and need to access it from here.
-url_property_taxes = 'https://www.countyoffice.org/property-records-search/?q='
-url_property_taxes += f"{house_number}+{street_name}%2C+{city}%2C+{state}%2C+USA"
+zillow = BeautifulSoup(zillow_page, 'html.parser')
+county_office = BeautifulSoup('', 'html.parser')
 
 
-def get_price():
-    pass
+def set_county_office_url(house_number, street_name, city, state) -> None:
+    """Set the county office url based on the address from zillow"""
+
+    global url_property_taxes, county_office
+
+    url_property_taxes = 'https://www.countyoffice.org/property-records-search/?q='  # Resetting variable each func call
+    url_property_taxes += f"{house_number}+{street_name}%2C+{city}%2C+{state}%2C+USA"
+    county_office_page = requests.get(url_property_taxes).text
+    county_office = BeautifulSoup(county_office_page, 'html.parser')
 
 
-def get_property_taxes():
-    if True:
-        pass
+def get_address() -> str:
+    """Try to get the address of the house from zillow. Use for countyoffice.org/tax-records/"""
+
+    raw_address = str(zillow.find(id="ds-chip-property-address").span).split('>')[1].split(',')[0].split()
+    city_state_zip = str(zillow.find(id="ds-chip-property-address")).split('-->')[-1].split('<')[0].split()
+
+    house_number = raw_address[0]
+    street_name = ''  # Handled below
+    state = city_state_zip.pop(-2)
+    zip_code = city_state_zip.pop(-1)
+    city = ''  # Handled below
+
+    # street_name can be multiple words, handling it here
+    street_name_ = raw_address[1:]
+    street_name_length = len(street_name_)
+    for index, word in enumerate(street_name_):
+        street_name += word
+        if index != street_name_length - 1:
+            street_name += '+'
+
+    # city can be multiple words, handling it here
+    city_ = city_state_zip
+    city_[-1] = city_[-1].rstrip(',')
+    city_length = len(city_)
+    for index, word in enumerate(city_):
+        city += word
+        if index != city_length - 1:
+            city += '+'
+
+    # Saves address into county office url in case zillow has no property taxes and need to access it from here.
+    set_county_office_url(house_number, street_name, city, state)
+
+    return f"{house_number} {street_name}, {city}, {state} {zip_code}"
+
+
+def get_price() -> int:
+    """Try to get the price of the house from zillow."""
+
+    price = zillow.find(class_="ds-summary-row").span.span.span
+    price = int(str(price).split('>')[1].split('<')[0].lstrip('$').replace(',', ''))
+
+    return price
+
+
+def get_property_taxes() -> int:
+    """Try to get property tax from zillow if it exist. Else use county_office. Must call get_address() prior."""
+
+    temp = page.find('-->$')
+
+    if temp != -1:
+        property_taxes = int(page[temp+4:temp+9].replace(',', ''))
     else:
-        pass
-    pass  # If taxes not on zillow, use county office
+        try:
+            property_taxes = str(county_office.find_all('tbody')[2]).split('<td>$')[1].split('<')[0].replace(',', '')
+            property_taxes = int(property_taxes)
+        except TypeError:
+            property_taxes = 0
+
+    return property_taxes
 
 
-def get_num_units():
-    pass
+# TODO Add notifier when this fall back to bathrooms as it may silently invalidate results.
+def get_num_units() -> int:
+    """Try to get number of units from zillow. Fall backs to full bathrooms as units."""
+
+    house_type = str(zillow.find(class_="ds-home-fact-list-item")).split('>')[-3].split('<')[0]
+
+    if house_type == 'Single Family Residence':
+        num_units = 1
+    elif house_type == 'Duplex':
+        num_units = 2
+    elif house_type == 'Triplex':
+        num_units = 3
+    elif house_type == 'Quadruplex':
+        num_units = 4
+    else:
+        temp = page.find('Full bathrooms:')
+
+        if temp != -1:
+            num_units = int(page[temp+24:temp+25])
+        else:
+            num_units = 0
+
+    return num_units
 
 
-def get_rent_per_unit():
-    pass
+def get_rent_per_unit() -> int:
+    """Try to get rent per unit from zillow. If it does not exist, returns 0."""
+
+    temp = page.find('"pricePerSquareFoot\\":null')-7
+
+    if temp != -1:
+        rent_per_unit = int(page[temp:temp+7].lstrip('"').lstrip(':').rstrip('\\').rstrip(','))
+    else:
+        rent_per_unit = 0
+
+    return rent_per_unit
