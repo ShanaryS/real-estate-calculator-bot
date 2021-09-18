@@ -5,6 +5,15 @@ from bs4 import BeautifulSoup
 import requests
 
 
+def set_url_property() -> str:
+    url = str(input('Enter url for zillow property:'))
+
+    while url[:11] != 'zillow.com/' and url[:23] != 'https://www.zillow.com/':
+        url = str(input('Enter url for zillow property:'))
+
+    return url
+
+
 # Zillow has bot detection. This handles it.
 req_headers = {
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
@@ -15,7 +24,7 @@ req_headers = {
                   ' (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
 }
 with requests.Session() as s:
-    url_property = 'https://www.zillow.com/homedetails/21-Harvard-St-Waterbury-CT-06704/58007082_zpid/'
+    url_property = set_url_property()
     url_property_taxes = 'https://www.countyoffice.org/property-records-search/?q='  # Completed by get_address()
     zillow_page = s.get(url_property, headers=req_headers).text
     page = zillow_page  # Hoping this reduces unnecessary calls to zillow for certain functions
@@ -27,7 +36,7 @@ zillow = BeautifulSoup(zillow_page, 'html.parser')
 county_office = BeautifulSoup('', 'html.parser')
 
 
-def set_county_office_url(house_number, street_name, city, state) -> None:
+def _set_url_property_taxes(house_number, street_name, city, state) -> None:
     """Set the county office url based on the address from zillow"""
 
     global url_property_taxes, county_office
@@ -68,7 +77,7 @@ def get_address() -> str:
             city += '+'
 
     # Saves address into county office url in case zillow has no property taxes and need to access it from here.
-    set_county_office_url(house_number, street_name, city, state)
+    _set_url_property_taxes(house_number, street_name, city, state)
 
     return f"{house_number} {street_name}, {city}, {state} {zip_code}"
 

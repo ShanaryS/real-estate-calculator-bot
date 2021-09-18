@@ -3,6 +3,7 @@
 
 from get_current_interest_rates import interest_rate_30_years, interest_rate_20_years,\
     interest_rate_15_years, interest_rate_10_years, interest_rate_30_years_FHA, interest_rate_30_years_VA
+from get_property_info import get_address, get_price, get_property_taxes, get_num_units, get_rent_per_unit
 
 
 # Values to reset to if no input necessary. A few variables always require input.
@@ -20,19 +21,24 @@ DEPRECIATION_LONG_PERCENT = 0.75
 TAX_BRACKET = 0.24
 IS_FIRST_RENTAL = True
 
+# Values from web scraper.
+address = get_address()
+price = get_price()
+property_taxes = get_property_taxes() if get_property_taxes() != 0 else PROPERTY_TAXES
+num_units = get_num_units()
+rent_per_unit = get_rent_per_unit() if get_rent_per_unit() != 0 else RENT_PER_UNIT
+
 # (INPUT REQUIRED) Default values used for calculator. Variables will be updated when performing real world calculations
-price = 200000
+# Removed price and num_units to place in web scraper at top of module
 interest_rate = 0.04  # Varies depending on years, defined in function below
 closing_percent = 0.03
-num_units = 3
 
 # (INPUT OPTIONAL) Default values used for calculator. Variables will be updated when performing real world calculations
+# Removed property_taxers and rent_per_unit to place in web scraper at top of module
 down_payment_percent = DOWN_PAYMENT_PERCENT
 years = YEARS
 loan_type = LOAN_TYPE
-property_taxes = PROPERTY_TAXES
 fix_up_cost = FIX_UP_COST
-rent_per_unit = RENT_PER_UNIT
 vacancy_percent = VACANCY_PERCENT
 maintenance_percent = MAINTENANCE_PERCENT
 management_percent = MANAGEMENT_PERCENT
