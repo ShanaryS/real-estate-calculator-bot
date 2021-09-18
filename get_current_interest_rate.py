@@ -7,4 +7,8 @@ doc = BeautifulSoup(page, "html.parser")
 
 table = doc.find("tbody")
 interest_rate_30_years = float(str(table.td).split('>')[-2].split('%')[0]) / 100
-print(interest_rate_30_years)
+interest_rate_20_years = 0.04
+interest_rate_15_years = 0.04
+interest_rate_10_years = 0.04
+interest_rate_30_years_FHA = 0.04
+interest_rate_30_years_VA = 0.04

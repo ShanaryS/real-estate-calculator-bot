@@ -1,11 +1,15 @@
 """Handles updating necessary variables per user input"""
 
 
+from get_current_interest_rate import interest_rate_30_years, interest_rate_20_years,\
+    interest_rate_15_years, interest_rate_10_years, interest_rate_30_years_FHA, interest_rate_30_years_VA
+
+
 # Default values used for calculator. Variables will be updated when performing real world calculations.
 price = 200000
 down_payment_percent = 0.20
-interest_rate = 0.04
 years = 30
+loan_type = 'Conventional'
 property_taxes = 5300
 closing_percent = 0.03
 fix_up_cost = 5000
@@ -21,6 +25,38 @@ tax_bracket = 0.24
 # Extra information from user
 is_first_rental = True  # TODO put this in UI file, update in returns_analysis()
 
+# Varies depending on years, defined in function below
+interest_rate = 0.04
+
+
+# TODO make sure the string is being handled correctly
+def set_interest_rate() -> None:
+    """Sets interest rate based on loan length"""
+
+    global interest_rate
+
+    if loan_type == 'Conventional':
+        if years == 30:
+            interest_rate = interest_rate_30_years
+        elif years == 20:
+            interest_rate = interest_rate_20_years
+        elif years == 15:
+            interest_rate = interest_rate_15_years
+        elif years == 10:
+            interest_rate = interest_rate_10_years
+        else:
+            interest_rate = "Invalid combination of loan type and years."
+    elif loan_type == 'FHA':
+        if years == 30:
+            interest_rate = interest_rate_30_years_FHA
+        else:
+            interest_rate = "Invalid combination of loan type and years."
+    elif loan_type == 'VA':
+        if years == 30:
+            interest_rate = interest_rate_30_years_VA
+        else:
+            interest_rate = "Invalid combination of loan type and years."
+
 
 def update_price(new_price) -> None:
     """Updates price with user input"""
@@ -32,12 +68,6 @@ def update_down_payment_percent(new_down_payment_percent) -> None:
     """Updates down_payment_percent with user input"""
     global down_payment_percent
     down_payment_percent = new_down_payment_percent
-
-
-def update_interest_rate(new_interest_rate) -> None:
-    """Updates interest_rate with user input"""
-    global interest_rate
-    interest_rate = new_interest_rate
 
 
 def update_years(new_years) -> None:

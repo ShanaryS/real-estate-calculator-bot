@@ -37,6 +37,8 @@ def _update_values() -> None:
 
     """Updates the values when a new property is being evaluated."""
 
+    user.set_interest_rate()
+
     global down_payment, loan, interest_rate_monthly, months, property_taxes_monthly, amortization_table
 
     down_payment = user.price * user.down_payment_percent
