@@ -1,4 +1,4 @@
-"""Web scrapes property info from zillow and countyoffice for property taxes if necessary."""
+"""Web scrapes property info from zillow.com and countyoffice.org/tax-records/ for property taxes if necessary."""
 
 
 from bs4 import BeautifulSoup
