@@ -1,7 +1,7 @@
 """Handles updating necessary variables per user input"""
 
 
-from get_current_interest_rate import interest_rate_30_years, interest_rate_20_years,\
+from get_current_interest_rates import interest_rate_30_years, interest_rate_20_years,\
     interest_rate_15_years, interest_rate_10_years, interest_rate_30_years_FHA, interest_rate_30_years_VA
 
 
