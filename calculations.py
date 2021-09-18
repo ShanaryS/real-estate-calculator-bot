@@ -303,7 +303,8 @@ def print_analysis() -> None:
 
     if not all([values[0] for values in user.found.values()]):
         print()
-        print("WARNING: THESE ITEMS COULD NOT BE FOUND AND MAY BE WRONG. DEFAULTED TO AN ESTIMATE VALUE.")
+        print(f"{PrintColors.FAIL}WARNING: THESE ITEMS COULD NOT BE FOUND THUS DEFAULTED TO AN ESTIMATE VALUE. "
+              f"THEY MAY BE WRONG.{PrintColors.ENDC}")
         for item, value in user.found.items():
             if value[0] is False:
                 print(f"{PrintColors.WARNING}{item}: ??? --> {user.found[item][1]}{PrintColors.ENDC}")
