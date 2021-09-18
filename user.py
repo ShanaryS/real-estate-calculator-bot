@@ -5,26 +5,41 @@ from get_current_interest_rates import interest_rate_30_years, interest_rate_20_
     interest_rate_15_years, interest_rate_10_years, interest_rate_30_years_FHA, interest_rate_30_years_VA
 
 
-# Default values used for calculator. Variables will be updated when performing real world calculations.
-price = 200000
-down_payment_percent = 0.20
-years = 30
-interest_rate = 0.04  # Varies depending on years, defined in function below
-loan_type = 'Conventional'
-property_taxes = 5300
-closing_percent = 0.03
-fix_up_cost = 5000
-num_units = 3
-rent_per_unit = 700
-vacancy_percent = 0.08
-maintenance_percent = 0.15
-management_percent = 0.10
-depreciation_short_percent = 0.08
-depreciation_long_percent = 0.75
-tax_bracket = 0.24
+# Values to reset to if no input necessary. A few variables always require input.
+DOWN_PAYMENT_PERCENT = 0.20
+YEARS = 30
+LOAN_TYPE = 'Conventional'
+PROPERTY_TAXES = 4000
+FIX_UP_COST = 5000
+RENT_PER_UNIT = 700
+VACANCY_PERCENT = 0.08
+MAINTENANCE_PERCENT = 0.15
+MANAGEMENT_PERCENT = 0.10
+DEPRECIATION_SHORT_PERCENT = 0.08
+DEPRECIATION_LONG_PERCENT = 0.75
+TAX_BRACKET = 0.24
+IS_FIRST_RENTAL = True
 
-# Extra information from user
-is_first_rental = True
+# (INPUT REQUIRED) Default values used for calculator. Variables will be updated when performing real world calculations
+price = 200000
+interest_rate = 0.04  # Varies depending on years, defined in function below
+closing_percent = 0.03
+num_units = 3
+
+# (INPUT OPTIONAL) Default values used for calculator. Variables will be updated when performing real world calculations
+down_payment_percent = DOWN_PAYMENT_PERCENT
+years = YEARS
+loan_type = LOAN_TYPE
+property_taxes = PROPERTY_TAXES
+fix_up_cost = FIX_UP_COST
+rent_per_unit = RENT_PER_UNIT
+vacancy_percent = VACANCY_PERCENT
+maintenance_percent = MAINTENANCE_PERCENT
+management_percent = MANAGEMENT_PERCENT
+depreciation_short_percent = DEPRECIATION_SHORT_PERCENT
+depreciation_long_percent = DEPRECIATION_LONG_PERCENT
+tax_bracket = TAX_BRACKET
+is_first_rental = IS_FIRST_RENTAL
 
 
 # TODO UI should handle ValueError and display the message
