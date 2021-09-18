@@ -4,10 +4,10 @@ import requests
 url = 'https://www.nerdwallet.com/mortgages/mortgage-rates'
 page = requests.get(url).text
 doc = BeautifulSoup(page, 'html.parser')
-interest_rates = []
 
 table = doc.find('tbody')
 
+interest_rates = []
 for index, tr in enumerate(table.find_all('tr')):
     if index == 4 or index == 5 or index == 6:
         continue
