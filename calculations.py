@@ -191,7 +191,7 @@ def returns_analysis() -> dict:
                      'Caprate': caprate_string,
                      'Cashflow per month': cashflow_per_month_string,
                      'Max Offer (Approximately)': max_offer_string,
-                     'Emergency Fund': emergency_fund_string}
+                     'Emergency Fund (Recommended)': emergency_fund_string}
 
     return final_returns
 
@@ -225,8 +225,8 @@ def print_analysis() -> None:
     print(f"Price: ${user.price} - Down Payment: {user.down_payment_percent * 100:.0f}% "
           f"- Fix Up Cost: ${user.fix_up_cost}")
     print(f"Loan: ${loan:.0f} - Interest Rate: {user.interest_rate * 100:.2f}% - Loan Length: {user.years} years")
-    print(f"Mortgage Payment: ${-amortization_table['Monthly Payment'][0]:.2f} "
-          f"- Property Taxes: ${property_taxes_monthly:.2f} - Insurance: ${-insurance_cost/12:.2f}")
+    print(f"Mortgage Payment (Monthly): ${-amortization_table['Monthly Payment'][0]:.2f} "
+          f"- Property Taxes (Monthly): ${property_taxes_monthly:.2f} - Insurance (Monthly): ${-insurance_cost/12:.2f}")
     print(f"Units: {user.num_units} - Rent per unit: ${user.rent_per_unit} "
           f"- Vacancy: {user.vacancy_percent * 100:.0f}%")
     print("--------------------------------------------")
@@ -306,5 +306,5 @@ def print_analysis() -> None:
         print("WARNING: THESE ITEMS COULD NOT BE FOUND AND MAY BE WRONG. DEFAULTED TO AN ESTIMATE VALUE.")
         for item, value in user.found.items():
             if value[0] is False:
-                print(f"{PrintColors.WARNING}{item}: {user.found[item][1]}{PrintColors.ENDC}")
+                print(f"{PrintColors.WARNING}{item}: ??? --> {user.found[item][1]}{PrintColors.ENDC}")
     print("--------------------------------------------")
