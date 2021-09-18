@@ -171,7 +171,7 @@ def returns_analysis() -> dict:
                      'Cash on Cash Return': c_on_c_return_string,
                      'Caprate': caprate_string,
                      'Cashflow per month': cashflow_per_month_string,
-                     'Max Offer': max_offer_string,
+                     'Max Offer (Approximately)': max_offer_string,
                      'Emergency Fund': emergency_fund_string}
 
     return final_returns
