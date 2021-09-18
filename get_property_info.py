@@ -6,9 +6,9 @@ import requests
 
 
 def set_url_property() -> str:
-    url = str(input('Enter url for zillow property:\n'))
+    url = str(input("Enter full url for zillow property:\n"))
 
-    while url.rstrip("?")[-6:] != '_zpid/':
+    while url[:35] != 'https://www.zillow.com/homedetails/':
         url = str(input('Enter url for zillow property:\n'))
     print()
 
