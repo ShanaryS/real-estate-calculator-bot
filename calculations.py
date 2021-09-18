@@ -60,11 +60,10 @@ def mortgage_amortization() -> dict:
     monthly_principal = npf.ppmt(interest_rate_monthly, period, months, loan)
     monthly_interest = npf.ipmt(interest_rate_monthly, period, months, loan)
     loan_balance = npf.fv(interest_rate_monthly, period, monthly_payment, loan)
-    loan_constant = monthly_payment / loan
 
     amortization = {'Period': [period], 'Monthly Payment': [monthly_payment],
                     'Principal Payment': [monthly_principal], 'Interest Payment': [monthly_interest],
-                    'Loan Balance': [loan_balance], 'Loan Constant': [loan_constant]}
+                    'Loan Balance': [loan_balance]}
 
     for i in range(2, months+1):
         period = i
@@ -77,7 +76,6 @@ def mortgage_amortization() -> dict:
         amortization['Principal Payment'].append(monthly_principal)
         amortization['Interest Payment'].append(monthly_interest)
         amortization['Loan Balance'].append(loan_balance)
-        amortization['Loan Constant'].append(loan_constant)
 
     return amortization
 
@@ -177,3 +175,26 @@ def returns_analysis() -> dict:
                      'Emergency Fund': emergency_fund_string}
 
     return final_returns
+
+
+def print_amortization_table() -> None:
+    d = {'Period': [], 'Monthly Payment': [],
+         'Principal Payment': [], 'Interest Payment': [],
+         'Loan Balance': []}
+
+    for key, value in get_amortization_table().items():
+        for num in value:
+            if key != 'Period':
+                d[key].append(f"{num:.2f}")
+            else:
+                d[key].append(num)
+
+    for each_row in zip(*([key] + value for key, value in d.items())):
+        print(*each_row, " ")
+    print()
+
+
+def print_analysis() -> None:
+    for key, value in get_analysis().items():
+        print(f"{key}: {value}")
+    print()
