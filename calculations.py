@@ -253,7 +253,8 @@ def returns_analysis() -> dict:
 def save_analysis(create_json=False) -> None:
     """Saves analysis of property to analyzedProperties.json"""
 
-    property_analysis = {get_property_key(): {
+    key = get_property_key()
+    property_analysis = {key: {
                               "Property URL": get_url(property_url=True),
                               "Property Taxes URL": get_url(taxes_url=True),
                               "Property Info": property_info,
@@ -268,9 +269,11 @@ def save_analysis(create_json=False) -> None:
     else:
         with open('analysis.json', 'r') as json_file:
             temp = json.load(json_file)
+
+        if property_analysis["Property Info"]["Price ($)"] != temp[key]["Property Info"]["Price ($)"]:
             temp.update(property_analysis)
-        with open('analysis.json', 'w') as json_file:
-            json.dump(temp, json_file, indent=4)
+            with open('analysis.json', 'w') as json_file:
+                json.dump(temp, json_file, indent=4)
 
 
 def print_amortization_table() -> None:
