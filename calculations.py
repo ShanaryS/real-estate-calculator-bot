@@ -1,11 +1,9 @@
 """Hub for all the calculations needed"""
 
-
 import numpy_financial as npf
 import json
 import user
 from get_property_info import set_page_property_info, get_url
-
 
 # Basic calculations necessary module wide. Defining here for visibility.
 down_payment: float
@@ -126,7 +124,7 @@ def mortgage_amortization() -> dict:
                     'Principal Payment': [monthly_principal], 'Interest Payment': [monthly_interest],
                     'Loan Balance': [loan_balance]}
 
-    for i in range(2, months+1):
+    for i in range(2, months + 1):
         period = i
         monthly_principal = npf.ppmt(interest_rate_monthly, period, months, loan)
         monthly_interest = npf.ipmt(interest_rate_monthly, period, months, loan)
@@ -219,8 +217,8 @@ def returns_analysis() -> dict:
     c_on_c_return_percent = round(cashflow / capital_required * 100, 2)
     caprate_percent = round(net_operating_income / user.price * 100, 2)
     cashflow_per_month = cashflow / 12
-    max_offer = ((effective_gross_income * 0.75 + -user.property_taxes - 600) * (0.37/0.12))\
-        / (user.closing_percent + user.down_payment_percent) - user.fix_up_cost
+    max_offer = ((effective_gross_income * 0.75 + -user.property_taxes - 600) * (0.37 / 0.12)) \
+                / (user.closing_percent + user.down_payment_percent) - user.fix_up_cost
     emergency_fund = -yearly_cost / 2 if user.is_first_rental else -yearly_cost / 4
 
     return_on_investment_string = f"{return_on_investment_percent}%"
@@ -243,12 +241,14 @@ def returns_analysis() -> dict:
 def save_analysis() -> None:
     """Saves analysis of property to analyzedProperties.json"""
 
-    property_analysis = {"Property URL": get_url(property_url=True),
-                         "Property Taxes URL": get_url(taxes_url=True),
-                         "Property Info": property_info,
-                         "Analysis": print_analysis(dump=True),
-                         "Estimations": estimations}
-
+    property_analysis = {f"https://www.zillow.com/homedetails/{get_url().split('/')[-2]}/": {
+                              "Property URL": get_url(property_url=True),
+                              "Property Taxes URL": get_url(taxes_url=True),
+                              "Property Info": property_info,
+                              "Analysis": print_analysis(dump=True),
+                              "Estimations": estimations
+                            }
+                         }
     with open('analyzedProperties.json', 'w') as json_file:
         json.dump(property_analysis, json_file, indent=4)
 
