@@ -54,17 +54,18 @@ def update_values() -> None:
     property_info = {
         "Address": user.address,
         "Price": user.price,
-        "Down Payment": float(f"{user.down_payment_percent * 100:.0f}"),
+        "Description": user.description,
+        "Down Payment": float(f"{user.down_payment_percent:.2f}"),
         "Fix Up Cost": user.fix_up_cost,
         "Loan": float(f"{loan:.0f}"),
-        "Interest Rate": float(f"{user.interest_rate * 100:.2f}"),
+        "Interest Rate": float(f"{user.interest_rate:.2f}"),
         "Loan Length": user.years,
         "Mortgage Payment (Monthly)": float(f"{-amortization_table['Monthly Payment'][0]:.2f}"),
         "Property Taxes (Monthly)": float(f"{property_taxes_monthly:.2f}"),
         "Insurance (Monthly)": float(f"{-insurance_cost / 12:.2f}"),
         "Units": user.num_units,
         "Rent per unit": user.rent_per_unit,
-        "Vacancy": float(f"{user.vacancy_percent * 100:.0f}")
+        "Vacancy": float(f"{user.vacancy_percent:.2f}")
     }
     estimations = {item: user.found[item][1] for item, value in user.found.items() if value[0] is False
                    if not all([values[0] for values in user.found.values()])}
@@ -245,7 +246,7 @@ def save_analysis() -> None:
     property_analysis = {"Property URL": get_url(property_url=True),
                          "Property Taxes URL": get_url(taxes_url=True),
                          "Property Info": property_info,
-                         "Analysis": analysis,
+                         "Analysis": print_analysis(dump=True),
                          "Estimations": estimations}
 
     with open('analyzedProperties.json', 'w') as json_file:
@@ -314,11 +315,14 @@ def print_property_info() -> None:
     print()
 
 
-def print_analysis() -> None:
+def print_analysis(dump=False) -> any:
     """Prints analysis results to terminal"""
 
-    print("Analysis of property:")
-    print()
+    temp = {}
+
+    if not dump:
+        print("Analysis of property:")
+        print()
 
     # Handles printing analysis with color coded results based on how good of a deal it is
     for item in analysis:
@@ -392,10 +396,19 @@ def print_analysis() -> None:
         else:
             stripped_val = float(value.lstrip('$'))
 
-        if is_dollar_sign:
-            print(f"{item}: {color}${stripped_val:,}{PrintColors.ENDC}")
+        if dump:
+            if is_dollar_sign:
+                temp[item] = f"${stripped_val:,.2f}"
+            else:
+                temp[item] = f"{stripped_val:,}%"
         else:
-            print(f"{item}: {color}{stripped_val}%{PrintColors.ENDC}")
+            if is_dollar_sign:
+                print(f"{item}: {color}${stripped_val:,.2f}{PrintColors.ENDC}")
+            else:
+                print(f"{item}: {color}{stripped_val}%{PrintColors.ENDC}")
+
+    if dump:
+        return temp
 
     if not all([values[0] for values in user.found.values()]):
         print()

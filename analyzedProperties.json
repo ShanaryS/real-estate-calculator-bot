@@ -1,13 +1,29 @@
 {
     "Property URL": "https://www.zillow.com/homedetails/80-82-E-Lawlor-St-New-Britain-CT-06051/2068502162_zpid/",
     "Property Taxes URL": "https://www.countyoffice.org/property-records-search/?q=80-82+E+Lawlor+St%2C+New+Britain%2C+CT%2C+USA",
+    "Property Info": {
+        "Address": "80-82 E Lawlor St, New Britain, CT 06051",
+        "Price": 249900,
+        "Description": "Rarely found 3 bedroom single family home for rent and a 2 family home located on the same parcel.  Freshly painted and new floors put in with an updated bathroom in the single family home.  Rent out the 2 family while living in the single family or purchase and rent out the whole property.  Off-street parking and a garage on the property.  This is a very unique opportunity available to the new owner.",
+        "Down Payment": 0.2,
+        "Fix Up Cost": 10000,
+        "Loan": 199920.0,
+        "Interest Rate": 0.03,
+        "Loan Length": 30,
+        "Mortgage Payment (Monthly)": 826.14,
+        "Property Taxes (Monthly)": 490.92,
+        "Insurance (Monthly)": 88.51,
+        "Units": 3,
+        "Rent per unit": 700,
+        "Vacancy": 0.08
+    },
     "Analysis": {
-        "Return On Investment": "11.38%",
+        "Return On Investment": "11.37%",
         "Cash on Cash Return": "0.79%",
         "Caprate": "4.18%",
-        "Cashflow per month": "$43.54",
-        "Max Offer (Approximately)": "$136082.97",
-        "Emergency Fund (Recommended)": "$11330.76"
+        "Cashflow per month": "$43.43",
+        "Max Offer (Approximately)": "$136,082.97",
+        "Emergency Fund (Recommended)": "$11,331.40"
     },
     "Estimations": {
         "Units": 3,
