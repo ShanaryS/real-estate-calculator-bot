@@ -26,29 +26,32 @@ def commit_updates_to_file() -> None:
 def print_captions(s_or_p=False, a_or_o=False, a=False, o=False, e=False, c=False, valid=True, received=False) -> None:
     """Prints text that tells the user what the programing is doing"""
 
+    BAD, OK, GOOD, GREAT = PrintColors.FAIL, PrintColors.WARNING, PrintColors.OKCYAN, PrintColors.OKGREEN
+    END = PrintColors.ENDC
+
     if s_or_p:
-        print("Do you want to update search urls 's' or property urls 'p'? ('c' to cancel):", end=" ")
+        print(f"{GOOD}Do you want to update search urls 's' or property urls 'p'? ('c' to cancel):{END}", end=" ")
     elif a_or_o:
-        print("Do you want to append 'a' or overwrite 'o'? ('c' to cancel):", end=" ")
+        print(f"{GOOD}Do you want to append 'a' or overwrite 'o'? ('c' to cancel):{END}", end=" ")
     elif a:
-        print("--- Appending... Urls in this session will be saved to file! ---")
+        print(f"{OK}--- Appending... Urls in this session will be saved to file! ---{END}")
         if e:
-            print("Enter another url ('e' to execute changes, 'c' to cancel):", end=" ")
+            print(f"{GOOD}Enter another url ('e' to execute changes, 'c' to cancel):{END}", end=" ")
         else:
-            print("- Enter url ('c' to cancel):", end=" ")
+            print(f"{GOOD}- Enter url ('c' to cancel):{END}", end=" ")
     elif o:
-        print("--- Overwriting... Urls before this session will be lost! ---")
+        print(f"{OK}--- Overwriting... Urls before this session will be lost! ---{END}")
         if e:
-            print("Enter another url ('e' to execute changes, 'c' to cancel):", end=" ")
+            print(f"{GOOD}Enter another url ('e' to execute changes, 'c' to cancel):{END}", end=" ")
         else:
-            print("Enter url ('c' to cancel):", end=" ")
+            print(f"{GOOD}Enter url ('c' to cancel):{END}", end=" ")
     elif c:
-        print("!!! Ending program... No changes were made !!!")
+        print(f"{BAD}!!! Ending program... No changes were made! !!!{END}")
 
     elif not valid:
-        print("!!! Invalid url. Try again !!!")
+        print(f"{BAD}!!! Invalid url... Try again! !!!{END}")
     elif received:
-        print("!!! Link received !!!")
+        print(f"{GREAT}!!! Link received! !!!{END}")
 
 
 def add_link() -> None:

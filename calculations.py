@@ -324,6 +324,9 @@ def print_property_info() -> None:
 def print_analysis(dump=False) -> any:
     """Prints analysis results to terminal"""
 
+    BAD, OK, GOOD, GREAT = PrintColors.FAIL, PrintColors.WARNING, PrintColors.OKCYAN, PrintColors.OKGREEN
+    END = PrintColors.ENDC
+
     temp = {}
 
     if not dump:
@@ -335,7 +338,6 @@ def print_analysis(dump=False) -> any:
         value = analysis[item]
         is_dollar_sign = True
         color = ""
-        BAD, OK, GOOD, GREAT = PrintColors.FAIL, PrintColors.WARNING, PrintColors.OKCYAN, PrintColors.OKGREEN
 
         if item == 'Return On Investment':
             stripped_val = float(value.rstrip('%'))
@@ -409,20 +411,20 @@ def print_analysis(dump=False) -> any:
                 temp[item] = f"{stripped_val:,}%"
         else:
             if is_dollar_sign:
-                print(f"{item}: {color}${stripped_val:,.2f}{PrintColors.ENDC}")
+                print(f"{item}: {color}${stripped_val:,.2f}{END}")
             else:
-                print(f"{item}: {color}{stripped_val}%{PrintColors.ENDC}")
+                print(f"{item}: {color}{stripped_val}%{END}")
 
     if dump:
         return temp
 
     if not all([values[0] for values in user.found.values()]):
         print()
-        print(f"{PrintColors.FAIL}WARNING: THESE ITEMS COULD NOT BE FOUND THUS DEFAULTED TO AN ESTIMATE VALUE. "
-              f"THEY MAY BE WRONG.{PrintColors.ENDC}")
+        print(f"{BAD}WARNING: THESE ITEMS COULD NOT BE FOUND THUS DEFAULTED TO AN ESTIMATE VALUE. "
+              f"THEY MAY BE WRONG.{END}")
         for item, value in user.found.items():
             if value[0] is False:
-                print(f"{PrintColors.WARNING}{item}: ??? --> {value[1]}{PrintColors.ENDC}")
+                print(f"{OK}{item}: ??? --> {value[1]}{END}")
     print()
     print("--------------------------------------------------------------------------------")
     print()
