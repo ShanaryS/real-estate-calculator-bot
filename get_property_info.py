@@ -15,10 +15,10 @@ page: requests.Session()
 def set_url_property() -> str:
     """Gets zillow url from user"""
 
-    url = str(input("Enter full url for zillow property:\n"))
+    url = str(input("Enter full url for zillow property: "))
 
     while url[:27] != 'https://www.zillow.com/home':
-        url = str(input("Enter full url for zillow property:\n"))
+        url = str(input("Enter full url for zillow property: "))
     print()
 
     return url
