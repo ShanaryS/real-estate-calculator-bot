@@ -51,19 +51,19 @@ def update_values(save_to_file=True) -> None:
     analysis = returns_analysis()
     property_info = {
         "Address": user.address,
-        "Price": user.price,
+        "Price ($)": user.price,
         "Description": user.description,
-        "Down Payment": float(f"{user.down_payment_percent:.2f}"),
-        "Fix Up Cost": user.fix_up_cost,
-        "Loan": int(loan),
-        "Interest Rate": float(f"{user.interest_rate:.4f}"),
-        "Loan Length": user.years,
+        "Down Payment (Fraction)": float(f"{user.down_payment_percent:.2f}"),
+        "Fix Up Cost ($)": user.fix_up_cost,
+        "Loan ($)": int(loan),
+        "Interest Rate (Fraction)": float(f"{user.interest_rate:.4f}"),
+        "Loan Length (Years)": user.years,
         "Mortgage Payment (Monthly)": float(f"{-amortization_table['Monthly Payment'][0]:.2f}"),
         "Property Taxes (Monthly)": float(f"{property_taxes_monthly:.2f}"),
         "Insurance (Monthly)": float(f"{-insurance_cost / 12:.2f}"),
         "Units": user.num_units,
-        "Rent per unit": user.rent_per_unit,
-        "Vacancy": float(f"{user.vacancy_percent:.2f}")
+        "Rent per unit ($)": user.rent_per_unit,
+        "Vacancy (Fraction)": float(f"{user.vacancy_percent:.2f}")
     }
     estimations = {item: user.found[item][1] for item, value in user.found.items() if value[0] is False
                    if not all([values[0] for values in user.found.values()])}
@@ -324,7 +324,7 @@ def print_property_info() -> None:
     print(f"Address: {user.address}")
     print(f"Price: ${user.price:,} - Down Payment: {user.down_payment_percent * 100:.0f}% "
           f"- Fix Up Cost: ${user.fix_up_cost:,}")
-    print(f"Loan: ${int(loan):,} - Interest Rate: {user.interest_rate * 100:.2f}% - Loan Length: {user.years} years")
+    print(f"Loan: ${int(loan):,} - Interest Rate: {user.interest_rate * 100:.2f}% - Loan Length (Years): {user.years}")
     print(f"Mortgage Payment (Monthly): ${-amortization_table['Monthly Payment'][0]:,.2f} "
           f"- Property Taxes (Monthly): ${property_taxes_monthly:,.2f} "
           f"- Insurance (Monthly): ${-insurance_cost / 12:,.2f}")
