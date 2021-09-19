@@ -7,8 +7,8 @@ zillow: BeautifulSoup
 page: requests.Session()
 
 
-def set_url_search() -> str:
-    """Gets zillow search url from user"""
+def _set_url_search() -> str:
+    """Gets zillow search url from user or file when running analysis"""
 
     url = str(input("Enter full url from zillow search: "))
 
@@ -34,7 +34,7 @@ def set_page_search() -> None:
                       ' (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
     }
     with requests.Session() as s:
-        url_property = set_url_search()
+        url_property = _set_url_search()
         zillow_page = s.get(url_property, headers=req_headers).text
         page = zillow_page  # Hoping this reduces unnecessary calls to zillow for certain functions
 

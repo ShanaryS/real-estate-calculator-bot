@@ -12,12 +12,12 @@ county_office: BeautifulSoup
 page: requests.Session()
 
 
-# TODO set_page_property_info() to take links.json instead of just url at run time
+# TODO set_page_property_info() to take urls.json instead of just url at run time
 # TODO Only update interest rate when first running file, for subsequent properties use previous value
-# TODO Store links to search in links.json, add ability to write links to json, separate file to run add_links.py
+# TODO Store links to search in urls.json, add ability to write links to json, separate file to run add_urls.py
 # TODO Handle saved list and search them all:
-def set_url_property() -> str:
-    """Gets zillow url from user"""
+def _set_url_property() -> str:
+    """Gets zillow url from user or file when running analysis"""
 
     url = str(input("Enter full url for zillow property: "))
 
@@ -43,7 +43,7 @@ def set_page_property_info() -> None:
                       ' (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
     }
     with requests.Session() as s:
-        url_property = set_url_property()
+        url_property = _set_url_property()
         url_property_taxes = 'https://www.countyoffice.org/property-records-search/?q='  # Completed by get_address()
         zillow_page = s.get(url_property, headers=req_headers).text
         page = zillow_page  # Hoping this reduces unnecessary calls to zillow for certain functions
