@@ -16,19 +16,22 @@ page: requests.Session()
 # TODO Only update interest rate when first running file, for subsequent properties use previous value
 # TODO Store links to search in urls.json, add ability to write links to json, separate file to run add_urls.py
 # TODO Handle saved list and search them all:
-def _set_url_property() -> str:
+def _set_url_property(url) -> str:
     """Gets zillow url from user or file when running analysis"""
 
-    url = str(input("Enter full url for zillow property: "))
+    if url:
+        _url = url
+    else:
+        _url = str(input("Enter full url for zillow property: "))
 
-    while url[:27] != 'https://www.zillow.com/home' or len(url) < 35:
-        url = str(input("Enter full url for zillow property: "))
+    while _url[:27] != 'https://www.zillow.com/home' or len(_url) < 35:
+        _url = str(input("Enter full url for zillow property: "))
     print()
 
-    return url
+    return _url
 
 
-def set_page_property_info() -> None:
+def set_page_property_info(url=None) -> None:
     """Gets html page to parse"""
 
     global url_property, url_property_taxes, zillow, county_office, page
@@ -43,7 +46,7 @@ def set_page_property_info() -> None:
                       ' (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
     }
     with requests.Session() as s:
-        url_property = _set_url_property()
+        url_property = _set_url_property(url)
         url_property_taxes = 'https://www.countyoffice.org/property-records-search/?q='  # Completed by get_address()
         zillow_page = s.get(url_property, headers=req_headers).text
         page = zillow_page  # Hoping this reduces unnecessary calls to zillow for certain functions
