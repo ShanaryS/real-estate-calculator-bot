@@ -5,8 +5,8 @@ import json
 def quit_program() -> None:
     """Quits programing without saving an data"""
 
-    print(">>> Ending program... No changes were made")
-    time.sleep(1)
+    print_captions(c=True)
+    time.sleep(1.5)
 
 
 def url_is_valid(url) -> bool:
@@ -22,55 +22,68 @@ def commit_updates_to_file() -> None:
     pass
 
 
-def print_overwrite_caption(execute=False) -> None:
+def print_captions(s_or_p=False, a_or_o=False, a=False, o=False, e=False, c=False, valid=True, received=False) -> None:
     """Prints text that tells the user what the programing is doing"""
 
-    print("Overwriting... urls before this session will be lost!")
-    if execute:
-        print("Enter another url ('e' to execute changes, 'c' to cancel):", end=" ")
-    else:
-        print("Enter url ('c' to cancel):", end=" ")
+    if s_or_p:
+        print("Do you want to update search urls 's' or property urls 'p'? ('c' to cancel):", end=" ")
+    elif a_or_o:
+        print("Do you want to append 'a' or overwrite 'o'? ('c' to cancel):", end=" ")
+    elif a:
+        print("--- Appending... Urls in this session will be saved to file! ---")
+        if e:
+            print("Enter another url ('e' to execute changes, 'c' to cancel):", end=" ")
+        else:
+            print("- Enter url ('c' to cancel):", end=" ")
+    elif o:
+        print("--- Overwriting... Urls before this session will be lost! ---")
+        if e:
+            print("Enter another url ('e' to execute changes, 'c' to cancel):", end=" ")
+        else:
+            print("Enter url ('c' to cancel):", end=" ")
+    elif c:
+        print("!!! Ending program... No changes were made !!!")
 
-
-def print_append_caption(execute=False) -> None:
-    """Prints text that tells the user what the programing is doing"""
-
-    print("Appending... urls in this session will be saved to file!")
-    if execute:
-        print("Enter another url ('e' to execute changes, 'c' to cancel):", end=" ")
-    else:
-        print("Enter url ('c' to cancel):", end=" ")
+    elif not valid:
+        print("!!! Invalid url. Try again !!!")
+    elif received:
+        print("!!! Link received !!!")
 
 
 def add_link() -> None:
     """Logic for adding urls"""
 
-    to_update = input("Do you want to update search urls 's' or property urls 'p'? ('c' to cancel): ")
-    while to_update != 's' and to_update != 'p' and to_update != 'c':
-        to_update = input("Do you want to update search urls 's' or property urls 'p'? ('c' to cancel): ")
+    print_captions(s_or_p=True)
+    search_or_property = input()
+    while search_or_property != 's' and search_or_property != 'p' and search_or_property != 'c':
+        print_captions(s_or_p=True)
+        search_or_property = input()
 
-    if to_update != 'c':
+    if search_or_property != 'c':
 
-        if to_update == 's':
-            append_overwrite = input("Do you want to append 'a' or overwrite 'o'? ('c' to cancel): ")
-            while append_overwrite != 'a' and append_overwrite != 'o' and append_overwrite != 'c':
-                append_overwrite = input("Do you want to append 'a' or overwrite 'o'? ('c' to cancel): ")
+        if search_or_property == 's':
 
-            if append_overwrite != 'c':
+            print_captions(a_or_o=True)
+            append_or_overwrite = input()
+            while append_or_overwrite != 'a' and append_or_overwrite != 'o' and append_or_overwrite != 'c':
+                print_captions(a_or_o=True)
+                append_or_overwrite = input()
 
-                if append_overwrite == 'a':
+            if append_or_overwrite != 'c':
+
+                if append_or_overwrite == 'a':
                     print('test')
 
-                elif append_overwrite == 'o':
-                    print_overwrite_caption()
+                elif append_or_overwrite == 'o':
+                    print_captions(o=True)
                     new_url = input()
 
                     if new_url != 'c':
                         valid = url_is_valid(new_url)
                         while not valid:
-                            print(">>> Invalid url. Try again\n")
+                            print_captions(valid=False)
 
-                            print_overwrite_caption()
+                            print_captions(o=True)
                             new_url = input()
 
                             if new_url == 'c':
@@ -79,9 +92,9 @@ def add_link() -> None:
 
                             valid = url_is_valid(new_url)
 
-                        print(">>> Link received\n")
+                        print_captions(received=True)
 
-                        print_overwrite_caption(execute=True)
+                        print_captions(o=True, e=True)
                         new_url = input()
                         while new_url != 'c':
 
@@ -92,9 +105,9 @@ def add_link() -> None:
                             else:
                                 valid = url_is_valid(new_url)
                                 while not valid:
-                                    print(">>> Invalid url. Try again\n")
+                                    print_captions(valid=False)
 
-                                    print_overwrite_caption(execute=True)
+                                    print_captions(o=True, e=True)
                                     new_url = input()
 
                                     if new_url == 'e':
@@ -107,23 +120,27 @@ def add_link() -> None:
 
                                     valid = url_is_valid(new_url)
 
-                                print(">>> Link received\n")
+                                print_captions(received=True)
 
-                                print_overwrite_caption(execute=True)
-                                new_url = input()
+                            print_captions(o=True, e=True)
+                            new_url = input()
+
+                        if new_url == 'c':
+                            quit_program()
+                            return
 
                     elif new_url == 'c':
                         quit_program()
                         return
 
-            elif append_overwrite == 'c':
+            elif append_or_overwrite == 'c':
                 quit_program()
                 return
 
-        elif to_update == 'p':
-            pass
+        elif search_or_property == 'p':
+            print('test')
 
-    elif to_update == 'c':
+    elif search_or_property == 'c':
         quit_program()
         return
 
