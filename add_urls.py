@@ -1,5 +1,4 @@
 import time
-import json
 from calculations import save_url
 from user import get_url_from_input
 from colors_for_print import PrintColors
