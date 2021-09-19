@@ -24,7 +24,7 @@ def set_url_property() -> str:
     return url
 
 
-def set_page() -> None:
+def set_page_property_info() -> None:
     """Gets html page to parse"""
 
     global url_property, url_property_taxes, zillow, county_office, page

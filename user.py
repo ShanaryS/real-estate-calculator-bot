@@ -1,8 +1,8 @@
 """Handles updating necessary variables per user input"""
 
 
-from get_current_interest_rates import interest_rates
-from get_property_info import set_page, get_address, get_price, get_description,\
+from get_current_interest_rates import set_page_interest_rates, interest_rates
+from get_property_info import get_address, get_price, get_description,\
                                 get_property_taxes, get_num_units, get_rent_per_unit
 
 
@@ -27,6 +27,37 @@ found_property_taxes = True
 found_num_units = True
 found_rent_per_unit = True
 found = {}
+
+# Values from web scraper
+address: str
+price: float
+description: str
+property_taxes: int
+num_units: int
+rent_per_unit: int
+
+
+def set_info() -> None:
+    """Sets the values from html pages"""
+
+    global address, price, description, property_taxes, num_units, rent_per_unit
+
+    address = get_address()
+    price = get_price()
+    description = get_description()[0] if get_description()[1] else get_description()[0]
+    property_taxes = get_property_taxes()[0] if get_property_taxes()[1] else use_default_property_taxes()
+    num_units = get_num_units()[0] if get_num_units()[1] else use_default_num_units(get_num_units()[0])
+    rent_per_unit = get_rent_per_unit()[0] if get_rent_per_unit()[1] else use_default_rent_per_unit()
+
+    set_found()
+
+
+def set_found() -> None:
+    """Handles if certain values were found or is using default"""
+
+    found['Property Taxes'] = (found_property_taxes, property_taxes)
+    found['Units'] = (found_num_units, num_units)
+    found['Rent per unit'] = (found_rent_per_unit, rent_per_unit)
 
 
 # These functions handle not finding certain values that are web scraped
@@ -53,20 +84,6 @@ def use_default_rent_per_unit() -> int:
     return RENT_PER_UNIT
 
 
-# Values from web scraper.
-set_page()  # This is what gets the html file. Prevents multiple redundant calls
-address = get_address()
-price = get_price()
-description = get_description()[0] if get_description()[1] else get_description()[0]
-property_taxes = get_property_taxes()[0] if get_property_taxes()[1] else use_default_property_taxes()
-num_units = get_num_units()[0] if get_num_units()[1] else use_default_num_units(get_num_units()[0])
-rent_per_unit = get_rent_per_unit()[0] if get_rent_per_unit()[1] else use_default_rent_per_unit()
-
-# Handling if some values above were found or is using default
-found['Property Taxes'] = (found_property_taxes, property_taxes)
-found['Units'] = (found_num_units, num_units)
-found['Rent per unit'] = (found_rent_per_unit, rent_per_unit)
-
 # (INPUT REQUIRED) Default values used for calculator. Variables will be updated when performing real world calculations
 # Removed price and num_units to place in web scraper at top of module
 interest_rate = 0.04  # Varies depending on years, defined in function below
@@ -90,6 +107,8 @@ is_first_rental = IS_FIRST_RENTAL
 # TODO UI should handle ValueError and display the message
 def set_interest_rate() -> None:
     """Sets interest rate based on loan length"""
+
+    set_page_interest_rates()
 
     global interest_rate
 

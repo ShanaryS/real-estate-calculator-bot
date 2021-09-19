@@ -4,7 +4,21 @@
 import numpy_financial as npf
 import json
 import user
-from get_property_info import get_url
+from get_property_info import set_page_property_info, get_url
+
+
+# Basic calculations necessary module wide. Defining here for visibility.
+down_payment: float
+loan: float
+interest_rate_monthly: float
+months: int
+property_taxes_monthly: float
+insurance_cost: float
+
+amortization_table: dict
+analysis: dict
+property_info: dict
+estimations: dict
 
 
 class PrintColors:
@@ -21,35 +35,19 @@ class PrintColors:
     UNDERLINE = '\033[4m'
 
 
-# Basic calculations necessary module wide
-down_payment = user.price * user.down_payment_percent
-loan = user.price - down_payment
-interest_rate_monthly = user.interest_rate / 12
-months = user.years * 12
-property_taxes_monthly = user.property_taxes / 12
-insurance_cost: float
-
-# Defined here for visibility
-amortization_table: dict
-analysis: dict
-property_info: dict
-estimations: dict
-# Above three defined at bottom of file. Relies on functions below.
-
-
 def update_values() -> None:
     """Updates the values when a new property is being evaluated."""
 
+    # These are what gets the html pages
     user.set_interest_rate()
+    set_page_property_info()
 
-    global down_payment, loan, interest_rate_monthly, months, property_taxes_monthly
+    # Gets values from html pages
+    user.set_info()
+
+    basic_calculations()
+
     global amortization_table, property_info, analysis, estimations
-
-    down_payment = user.price * user.down_payment_percent
-    loan = user.price - down_payment
-    interest_rate_monthly = user.interest_rate / 12
-    months = user.years * 12
-    property_taxes_monthly = user.property_taxes / 12
 
     amortization_table = mortgage_amortization()
     analysis = returns_analysis()
@@ -71,7 +69,19 @@ def update_values() -> None:
     estimations = {item: user.found[item][1] for item, value in user.found.items() if value[0] is False
                    if not all([values[0] for values in user.found.values()])}
 
-    save_analysis()
+    # save_analysis()
+
+
+def basic_calculations() -> None:
+    """Basic calculations necessary module wide"""
+
+    global down_payment, loan, interest_rate_monthly, months, property_taxes_monthly
+
+    down_payment = user.price * user.down_payment_percent
+    loan = user.price - down_payment
+    interest_rate_monthly = user.interest_rate / 12
+    months = user.years * 12
+    property_taxes_monthly = user.property_taxes / 12
 
 
 def get_amortization_table() -> dict:
@@ -251,7 +261,7 @@ def print_amortization_table() -> None:
          'Principal Payment': [], 'Interest Payment': [],
          'Loan Balance': []}
 
-    for key, value in get_amortization_table().items():
+    for key, value in amortization_table.items():
         for num in value:
             if key != 'Period':
                 d[key].append(f"{num:.2f}")
