@@ -2,6 +2,7 @@
 
 
 import numpy_financial as npf
+import json
 import user
 
 
@@ -29,6 +30,7 @@ insurance_cost: float
 
 # Defined here for visibility
 amortization_table: dict
+analysis: dict
 
 
 def get_analysis() -> dict:
@@ -195,6 +197,10 @@ def returns_analysis() -> dict:
     return final_returns
 
 
+def save_analysis() -> None:
+    """Saves analysis of property to analyzed_properties.json"""
+
+
 def print_amortization_table() -> None:
     """Prints amortization table to terminal"""
 
@@ -214,14 +220,12 @@ def print_amortization_table() -> None:
     for each_row in zip(*([key] + value for key, value in d.items())):
         print(*each_row, " ")
     print("--------------------------------------------")
+    print()
 
 
-def print_analysis() -> None:
-    """Prints analysis results to terminal"""
+def print_property_info() -> None:
+    """Prints information gathered about the property"""
 
-    analysis = get_analysis()
-
-    # Print analysis output along with relevant info used
     print("Info used for calculations:")
     print()
     print("Property Description -", end=' ')
@@ -232,13 +236,13 @@ def print_analysis() -> None:
         slices = int(length / max_size)
 
         for i in range(slices):
-            print(f"{description[i*max_size : (i+1)*max_size]}", end='')
-            if description[(i+1)*max_size - 1] != ' ' and description[(i+1)*max_size + 1] != ' ':
+            print(f"{description[i * max_size: (i + 1) * max_size]}", end='')
+            if description[(i + 1) * max_size - 1] != ' ' and description[(i + 1) * max_size + 1] != ' ':
                 print("-")
             else:
                 print("")
         else:
-            print(f"{description[slices*max_size:]}")
+            print(f"{description[slices * max_size:]}")
     else:
         print("None")
     print()
@@ -247,10 +251,16 @@ def print_analysis() -> None:
           f"- Fix Up Cost: ${user.fix_up_cost}")
     print(f"Loan: ${loan:.0f} - Interest Rate: {user.interest_rate * 100:.2f}% - Loan Length: {user.years} years")
     print(f"Mortgage Payment (Monthly): ${-amortization_table['Monthly Payment'][0]:.2f} "
-          f"- Property Taxes (Monthly): ${property_taxes_monthly:.2f} - Insurance (Monthly): ${-insurance_cost/12:.2f}")
+          f"- Property Taxes (Monthly): ${property_taxes_monthly:.2f} - Insurance (Monthly): ${-insurance_cost / 12:.2f}")
     print(f"Units: {user.num_units} - Rent per unit: ${user.rent_per_unit} "
           f"- Vacancy: {user.vacancy_percent * 100:.0f}%")
     print("--------------------------------------------")
+    print()
+
+
+def print_analysis() -> None:
+    """Prints analysis results to terminal"""
+
     print("Analysis of property:")
     print()
 
@@ -330,3 +340,7 @@ def print_analysis() -> None:
             if value[0] is False:
                 print(f"{PrintColors.WARNING}{item}: ??? --> {user.found[item][1]}{PrintColors.ENDC}")
     print("--------------------------------------------")
+    print()
+
+
+analysis = get_analysis()
