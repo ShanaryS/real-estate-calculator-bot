@@ -261,7 +261,7 @@ def save_analysis() -> None:
         with open('analysis.json', 'r') as json_file:
             temp = json.load(json_file)
 
-        if property_analysis["Property Info"]["Price ($)"] != temp[key]["Property Info"]["Price ($)"]:
+        if property_analysis[key]["Property Info"]["Price ($)"] != temp[key]["Property Info"]["Price ($)"]:
             temp.update(property_analysis)
             with open('analysis.json', 'w') as json_file:
                 json.dump(temp, json_file, indent=4)
