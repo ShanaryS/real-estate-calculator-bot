@@ -233,7 +233,7 @@ def returns_analysis() -> dict:
     return final_returns
 
 
-def save_url(url, search=False) -> None:
+def save_url(url, overwrite=False, search=False) -> None:
     """Saves user inputted search URL"""
 
     if search:
@@ -242,17 +242,21 @@ def save_url(url, search=False) -> None:
         key = 'Property'
     link = {key: url}
 
-    try:
-        with open('urls.json', 'r') as json_file:
-            urls_json = json.load(json_file)
+    if not overwrite:
+        try:
+            with open('urls.json', 'r') as json_file:
+                urls_json = json.load(json_file)
 
-        if url not in urls_json[key]:
-            urls_json[key].append(url)
-            with open('urls.json', 'w') as json_file:
-                json.dump(urls_json, json_file, indent=4)
-    except FileNotFoundError:
-        with open('urls.json', 'x') as json_file:
-            json.dump(link, json_file, indent=4)
+            if url not in urls_json[key]:
+                urls_json[key].append(url)
+                with open('urls.json', 'w') as json_file:
+                    json.dump(urls_json, json_file, indent=4)
+            return
+        except FileNotFoundError:
+            pass  # Handled below. Using pass to avoid duplicating code
+
+    with open('urls.json', 'w') as json_file:
+        json.dump(link, json_file, indent=4)
 
 
 def save_analysis() -> None:
