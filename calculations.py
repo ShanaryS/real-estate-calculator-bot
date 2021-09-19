@@ -33,7 +33,7 @@ class PrintColors:
     UNDERLINE = '\033[4m'
 
 
-def update_values() -> None:
+def update_values(save_to_file=True) -> None:
     """Updates the values when a new property is being evaluated."""
 
     # These are what gets the html pages
@@ -68,7 +68,8 @@ def update_values() -> None:
     estimations = {item: user.found[item][1] for item, value in user.found.items() if value[0] is False
                    if not all([values[0] for values in user.found.values()])}
 
-    save_analysis()
+    if save_to_file:
+        save_analysis()
 
 
 def basic_calculations() -> None:
@@ -218,7 +219,7 @@ def returns_analysis() -> dict:
     caprate_percent = round(net_operating_income / user.price * 100, 2)
     cashflow_per_month = cashflow / 12
     max_offer = ((effective_gross_income * 0.75 + -user.property_taxes - 600) * (0.37 / 0.12)) \
-                / (user.closing_percent + user.down_payment_percent) - user.fix_up_cost
+        / (user.closing_percent + user.down_payment_percent) - user.fix_up_cost
     emergency_fund = -yearly_cost / 2 if user.is_first_rental else -yearly_cost / 4
 
     return_on_investment_string = f"{return_on_investment_percent}%"
