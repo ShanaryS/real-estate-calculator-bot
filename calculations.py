@@ -200,6 +200,9 @@ def returns_analysis() -> dict:
 def save_analysis() -> None:
     """Saves analysis of property to analyzed_properties.json"""
 
+    with open('analyzed_properties.json', 'w') as file:
+        json.dump(analysis, file, indent=4)
+
 
 def print_amortization_table() -> None:
     """Prints amortization table to terminal"""
@@ -251,7 +254,8 @@ def print_property_info() -> None:
           f"- Fix Up Cost: ${user.fix_up_cost}")
     print(f"Loan: ${loan:.0f} - Interest Rate: {user.interest_rate * 100:.2f}% - Loan Length: {user.years} years")
     print(f"Mortgage Payment (Monthly): ${-amortization_table['Monthly Payment'][0]:.2f} "
-          f"- Property Taxes (Monthly): ${property_taxes_monthly:.2f} - Insurance (Monthly): ${-insurance_cost / 12:.2f}")
+          f"- Property Taxes (Monthly): ${property_taxes_monthly:.2f} "
+          f"- Insurance (Monthly): ${-insurance_cost / 12:.2f}")
     print(f"Units: {user.num_units} - Rent per unit: ${user.rent_per_unit} "
           f"- Vacancy: {user.vacancy_percent * 100:.0f}%")
     print("--------------------------------------------")
