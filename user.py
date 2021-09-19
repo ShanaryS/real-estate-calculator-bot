@@ -58,7 +58,7 @@ def set_found() -> None:
     """Handles if certain values were found or is using default"""
 
     found['Property Taxes'] = (found_property_taxes, f"{property_taxes:,}")
-    found['Units'] = (found_num_units, num_units)
+    found['Units'] = (found_num_units, f"{num_units}")
     found['Rent per unit'] = (found_rent_per_unit, f"{rent_per_unit:,}")
 
 
