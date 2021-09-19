@@ -1,3 +1,6 @@
+"""Web scrapes properties from zillow search URL."""
+
+
 from bs4 import BeautifulSoup
 import requests
 
