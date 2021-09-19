@@ -272,6 +272,7 @@ def print_amortization_table() -> None:
 
     for each_row in zip(*([key + " |"] + [val + " |" for val in value] for key, value in d.items())):
         print(*each_row, " ")
+    print()
     print("--------------------------------------------------------------------------------")
     print()
 
@@ -308,6 +309,7 @@ def print_property_info() -> None:
           f"- Insurance (Monthly): ${-insurance_cost / 12:,.2f}")
     print(f"Units: {user.num_units} - Rent per unit: ${user.rent_per_unit:,} "
           f"- Vacancy: {user.vacancy_percent * 100:.0f}%")
+    print()
     print("--------------------------------------------------------------------------------")
     print()
 
@@ -402,5 +404,6 @@ def print_analysis() -> None:
         for item, value in user.found.items():
             if value[0] is False:
                 print(f"{PrintColors.WARNING}{item}: ??? --> {value[1]}{PrintColors.ENDC}")
+    print()
     print("--------------------------------------------------------------------------------")
     print()
