@@ -248,12 +248,12 @@ def save_analysis() -> None:
 
     try:
         with open('analysis.json', 'r') as json_file:
-            temp = json.load(json_file)
+            analysis_json = json.load(json_file)
 
-        if property_analysis[key]["Property Info"]["Price ($)"] != temp[key]["Property Info"]["Price ($)"]:
-            temp.update(property_analysis)
+        if property_analysis[key]["Property Info"]["Price ($)"] != analysis_json[key]["Property Info"]["Price ($)"]:
+            analysis_json.update(property_analysis)
             with open('analysis.json', 'w') as json_file:
-                json.dump(temp, json_file, indent=4)
+                json.dump(analysis_json, json_file, indent=4)
     except FileNotFoundError:
         with open('analysis.json', 'x') as json_file:
             json.dump(property_analysis, json_file, indent=4)
