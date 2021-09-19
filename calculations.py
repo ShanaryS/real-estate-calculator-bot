@@ -17,7 +17,6 @@ amortization_table: dict
 analysis: dict
 property_info: dict
 estimations: dict
-property_key = f"https://www.zillow.com/homedetails/{get_url().split('/')[-2]}/"
 
 
 class PrintColors:
@@ -73,7 +72,7 @@ def update_values(save_to_file=True) -> None:
         try:
             with open('analysis.json', 'r') as json_file:
                 temp = json.load(json_file)
-            if property_key not in temp:
+            if get_property_key() not in temp:
                 save_analysis()
         except FileNotFoundError:
             save_analysis(create_json=True)
@@ -89,6 +88,11 @@ def basic_calculations() -> None:
     interest_rate_monthly = user.interest_rate / 12
     months = user.years * 12
     property_taxes_monthly = user.property_taxes / 12
+
+
+def get_property_key() -> str:
+    """Get key used to hash different properties"""
+    return f"https://www.zillow.com/homedetails/{get_url().split('/')[-2]}/"
 
 
 def get_amortization_table() -> dict:
@@ -249,7 +253,7 @@ def returns_analysis() -> dict:
 def save_analysis(create_json=False) -> None:
     """Saves analysis of property to analyzedProperties.json"""
 
-    property_analysis = {property_key: {
+    property_analysis = {get_property_key(): {
                               "Property URL": get_url(property_url=True),
                               "Property Taxes URL": get_url(taxes_url=True),
                               "Property Info": property_info,
