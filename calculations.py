@@ -37,7 +37,7 @@ estimations: dict
 # Above three defined at bottom of file. Relies on functions below.
 
 
-def _update_values() -> None:
+def update_values() -> None:
     """Updates the values when a new property is being evaluated."""
 
     user.set_interest_rate()
@@ -71,35 +71,30 @@ def _update_values() -> None:
     estimations = {item: user.found[item][1] for item, value in user.found.items() if value[0] is False
                    if not all([values[0] for values in user.found.values()])}
 
+    save_analysis()
+
 
 def get_amortization_table() -> dict:
     """Get the mortgage amortization table. Second function to interact with."""
-
-    _update_values()
-
+    update_values()
     return amortization_table
 
 
 def get_info() -> dict:
-
-    _update_values()
-
+    """Gets property info"""
+    update_values()
     return property_info
 
 
 def get_analysis() -> dict:
     """Calls required functions needed for analysis. Main function to interact with."""
-
-    _update_values()
-
+    update_values()
     return analysis
 
 
 def get_estimations() -> dict:
-    """"""
-
-    _update_values()
-
+    """Gets what values the web scraper couldn't find"""
+    update_values()
     return estimations
 
 
@@ -240,10 +235,8 @@ def save_analysis() -> None:
     property_analysis = {"Property URL": get_url(property_url=True),
                          "Property Taxes URL": get_url(taxes_url=True),
                          "Property Info": property_info,
-                         "Address": user.address,
-                         "Price": user.price,
                          "Analysis": analysis,
-                         "Estimated": estimations}
+                         "Estimations": estimations}
 
     with open('analyzedProperties.json', 'w') as file:
         json.dump(property_analysis, file, indent=4)
@@ -390,6 +383,3 @@ def print_analysis() -> None:
                 print(f"{PrintColors.WARNING}{item}: ??? --> {user.found[item][1]}{PrintColors.ENDC}")
     print("--------------------------------------------")
     print()
-
-
-_update_values()
