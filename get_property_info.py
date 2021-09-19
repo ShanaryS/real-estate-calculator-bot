@@ -74,7 +74,7 @@ def get_url(property_url=False, taxes_url=False):
 def get_address() -> str:
     """Get the address of the house from zillow. Use for countyoffice.org/tax-records/"""
 
-    raw_address = str(zillow.find(id="ds-chip-property-address").span).split('>')[1].split(',')[0].split()
+    raw_address = str(zillow.find(id="ds-chip-property-address").span.string).rstrip(',').split()
     city_state_zip = str(zillow.find(id="ds-chip-property-address")).split('-->')[-1].split('<')[0].split()
 
     house_number = raw_address[0]
@@ -122,7 +122,7 @@ def get_price() -> int:
     """Get the price of the house from zillow."""
 
     price = zillow.find(class_="ds-summary-row").span.span.span
-    price = int(str(price).split('>')[1].split('<')[0].lstrip('$').replace(',', ''))
+    price = int(str(price.string).lstrip('$').replace(',', ''))
 
     return price
 
@@ -162,7 +162,8 @@ def get_property_taxes() -> tuple:
 def get_num_units() -> tuple:
     """Get number of units from zillow. Fall backs to full bathrooms as units."""
 
-    house_type = str(zillow.find(class_="ds-home-fact-list-item")).split('>')[-3].split('<')[0]
+    house_type = zillow.find(class_="ds-home-fact-list-item").contents[-1].string
+    print(house_type)
     found_num_units = True
 
     if house_type == 'Single Family Residence':
