@@ -249,8 +249,16 @@ def save_analysis() -> None:
                               "Estimations": estimations
                             }
                          }
-    with open('analyzedProperties.json', 'w') as json_file:
-        json.dump(property_analysis, json_file, indent=4)
+
+    try:
+        with open('analysis.json', 'r') as json_file:
+            temp = json.load(json_file)
+            temp.update(property_analysis)
+        with open('analysis.json', 'w') as json_file:
+            json.dump(temp, json_file, indent=4)
+    except FileNotFoundError:
+        with open('analysis.json', 'x') as json_file:
+            json.dump(property_analysis, json_file, indent=4)
 
 
 def print_amortization_table() -> None:
