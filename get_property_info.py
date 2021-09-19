@@ -51,7 +51,7 @@ def _set_url_property_taxes(house_number, street_name, city, state) -> None:
 
 
 def get_address() -> str:
-    """Try to get the address of the house from zillow. Use for countyoffice.org/tax-records/"""
+    """Get the address of the house from zillow. Use for countyoffice.org/tax-records/"""
 
     raw_address = str(zillow.find(id="ds-chip-property-address").span).split('>')[1].split(',')[0].split()
     city_state_zip = str(zillow.find(id="ds-chip-property-address")).split('-->')[-1].split('<')[0].split()
@@ -98,7 +98,7 @@ def get_address() -> str:
 
 
 def get_price() -> int:
-    """Try to get the price of the house from zillow."""
+    """Get the price of the house from zillow."""
 
     price = zillow.find(class_="ds-summary-row").span.span.span
     price = int(str(price).split('>')[1].split('<')[0].lstrip('$').replace(',', ''))
@@ -107,7 +107,7 @@ def get_price() -> int:
 
 
 def get_property_taxes() -> tuple:
-    """Try to get property tax from zillow if it exist. Else use county_office. Must call get_address() prior."""
+    """Get property tax from zillow if it exist. Else use county_office. Must call get_address() prior."""
 
     temp = page.find('-->$')
     found_property_taxes = True
@@ -126,7 +126,7 @@ def get_property_taxes() -> tuple:
 
 
 def get_num_units() -> tuple:
-    """Try to get number of units from zillow. Fall backs to full bathrooms as units."""
+    """Get number of units from zillow. Fall backs to full bathrooms as units."""
 
     house_type = str(zillow.find(class_="ds-home-fact-list-item")).split('>')[-3].split('<')[0]
     found_num_units = True
@@ -152,7 +152,7 @@ def get_num_units() -> tuple:
 
 
 def get_rent_per_unit() -> tuple:
-    """Try to get rent per unit from zillow. If it does not exist, returns 0."""
+    """Get rent per unit from zillow. If it does not exist, returns 0."""
 
     temp = page.find('"pricePerSquareFoot\\":null')-7
     found_rent_per_unit = True
@@ -164,3 +164,11 @@ def get_rent_per_unit() -> tuple:
         rent_per_unit = 0
 
     return rent_per_unit, found_rent_per_unit
+
+
+def get_description() -> str:
+    """Get the description of listing"""
+
+    description = zillow.find(class_="Text-c11n-8-48-0__sc-aiai24-0 sc-pQQXS gDpqEw").string
+
+    return description
