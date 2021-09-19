@@ -48,4 +48,4 @@ def set_page_search(url) -> None:
 def get_links() -> list:
     """"""
 
-    return list of links to use indivdually
+    return ["list of links to use individually"]
