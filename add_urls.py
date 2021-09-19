@@ -5,7 +5,7 @@ from colors_for_print import PrintColors
 
 
 # Stores the urls from inputs. Gets written to file after add_link() is completed. If was cancelled, it gets cleared.
-urls = []
+urls = set()
 overwrite = search = False
 
 
@@ -111,7 +111,7 @@ def add_link() -> None:
 
                             valid = url_is_valid(new_url)
 
-                        urls.append(new_url)
+                        urls.add(new_url)
                         print_captions(received=True)
 
                         print_captions(o=True, e=True)
@@ -140,7 +140,7 @@ def add_link() -> None:
 
                                     valid = url_is_valid(new_url)
 
-                                urls.append(new_url)
+                                urls.add(new_url)
                                 print_captions(received=True)
 
                             print_captions(o=True, e=True)
@@ -167,4 +167,5 @@ def add_link() -> None:
 
 
 add_link()
-save_urls(urls, overwrite=overwrite, search=search)
+if urls:
+    save_urls(urls, overwrite=overwrite, search=search)

@@ -236,6 +236,7 @@ def returns_analysis() -> dict:
 def save_urls(urls, overwrite=False, search=False) -> None:
     """Saves user inputted search URL"""
 
+    urls = list(urls)
     if search:
         key = 'Search'
     else:
