@@ -56,7 +56,7 @@ def update_values(save_to_file=True) -> None:
         "Down Payment": float(f"{user.down_payment_percent:.2f}"),
         "Fix Up Cost": user.fix_up_cost,
         "Loan": int(loan),
-        "Interest Rate": float(f"{user.interest_rate:.2f}"),
+        "Interest Rate": float(f"{user.interest_rate:.4f}"),
         "Loan Length": user.years,
         "Mortgage Payment (Monthly)": float(f"{-amortization_table['Monthly Payment'][0]:.2f}"),
         "Property Taxes (Monthly)": float(f"{property_taxes_monthly:.2f}"),
