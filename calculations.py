@@ -392,6 +392,6 @@ def print_analysis() -> None:
               f"THEY MAY BE WRONG.{PrintColors.ENDC}")
         for item, value in user.found.items():
             if value[0] is False:
-                print(f"{PrintColors.WARNING}{item}: ??? --> {user.found[item][1]}{PrintColors.ENDC}")
+                print(f"{PrintColors.WARNING}{item}: ??? --> {value[1]}{PrintColors.ENDC}")
     print("--------------------------------------------------------------------------------")
     print()

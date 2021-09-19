@@ -55,9 +55,9 @@ def set_info() -> None:
 def set_found() -> None:
     """Handles if certain values were found or is using default"""
 
-    found['Property Taxes'] = (found_property_taxes, property_taxes)
+    found['Property Taxes'] = (found_property_taxes, f"{property_taxes:,}")
     found['Units'] = (found_num_units, num_units)
-    found['Rent per unit'] = (found_rent_per_unit, rent_per_unit)
+    found['Rent per unit'] = (found_rent_per_unit, f"{rent_per_unit:,}")
 
 
 # These functions handle not finding certain values that are web scraped
@@ -104,7 +104,6 @@ tax_bracket = TAX_BRACKET
 is_first_rental = IS_FIRST_RENTAL
 
 
-# TODO UI should handle ValueError and display the message
 def set_interest_rate() -> None:
     """Sets interest rate based on loan length"""
 
