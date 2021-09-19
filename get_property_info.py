@@ -17,15 +17,15 @@ page: requests.Session()
 # TODO Store links to search in urls.json, add ability to write links to json, separate file to run add_urls.py
 # TODO Handle saved list and search them all:
 def _set_url_property(url) -> str:
-    """Gets zillow url from user or file when running analysis"""
+    """Gets zillow URL from user or file when running analysis"""
 
     if url:
         _url = url
     else:
-        _url = str(input("Enter full url for zillow property: "))
+        _url = str(input("Enter full URL for zillow property: "))
 
     while _url[:27] != 'https://www.zillow.com/home' or len(_url) < 35:
-        _url = str(input("Enter full url for zillow property: "))
+        _url = str(input("Enter full URL for zillow property: "))
     print()
 
     return _url
@@ -57,7 +57,7 @@ def set_page_property_info(url=None) -> None:
 
 
 def _set_url_property_taxes(house_number, street_name, city, state) -> None:
-    """Set the county office url based on the address from zillow"""
+    """Set the county office URL based on the address from zillow"""
 
     global url_property_taxes, county_office
 
@@ -68,7 +68,7 @@ def _set_url_property_taxes(house_number, street_name, city, state) -> None:
 
 
 def get_url(property_url=False, taxes_url=False):
-    """Returns url for either property or property taxes on countyoffice.org/tax-records/"""
+    """Returns URL for either property or property taxes on countyoffice.org/tax-records/"""
 
     if property_url:
         return url_property
