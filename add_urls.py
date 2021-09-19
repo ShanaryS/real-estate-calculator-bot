@@ -1,11 +1,20 @@
 import time
-from calculations import save_url
+from calculations import save_urls
 from user import get_url_from_input
 from colors_for_print import PrintColors
 
 
+# Stores the urls from inputs. Gets written to file after add_link() is completed. If was cancelled, it gets cleared.
+urls = []
+overwrite = search = False
+
+
 def quit_program() -> None:
     """Quits programing without saving an data"""
+
+    global overwrite, search
+    overwrite = search = False
+    urls.clear()
 
     print_captions(c=True)
     time.sleep(1)
@@ -67,6 +76,8 @@ def add_link() -> None:
     if search_or_property != 'c':
 
         if search_or_property == 's':
+            global search
+            search = True
 
             print_captions(a_or_o=True)
             append_or_overwrite = input()
@@ -80,6 +91,9 @@ def add_link() -> None:
                     print('test')
 
                 elif append_or_overwrite == 'o':
+                    global overwrite
+                    overwrite = True
+
                     print_captions(o=True)
                     new_url = get_url_from_input()
 
@@ -97,7 +111,7 @@ def add_link() -> None:
 
                             valid = url_is_valid(new_url)
 
-                        save_url(new_url, overwrite=True, search=True)
+                        urls.append(new_url)
                         print_captions(received=True)
 
                         print_captions(o=True, e=True)
@@ -126,7 +140,7 @@ def add_link() -> None:
 
                                     valid = url_is_valid(new_url)
 
-                                save_url(new_url, overwrite=True, search=True)
+                                urls.append(new_url)
                                 print_captions(received=True)
 
                             print_captions(o=True, e=True)
@@ -151,18 +165,6 @@ def add_link() -> None:
         quit_program()
         return
 
-# try:
-#     with open('urls.json', 'r') as json_file:
-#         URLs = json.load(json_file)
-#         URLs = {'Searches': [stuff], 'Properties': [stuff]}
-#
-#     if property_analysis[key]["Property Info"]["Price ($)"] != temp[key]["Property Info"]["Price ($)"]:
-#         temp.update(property_analysis)
-#         with open('urls.json', 'w') as json_file:
-#             json.dump(temp, json_file, indent=4)
-# except FileNotFoundError:
-#     with open('urls.json', 'x') as json_file:
-#         json.dump(property_analysis, json_file, indent=4)
-
 
 add_link()
+save_urls(urls, overwrite=overwrite, search=search)

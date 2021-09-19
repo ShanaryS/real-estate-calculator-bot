@@ -233,22 +233,22 @@ def returns_analysis() -> dict:
     return final_returns
 
 
-def save_url(url, overwrite=False, search=False) -> None:
+def save_urls(urls, overwrite=False, search=False) -> None:
     """Saves user inputted search URL"""
 
     if search:
         key = 'Search'
     else:
         key = 'Property'
-    link = {key: url}
+    link = {key: urls}
 
     if not overwrite:
         try:
             with open('urls.json', 'r') as json_file:
                 urls_json = json.load(json_file)
 
-            if url not in urls_json[key]:
-                urls_json[key].append(url)
+            if urls not in urls_json[key]:
+                urls_json[key].extend(urls)
                 with open('urls.json', 'w') as json_file:
                     json.dump(urls_json, json_file, indent=4)
             return
