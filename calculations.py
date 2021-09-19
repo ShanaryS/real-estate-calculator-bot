@@ -69,7 +69,7 @@ def update_values() -> None:
     estimations = {item: user.found[item][1] for item, value in user.found.items() if value[0] is False
                    if not all([values[0] for values in user.found.values()])}
 
-    # save_analysis()
+    save_analysis()
 
 
 def basic_calculations() -> None:
@@ -248,8 +248,8 @@ def save_analysis() -> None:
                          "Analysis": analysis,
                          "Estimations": estimations}
 
-    with open('analyzedProperties.json', 'w') as file:
-        json.dump(property_analysis, file, indent=4)
+    with open('analyzedProperties.json', 'w') as json_file:
+        json.dump(property_analysis, json_file, indent=4)
 
 
 def print_amortization_table() -> None:
