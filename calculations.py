@@ -33,11 +33,12 @@ class PrintColors:
     UNDERLINE = '\033[4m'
 
 
-def update_values(save_to_file=True) -> None:
+def update_values(save_to_file=True, update_interest_rate=True) -> None:
     """Updates the values when a new property is being evaluated."""
 
     # These are what gets the html pages
-    user.set_interest_rate()
+    if update_interest_rate:
+        user.set_interest_rate()
     set_page_property_info()
 
     # Gets values from html pages
