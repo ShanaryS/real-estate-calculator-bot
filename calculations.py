@@ -267,7 +267,7 @@ def print_amortization_table() -> None:
                 num = f"{num}".center(len(key))
                 d[key].append(f"{num}")
             else:
-                num = f"{num:.2f}".center(len(key))
+                num = f"{num:,.2f}".center(len(key))
                 d[key].append(f"{num}")
 
     for each_row in zip(*([key + " |"] + [val + " |" for val in value] for key, value in d.items())):
@@ -300,13 +300,13 @@ def print_property_info() -> None:
         print("None")
     print()
     print(f"Address: {user.address}")
-    print(f"Price: ${user.price} - Down Payment: {user.down_payment_percent * 100:.0f}% "
-          f"- Fix Up Cost: ${user.fix_up_cost}")
-    print(f"Loan: ${loan:.0f} - Interest Rate: {user.interest_rate * 100:.2f}% - Loan Length: {user.years} years")
-    print(f"Mortgage Payment (Monthly): ${-amortization_table['Monthly Payment'][0]:.2f} "
-          f"- Property Taxes (Monthly): ${property_taxes_monthly:.2f} "
-          f"- Insurance (Monthly): ${-insurance_cost / 12:.2f}")
-    print(f"Units: {user.num_units} - Rent per unit: ${user.rent_per_unit} "
+    print(f"Price: ${user.price:,} - Down Payment: {user.down_payment_percent * 100:.0f}% "
+          f"- Fix Up Cost: ${user.fix_up_cost:,}")
+    print(f"Loan: ${loan:,.0f} - Interest Rate: {user.interest_rate * 100:.2f}% - Loan Length: {user.years} years")
+    print(f"Mortgage Payment (Monthly): ${-amortization_table['Monthly Payment'][0]:,.2f} "
+          f"- Property Taxes (Monthly): ${property_taxes_monthly:,.2f} "
+          f"- Insurance (Monthly): ${-insurance_cost / 12:,.2f}")
+    print(f"Units: {user.num_units} - Rent per unit: ${user.rent_per_unit:,} "
           f"- Vacancy: {user.vacancy_percent * 100:.0f}%")
     print("--------------------------------------------------------------------------------")
     print()
@@ -321,70 +321,79 @@ def print_analysis() -> None:
     # Handles printing analysis with color coded results based on how good of a deal it is
     for item in analysis:
         value = analysis[item]
+        is_dollar_sign = True
         color = ""
         BAD, OK, GOOD, GREAT = PrintColors.FAIL, PrintColors.WARNING, PrintColors.OKCYAN, PrintColors.OKGREEN
 
         if item == 'Return On Investment':
-            value_check = float(value.rstrip('%'))
+            stripped_val = float(value.rstrip('%'))
+            is_dollar_sign = False
 
-            if value_check < 12:
+            if stripped_val < 12:
                 color = BAD
-            if 12 <= value_check < 20:
+            if 12 <= stripped_val < 20:
                 color = OK
-            if 20 <= value_check < 25:
+            if 20 <= stripped_val < 25:
                 color = GOOD
-            if value_check >= 25:
+            if stripped_val >= 25:
                 color = GREAT
 
         elif item == 'Cash on Cash Return':
-            value_check = float(value.rstrip('%'))
+            stripped_val = float(value.rstrip('%'))
+            is_dollar_sign = False
 
-            if value_check < 8:
+            if stripped_val < 8:
                 color = BAD
-            if 8 <= value_check < 10:
+            if 8 <= stripped_val < 10:
                 color = OK
-            if 10 <= value_check < 12:
+            if 10 <= stripped_val < 12:
                 color = GOOD
-            if value_check >= 12:
+            if stripped_val >= 12:
                 color = GREAT
 
         elif item == 'Caprate':
-            value_check = float(value.rstrip('%'))
+            stripped_val = float(value.rstrip('%'))
+            is_dollar_sign = False
 
-            if value_check < 5:
+            if stripped_val < 5:
                 color = BAD
-            if 5 <= value_check < 7:
+            if 5 <= stripped_val < 7:
                 color = OK
-            if 7 <= value_check < 8:
+            if 7 <= stripped_val < 8:
                 color = GOOD
-            if value_check >= 8:
+            if stripped_val >= 8:
                 color = GREAT
 
         elif item == 'Cashflow per month':
-            value_check = float(value.lstrip('$'))
+            stripped_val = float(value.lstrip('$'))
 
-            if value_check < 150:
+            if stripped_val < 150:
                 color = BAD
-            elif 150 <= value_check < 300:
+            elif 150 <= stripped_val < 300:
                 color = OK
-            elif 300 <= value_check < 500:
+            elif 300 <= stripped_val < 500:
                 color = GOOD
-            elif value_check >= 500:
+            elif stripped_val >= 500:
                 color = GREAT
 
         elif item == 'Max Offer (Approximately)':
-            value_check = float(value.lstrip('$'))
+            stripped_val = float(value.lstrip('$'))
 
-            if value_check < user.price * 0.95:
+            if stripped_val < user.price * 0.95:
                 color = BAD
-            elif user.price * 0.95 <= value_check < user.price * 1.05:
+            elif user.price * 0.95 <= stripped_val < user.price * 1.05:
                 color = OK
-            elif user.price * 1.05 <= value_check < user.price * 1.1:
+            elif user.price * 1.05 <= stripped_val < user.price * 1.1:
                 color = GOOD
-            elif value_check >= user.price * 1.1:
+            elif stripped_val >= user.price * 1.1:
                 color = GREAT
+        else:
+            stripped_val = float(value.lstrip('$'))
 
-        print(f"{item}: {color}{value}{PrintColors.ENDC}")
+        if is_dollar_sign:
+            print(f"{item}: {color}${stripped_val:,}{PrintColors.ENDC}")
+        else:
+            print(f"{item}: {color}{stripped_val}%{PrintColors.ENDC}")
 
     if not all([values[0] for values in user.found.values()]):
         print()
