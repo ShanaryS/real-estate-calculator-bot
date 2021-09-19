@@ -4,6 +4,7 @@
 import numpy_financial as npf
 import json
 import user
+from get_property_info import get_url
 
 
 class PrintColors:
@@ -31,14 +32,44 @@ insurance_cost: float
 # Defined here for visibility
 amortization_table: dict
 analysis: dict
+property_info: dict
+estimations: dict
+# Above three defined at bottom of file. Relies on functions below.
 
 
-def get_analysis() -> dict:
-    """Calls required functions needed for analysis. Main function to interact with."""
+def _update_values() -> None:
+    """Updates the values when a new property is being evaluated."""
 
-    _update_values()
+    user.set_interest_rate()
 
-    return returns_analysis()
+    global down_payment, loan, interest_rate_monthly, months, property_taxes_monthly
+    global amortization_table, property_info, analysis, estimations
+
+    down_payment = user.price * user.down_payment_percent
+    loan = user.price - down_payment
+    interest_rate_monthly = user.interest_rate / 12
+    months = user.years * 12
+    property_taxes_monthly = user.property_taxes / 12
+
+    amortization_table = mortgage_amortization()
+    analysis = returns_analysis()
+    property_info = {
+        "Address": user.address,
+        "Price": user.price,
+        "Down Payment": float(f"{user.down_payment_percent * 100:.0f}"),
+        "Fix Up Cost": user.fix_up_cost,
+        "Loan": float(f"{loan:.0f}"),
+        "Interest Rate": float(f"{user.interest_rate * 100:.2f}"),
+        "Loan Length": {user.years},
+        "Mortgage Payment (Monthly)": float(f"{-amortization_table['Monthly Payment'][0]:.2f}"),
+        "Property Taxes (Monthly)": float(f"{property_taxes_monthly:.2f}"),
+        "Insurance (Monthly)": float(f"{-insurance_cost / 12:.2f}"),
+        "Units": user.num_units,
+        "Rent per unit": user.rent_per_unit,
+        "Vacancy": float(f"{user.vacancy_percent * 100:.0f}")
+    }
+    estimations = {item: user.found[item][1] for item, value in user.found.items() if value[0] is False
+                   if not all([values[0] for values in user.found.values()])}
 
 
 def get_amortization_table() -> dict:
@@ -49,21 +80,27 @@ def get_amortization_table() -> dict:
     return amortization_table
 
 
-def _update_values() -> None:
+def get_info() -> dict:
 
-    """Updates the values when a new property is being evaluated."""
+    _update_values()
 
-    user.set_interest_rate()
+    return property_info
 
-    global down_payment, loan, interest_rate_monthly, months, property_taxes_monthly, amortization_table
 
-    down_payment = user.price * user.down_payment_percent
-    loan = user.price - down_payment
-    interest_rate_monthly = user.interest_rate / 12
-    months = user.years * 12
-    property_taxes_monthly = user.property_taxes / 12
+def get_analysis() -> dict:
+    """Calls required functions needed for analysis. Main function to interact with."""
 
-    amortization_table = mortgage_amortization()
+    _update_values()
+
+    return analysis
+
+
+def get_estimations() -> dict:
+    """"""
+
+    _update_values()
+
+    return estimations
 
 
 def mortgage_amortization() -> dict:
@@ -198,10 +235,18 @@ def returns_analysis() -> dict:
 
 
 def save_analysis() -> None:
-    """Saves analysis of property to analyzed_properties.json"""
+    """Saves analysis of property to analyzedProperties.json"""
 
-    with open('analyzed_properties.json', 'w') as file:
-        json.dump(analysis, file, indent=4)
+    property_analysis = {"Property URL": get_url(property_url=True),
+                         "Property Taxes URL": get_url(taxes_url=True),
+                         "Property Info": property_info,
+                         "Address": user.address,
+                         "Price": user.price,
+                         "Analysis": analysis,
+                         "Estimated": estimations}
+
+    with open('analyzedProperties.json', 'w') as file:
+        json.dump(property_analysis, file, indent=4)
 
 
 def print_amortization_table() -> None:
@@ -347,4 +392,4 @@ def print_analysis() -> None:
     print()
 
 
-analysis = get_analysis()
+_update_values()

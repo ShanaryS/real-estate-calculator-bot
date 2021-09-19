@@ -50,6 +50,17 @@ def _set_url_property_taxes(house_number, street_name, city, state) -> None:
     county_office = BeautifulSoup(county_office_page, 'html.parser')
 
 
+def get_url(property_url=False, taxes_url=False):
+    """Returns url for either property or property taxes on countyoffice.org/tax-records/"""
+
+    if property_url:
+        return url_property
+    elif taxes_url:
+        return url_property_taxes
+    else:
+        return url_property
+
+
 def get_address() -> str:
     """Get the address of the house from zillow. Use for countyoffice.org/tax-records/"""
 

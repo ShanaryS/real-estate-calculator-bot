@@ -1,4 +1,3 @@
-from calculations import get_analysis, get_amortization_table
 from calculations import print_amortization_table, print_property_info, print_analysis
 
 
@@ -6,5 +5,5 @@ from calculations import print_amortization_table, print_property_info, print_an
 # print_property_info()
 # print_analysis()
 
-from calculations import save_analysis
-print(save_analysis())
+# from calculations import save_analysis
+# print(save_analysis())
