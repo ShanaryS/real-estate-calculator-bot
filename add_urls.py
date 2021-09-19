@@ -7,7 +7,7 @@ def quit_program() -> None:
     """Quits programing without saving an data"""
 
     print_captions(c=True)
-    time.sleep(1.5)
+    time.sleep(1)
 
 
 def url_is_valid(url) -> bool:
