@@ -42,12 +42,14 @@ def set_info() -> None:
 
     global address, price, description, property_taxes, num_units, rent_per_unit
 
+    tdesc, ttaxes, tnum, trent = get_description(), get_property_taxes(), get_num_units(), get_rent_per_unit()
+
     address = get_address()
     price = get_price()
-    description = get_description()[0] if get_description()[1] else get_description()[0]
-    property_taxes = get_property_taxes()[0] if get_property_taxes()[1] else use_default_property_taxes()
-    num_units = get_num_units()[0] if get_num_units()[1] else use_default_num_units(get_num_units()[0])
-    rent_per_unit = get_rent_per_unit()[0] if get_rent_per_unit()[1] else use_default_rent_per_unit()
+    description = tdesc[0] if tdesc[1] else tdesc[0]
+    property_taxes = ttaxes[0] if ttaxes[1] else use_default_property_taxes()
+    num_units = tnum[0] if tnum[1] else use_default_num_units(tnum[0])
+    rent_per_unit = trent[0] if trent[1] else use_default_rent_per_unit()
 
     set_found()
 

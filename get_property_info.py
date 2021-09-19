@@ -163,7 +163,6 @@ def get_num_units() -> tuple:
     """Get number of units from zillow. Fall backs to full bathrooms as units."""
 
     house_type = zillow.find(class_="ds-home-fact-list-item").contents[-1].string
-    print(house_type)
     found_num_units = True
 
     if house_type == 'Single Family Residence':
