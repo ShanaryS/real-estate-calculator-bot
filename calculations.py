@@ -58,7 +58,7 @@ def update_values() -> None:
         "Fix Up Cost": user.fix_up_cost,
         "Loan": float(f"{loan:.0f}"),
         "Interest Rate": float(f"{user.interest_rate * 100:.2f}"),
-        "Loan Length": {user.years},
+        "Loan Length": user.years,
         "Mortgage Payment (Monthly)": float(f"{-amortization_table['Monthly Payment'][0]:.2f}"),
         "Property Taxes (Monthly)": float(f"{property_taxes_monthly:.2f}"),
         "Insurance (Monthly)": float(f"{-insurance_cost / 12:.2f}"),
