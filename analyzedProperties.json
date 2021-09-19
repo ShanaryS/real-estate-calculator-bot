@@ -1,12 +1,11 @@
 {
-    "Address": "80-82 E Lawlor St, New Britain, CT 06051",
-    "Price": 249900,
-    "Analysis": {
-        "Return On Investment": "11.38%",
-        "Cash on Cash Return": "0.79%",
-        "Caprate": "4.18%",
-        "Cashflow per month": "$43.54",
-        "Max Offer (Approximately)": "$136082.97",
-        "Emergency Fund (Recommended)": "$11330.76"
-    }
-}
+    "Property URL": "https://www.zillow.com/homedetails/80-82-E-Lawlor-St-New-Britain-CT-06051/2068502162_zpid/",
+    "Property Taxes URL": "https://www.countyoffice.org/property-records-search/?q=80-82+E+Lawlor+St%2C+New+Britain%2C+CT%2C+USA",
+    "Property Info": {
+        "Address": "80-82 E Lawlor St, New Britain, CT 06051",
+        "Price": 249900,
+        "Down Payment": 20.0,
+        "Fix Up Cost": 10000,
+        "Loan": 199920.0,
+        "Interest Rate": 2.84,
+        "Loan Length": 

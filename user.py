@@ -2,7 +2,7 @@
 
 
 from get_current_interest_rates import interest_rates
-from get_property_info import get_address, get_price, get_description,\
+from get_property_info import set_page, get_address, get_price, get_description,\
                                 get_property_taxes, get_num_units, get_rent_per_unit
 
 
@@ -54,6 +54,7 @@ def use_default_rent_per_unit() -> int:
 
 
 # Values from web scraper.
+set_page()  # This is what gets the html file. Prevents multiple redundant calls
 address = get_address()
 price = get_price()
 description = get_description()[0] if get_description()[1] else get_description()[0]
