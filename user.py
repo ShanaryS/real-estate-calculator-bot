@@ -136,6 +136,11 @@ def set_interest_rate() -> None:
             raise ValueError(f"Invalid combination of loan type '{loan_type}' and years '{years}'.")
 
 
+def get_url_from_input() -> str:
+    """Saves user inputted URL"""
+    return input()
+
+
 def update_price(new_price) -> None:
     """Updates price with user input"""
     global price

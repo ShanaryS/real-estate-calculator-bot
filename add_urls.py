@@ -1,5 +1,6 @@
 import time
 import json
+from user import get_url_from_input
 from colors_for_print import PrintColors
 
 
@@ -80,7 +81,7 @@ def add_link() -> None:
 
                 elif append_or_overwrite == 'o':
                     print_captions(o=True)
-                    new_url = input()
+                    new_url = get_url_from_input()
 
                     if new_url != 'c':
                         valid = url_is_valid(new_url)
@@ -88,7 +89,7 @@ def add_link() -> None:
                             print_captions(valid=False)
 
                             print_captions(o=True)
-                            new_url = input()
+                            new_url = get_url_from_input()
 
                             if new_url == 'c':
                                 quit_program()
@@ -99,7 +100,7 @@ def add_link() -> None:
                         print_captions(received=True)
 
                         print_captions(o=True, e=True)
-                        new_url = input()
+                        new_url = get_url_from_input()
                         while new_url != 'c':
 
                             if new_url == 'e':
@@ -112,7 +113,7 @@ def add_link() -> None:
                                     print_captions(valid=False)
 
                                     print_captions(o=True, e=True)
-                                    new_url = input()
+                                    new_url = get_url_from_input()
 
                                     if new_url == 'e':
                                         commit_updates_to_file()
@@ -127,7 +128,7 @@ def add_link() -> None:
                                 print_captions(received=True)
 
                             print_captions(o=True, e=True)
-                            new_url = input()
+                            new_url = get_url_from_input()
 
                         if new_url == 'c':
                             quit_program()

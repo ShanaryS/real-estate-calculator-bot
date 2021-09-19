@@ -3,7 +3,6 @@
 
 from bs4 import BeautifulSoup
 import requests
-import json
 
 
 url_search: str
@@ -64,13 +63,5 @@ def get_property_urls() -> list:
     link = zillow
 
     url = {key: link}
-
-    with open('urls.json', 'r') as json_file:
-        urls_json = json.load(json_file)
-
-    if url[key][link] != urls_json[key][link]:
-        urls_json.update(url)
-        with open('urls.json', 'w') as json_file:
-            json.dump(urls_json, json_file, indent=4)
 
     return urls
