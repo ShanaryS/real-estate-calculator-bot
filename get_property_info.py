@@ -12,6 +12,7 @@ county_office: BeautifulSoup
 page: requests.Session()
 
 
+# TODO set_page_property_info() to take links.json instead of just url at run time
 # TODO Only update interest rate when first running file, for subsequent properties use previous value
 # TODO Store links to search in links.json, add ability to write links to json, separate file to run add_links.py
 # TODO Handle saved list and search them all:
