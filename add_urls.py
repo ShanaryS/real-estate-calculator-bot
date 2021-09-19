@@ -11,7 +11,7 @@ def quit_program() -> None:
 
 
 def url_is_valid(url) -> bool:
-    """Checks if url is valid"""
+    """Checks if URL is valid"""
 
     if url[:23] == 'https://www.zillow.com/' and len(url) >= 29:
         return True
@@ -30,32 +30,32 @@ def print_captions(s_or_p=False, a_or_o=False, a=False, o=False, e=False, c=Fals
     END = PrintColors.ENDC
 
     if s_or_p:
-        print(f"{GOOD}Do you want to update search urls 's' or property urls 'p'? ('c' to cancel):{END}", end=" ")
+        print(f"{GOOD}Do you want to update search URLs 's' or property URLs 'p'? ('c' to cancel):{END}", end=" ")
     elif a_or_o:
         print(f"{GOOD}Do you want to append 'a' or overwrite 'o'? ('c' to cancel):{END}", end=" ")
     elif a:
-        print(f"{OK}--- Appending... Urls in this session will be saved to file! ---{END}")
+        print(f"{OK}--- Appending... URLs in this session will be saved to file! ---{END}")
         if e:
-            print(f"{GOOD}Enter another url ('e' to execute changes, 'c' to cancel):{END}", end=" ")
+            print(f"{GOOD}Enter another URL ('e' to execute changes, 'c' to cancel):{END}", end=" ")
         else:
-            print(f"{GOOD}- Enter url ('c' to cancel):{END}", end=" ")
+            print(f"{GOOD}- Enter URL ('c' to cancel):{END}", end=" ")
     elif o:
-        print(f"{OK}--- Overwriting... Urls before this session will be lost! ---{END}")
+        print(f"{OK}--- Overwriting... URLs before this session will be lost! ---{END}")
         if e:
-            print(f"{GOOD}Enter another url ('e' to execute changes, 'c' to cancel):{END}", end=" ")
+            print(f"{GOOD}Enter another URL ('e' to execute changes, 'c' to cancel):{END}", end=" ")
         else:
-            print(f"{GOOD}Enter url ('c' to cancel):{END}", end=" ")
+            print(f"{GOOD}Enter URL ('c' to cancel):{END}", end=" ")
     elif c:
         print(f"{BAD}!!! Ending program... No changes were made! !!!{END}")
 
     elif not valid:
-        print(f"{BAD}!!! Invalid url... Try again! !!!{END}")
+        print(f"{BAD}!!! Invalid URL... Try again! !!!{END}")
     elif received:
-        print(f"{GREAT}!!! Link received! !!!{END}")
+        print(f"{GREAT}!!! URL received! !!!{END}")
 
 
 def add_link() -> None:
-    """Logic for adding urls"""
+    """Logic for adding URLs"""
 
     print_captions(s_or_p=True)
     search_or_property = input()
@@ -150,8 +150,8 @@ def add_link() -> None:
 
 # try:
 #     with open('urls.json', 'r') as json_file:
-#         urls = json.load(json_file)
-#         urls = {'Searches': [stuff], 'Properties': [stuff]}
+#         URLs = json.load(json_file)
+#         URLs = {'Searches': [stuff], 'Properties': [stuff]}
 #
 #     if property_analysis[key]["Property Info"]["Price ($)"] != temp[key]["Property Info"]["Price ($)"]:
 #         temp.update(property_analysis)
