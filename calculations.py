@@ -17,6 +17,7 @@ amortization_table: dict
 analysis: dict
 property_info: dict
 estimations: dict
+property_key = f"https://www.zillow.com/homedetails/{get_url().split('/')[-2]}/"
 
 
 class PrintColors:
@@ -69,7 +70,13 @@ def update_values(save_to_file=True) -> None:
                    if not all([values[0] for values in user.found.values()])}
 
     if save_to_file:
-        save_analysis()
+        try:
+            with open('analysis.json', 'r') as json_file:
+                temp = json.load(json_file)
+            if property_key not in temp:
+                save_analysis()
+        except FileNotFoundError:
+            save_analysis(create_json=True)
 
 
 def basic_calculations() -> None:
@@ -239,10 +246,10 @@ def returns_analysis() -> dict:
     return final_returns
 
 
-def save_analysis() -> None:
+def save_analysis(create_json=False) -> None:
     """Saves analysis of property to analyzedProperties.json"""
 
-    property_analysis = {f"https://www.zillow.com/homedetails/{get_url().split('/')[-2]}/": {
+    property_analysis = {property_key: {
                               "Property URL": get_url(property_url=True),
                               "Property Taxes URL": get_url(taxes_url=True),
                               "Property Info": property_info,
@@ -251,15 +258,15 @@ def save_analysis() -> None:
                             }
                          }
 
-    try:
+    if create_json:
+        with open('analysis.json', 'x') as json_file:
+            json.dump(property_analysis, json_file, indent=4)
+    else:
         with open('analysis.json', 'r') as json_file:
             temp = json.load(json_file)
             temp.update(property_analysis)
         with open('analysis.json', 'w') as json_file:
             json.dump(temp, json_file, indent=4)
-    except FileNotFoundError:
-        with open('analysis.json', 'x') as json_file:
-            json.dump(property_analysis, json_file, indent=4)
 
 
 def print_amortization_table() -> None:
