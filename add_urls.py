@@ -1,5 +1,6 @@
 import time
 import json
+from colors_for_print import PrintColors
 
 
 def quit_program() -> None:

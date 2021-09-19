@@ -4,6 +4,8 @@ import numpy_financial as npf
 import json
 import user
 from get_property_info import set_page_property_info, get_url
+from colors_for_print import PrintColors
+
 
 # Basic calculations necessary module wide. Defining here for visibility.
 down_payment: float
@@ -17,20 +19,6 @@ amortization_table: dict
 analysis: dict
 property_info: dict
 estimations: dict
-
-
-class PrintColors:
-    """Used for adding color to print output"""
-
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
 
 
 def update_values(save_to_file=True, update_interest_rate=True) -> None:
