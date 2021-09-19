@@ -55,7 +55,7 @@ def update_values(save_to_file=True) -> None:
         "Description": user.description,
         "Down Payment": float(f"{user.down_payment_percent:.2f}"),
         "Fix Up Cost": user.fix_up_cost,
-        "Loan": float(f"{loan:.0f}"),
+        "Loan": int(loan),
         "Interest Rate": float(f"{user.interest_rate:.2f}"),
         "Loan Length": user.years,
         "Mortgage Payment (Monthly)": float(f"{-amortization_table['Monthly Payment'][0]:.2f}"),
@@ -324,7 +324,7 @@ def print_property_info() -> None:
     print(f"Address: {user.address}")
     print(f"Price: ${user.price:,} - Down Payment: {user.down_payment_percent * 100:.0f}% "
           f"- Fix Up Cost: ${user.fix_up_cost:,}")
-    print(f"Loan: ${loan:,.0f} - Interest Rate: {user.interest_rate * 100:.2f}% - Loan Length: {user.years} years")
+    print(f"Loan: ${int(loan):,} - Interest Rate: {user.interest_rate * 100:.2f}% - Loan Length: {user.years} years")
     print(f"Mortgage Payment (Monthly): ${-amortization_table['Monthly Payment'][0]:,.2f} "
           f"- Property Taxes (Monthly): ${property_taxes_monthly:,.2f} "
           f"- Insurance (Monthly): ${-insurance_cost / 12:,.2f}")
