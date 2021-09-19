@@ -51,17 +51,3 @@ def set_page_search(url) -> None:
 def get_url():
     """Returns URL for either property or property taxes on countyoffice.org/tax-records/"""
     return url_search
-
-
-def get_property_urls() -> list:
-    """Gets properties from zillow search URL"""
-
-    # Check if URL already in urls.json before adding
-    urls = []
-    key = 'Search'
-
-    link = zillow
-
-    url = {key: link}
-
-    return urls
