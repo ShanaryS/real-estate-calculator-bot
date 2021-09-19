@@ -2,7 +2,8 @@
 
 
 from get_current_interest_rates import interest_rates
-from get_property_info import get_address, get_price, get_property_taxes, get_num_units, get_rent_per_unit
+from get_property_info import get_address, get_price, get_description,\
+                                get_property_taxes, get_num_units, get_rent_per_unit
 
 
 # Values to reset to if no input necessary. A few variables always require input.
@@ -55,6 +56,7 @@ def use_default_rent_per_unit() -> int:
 # Values from web scraper.
 address = get_address()
 price = get_price()
+description = get_description()[0] if get_description()[1] else get_description()[0]
 property_taxes = get_property_taxes()[0] if get_property_taxes()[1] else use_default_property_taxes()
 num_units = get_num_units()[0] if get_num_units()[1] else use_default_num_units(get_num_units()[0])
 rent_per_unit = get_rent_per_unit()[0] if get_rent_per_unit()[1] else use_default_rent_per_unit()

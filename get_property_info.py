@@ -106,6 +106,19 @@ def get_price() -> int:
     return price
 
 
+def get_description() -> tuple:
+    """Get the description of listing"""
+
+    try:
+        description = zillow.find(class_="Text-c11n-8-48-0__sc-aiai24-0 sc-pQQXS gDpqEw").string
+        found_description = True
+    except AttributeError:
+        description = ""
+        found_description = False
+
+    return description, found_description
+
+
 def get_property_taxes() -> tuple:
     """Get property tax from zillow if it exist. Else use county_office. Must call get_address() prior."""
 
@@ -164,11 +177,3 @@ def get_rent_per_unit() -> tuple:
         rent_per_unit = 0
 
     return rent_per_unit, found_rent_per_unit
-
-
-def get_description() -> str:
-    """Get the description of listing"""
-
-    description = zillow.find(class_="Text-c11n-8-48-0__sc-aiai24-0 sc-pQQXS gDpqEw").string
-
-    return description

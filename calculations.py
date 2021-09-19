@@ -224,6 +224,24 @@ def print_analysis() -> None:
     # Print analysis output along with relevant info used
     print("Info used for calculations:")
     print()
+    print("Property Description -", end=' ')
+    if user.description:
+        description = user.description
+        max_size = 120
+        length = len(description)
+        slices = int(length / max_size)
+
+        for i in range(slices):
+            print(f"{description[i*max_size : (i+1)*max_size]}", end='')
+            if description[(i+1)*max_size - 1] != ' ' and description[(i+1)*max_size + 1] != ' ':
+                print("-")
+            else:
+                print("")
+        else:
+            print(f"{description[slices*max_size:]}")
+    else:
+        print("None")
+    print()
     print(f"Address: {user.address}")
     print(f"Price: ${user.price} - Down Payment: {user.down_payment_percent * 100:.0f}% "
           f"- Fix Up Cost: ${user.fix_up_cost}")
