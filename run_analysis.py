@@ -5,7 +5,7 @@ the 'Property' object.
 """
 
 
-from calculations import update_values, is_new_analysis
+from calculations import save_urls, update_values, is_new_analysis
 from colors_for_print import PrintColors
 import json
 import time
@@ -23,7 +23,7 @@ try:
 
     '''
     for url in urls_json['Search']:
-        # Add urls to urls.json under property
+        # Add urls to urls.json under property, save_urls
         time.sleep(TIME_BETWEEN_REQUESTS)
     '''
 
