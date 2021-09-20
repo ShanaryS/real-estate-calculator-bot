@@ -1,8 +1,8 @@
 """Handles updating necessary variables per user input"""
 
 
-from get_current_interest_rates import set_page_interest_rates, interest_rates
-from get_property_info import get_address, get_price, get_year, get_description, get_property_taxes,\
+from webscrapers.get_current_interest_rates import set_page_interest_rates, interest_rates
+from webscrapers.get_property_info import get_address, get_price, get_year, get_description, get_property_taxes,\
     get_num_units, get_rent_per_unit, get_sqft, get_price_per_sqft, get_lot_size, get_parking
 
 

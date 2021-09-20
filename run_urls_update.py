@@ -2,9 +2,9 @@
 
 
 import time
-from calculations import save_urls
-from user import get_url_from_input
-from colors_for_print import PrintColors
+from data.calculations import save_urls
+from data.user import get_url_from_input
+from data.colors_for_print import PrintColors
 
 
 # Stores the urls from inputs. Gets written to file after add_link() is completed. If was cancelled, it gets cleared.
