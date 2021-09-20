@@ -3,8 +3,10 @@
 
 from bs4 import BeautifulSoup
 import requests
+import time
 
 
+TIME_BETWEEN_REQUESTS = 1  # Used by get_property_taxes() for county office exception handling
 url_property: str
 url_property_taxes: str
 zillow: BeautifulSoup
@@ -221,6 +223,7 @@ def get_property_taxes() -> tuple:
 
             # Sometimes it fails to get the data but it exists. Retrying usually works
             for i in range(5):
+                time.sleep(TIME_BETWEEN_REQUESTS)
                 get_address()
                 try:
                     property_taxes = str(county_office.find_all('tbody')[2])\
