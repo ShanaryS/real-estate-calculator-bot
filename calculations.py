@@ -310,8 +310,8 @@ def save_analysis() -> None:
             analysis_json.update(property_analysis)
             with open('analysis.json', 'w') as json_file:
                 json.dump(analysis_json, json_file, indent=4)
-    except FileNotFoundError:
-        with open('analysis.json', 'x') as json_file:
+    except (FileNotFoundError, json.JSONDecodeError, TypeError):  # Explained in save_urls() above
+        with open('analysis.json', 'w') as json_file:
             json.dump(property_analysis, json_file, indent=4)
 
 
