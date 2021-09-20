@@ -20,9 +20,8 @@ property_analyses = []
 url_removed = False
 
 
-try:
-    with open(os.path.join('output', 'urls.json')) as json_file:
-        urls_json = json.load(json_file)
+def add_urls_to_property_from_search() -> None:
+    """Calls web scraper for search urls then????????"""
 
     print(f"\n{PrintColors.WARNING}--- Getting URLs from saved searches...{PrintColors.ENDC}\n")
 
@@ -32,12 +31,16 @@ try:
         time.sleep(TIME_BETWEEN_REQUESTS)
     '''
 
+
+def sync_urls_and_analysis_data() -> None:
+    """Updates analysis.json if URLs were deleted"""
+
     print(f"{PrintColors.WARNING}--- Removing any analysis not tracked in urls.json...{PrintColors.ENDC}\n")
 
     # Update analysis.json if URLs were deleted
     try:
-        with open(os.path.join('output', 'analysis.json')) as json_file:
-            analysis_json = json.load(json_file)
+        with open(os.path.join('output', 'analysis.json')) as file:
+            analysis_json = json.load(file)
 
         # Think this can be simplified using set().intersection_update()
         temp = []
@@ -48,21 +51,30 @@ try:
             analysis_json.pop(i)
 
         if temp:
+            global url_removed
             url_removed = True
-            with open(os.path.join('output', 'analysis.json'), 'w') as json_file:
-                json.dump(analysis_json, json_file, indent=4)
+            with open(os.path.join('output', 'analysis.json'), 'w') as file:
+                json.dump(analysis_json, file, indent=4)
 
     except FileNotFoundError:
         pass
     except (json.JSONDecodeError, TypeError):
-        with open(os.path.join('output', 'analysis.json'), 'w') as json_file:
-            json.dump({}, json_file, indent=4)
+        with open(os.path.join('output', 'analysis.json'), 'w') as file:
+            json.dump({}, file, indent=4)
+
+
+def get_interest_rate() -> None:
+    """Gets current interest rate to use for analyses in current session"""
 
     print(f"{PrintColors.WARNING}--- Getting current interest rates...{PrintColors.ENDC}\n")
     set_interest_rate()
 
+
+def analyze_properties() -> None:
+    """Gets info for all properties and saves them to analysis.json"""
+
     num_urls = len(urls_json['Property'])
-    print(f"{PrintColors.WARNING}--- Analyzing houses... Expected duration: "
+    print(f"{PrintColors.WARNING}--- Analyzing properties... Expected duration: "
           f"{PrintColors.OKGREEN}{int(num_urls * (1.75 + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
 
     for url in urls_json['Property']:
@@ -71,10 +83,13 @@ try:
         key, property_analysis = get_property_analysis()
         keys.append(key)
         property_analyses.append(property_analysis)
-        update_interest_rate = False
         time.sleep(TIME_BETWEEN_REQUESTS)
 
     write_property_analyses(keys, property_analyses)
+
+
+def check_if_analysis_json_updated() -> None:
+    """Checks if the analysis performed yielded any new results"""
 
     if any(is_new_analyses()) or url_removed:
         print(f"\n{PrintColors.OKGREEN}"
@@ -83,10 +98,23 @@ try:
         print(f"\n{PrintColors.FAIL}!!! No new analysis to add/update! Ending program... !!!{PrintColors.ENDC}")
     time.sleep(SLEEP_TIMER)  # Delays closing the program so user can read final text
 
-except FileNotFoundError:
-    print(f"\n{PrintColors.FAIL}!!! Error: No URLs exist... !!!{PrintColors.ENDC}")
-    print(f"{PrintColors.OKGREEN}Run run_urls_update.py first.{PrintColors.ENDC}")
-    time.sleep(3)
+
+# Calls all the above functions to perform the analysis
+if __name__ == '__main__':
+    try:
+        with open(os.path.join('output', 'urls.json')) as json_file:
+            urls_json = json.load(json_file)
+
+        add_urls_to_property_from_search()
+        sync_urls_and_analysis_data()
+        get_interest_rate()
+        analyze_properties()
+        check_if_analysis_json_updated()
+
+    except FileNotFoundError:
+        print(f"\n{PrintColors.FAIL}!!! Error: No URLs exist... !!!{PrintColors.ENDC}")
+        print(f"{PrintColors.OKGREEN}Run run_urls_update.py first.{PrintColors.ENDC}")
+        time.sleep(3)
 
 
 '''
