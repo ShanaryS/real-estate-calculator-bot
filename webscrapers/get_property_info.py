@@ -81,7 +81,7 @@ def get_address() -> str:
 
     raw_address = ""
     city_state_zip = ""
-    base = zillow.find(class_="Text-c11n-8-48-0__sc-aiai24-0 StyledHeading-c11n-8-48-0__sc-ktujwe-0 YmdCA")
+    base = zillow.find_all(class_="ds-home-details-chip")[1].contents[1]
 
     try:
         raw_address = str(base.span.string).rstrip(',').split()
