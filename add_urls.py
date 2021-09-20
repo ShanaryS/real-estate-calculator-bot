@@ -1,3 +1,6 @@
+"""Use before run_analysis.py to choose urls. Can add property urls or search urls."""
+
+
 import time
 from calculations import save_urls
 from user import get_url_from_input

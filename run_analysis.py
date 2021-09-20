@@ -1,3 +1,10 @@
+"""Main script to run. Saves analysis to file based on urls.json. Add to urls.json by running add_urls.py.
+For search urls, the URLs for the houses are found at run time and then added urls.json inside 'Property' object. This
+is the same place where adding a single property would also be stored. Then program gets the info for all houses in
+the 'Property' object.
+"""
+
+
 from calculations import update_values
 import json
 import time
