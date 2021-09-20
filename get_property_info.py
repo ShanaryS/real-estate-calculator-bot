@@ -137,7 +137,7 @@ def get_price() -> int:
 def get_year() -> int:
     """Get the year of the listing"""
 
-    house_year = zillow.find(class_="ds-home-fact-list-item").next_sibling.contents[-1].string
+    house_year = int(zillow.find(class_="ds-home-fact-list-item").next_sibling.contents[-1].string)
 
     return house_year
 

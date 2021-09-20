@@ -367,7 +367,7 @@ def print_property_info() -> None:
             print(f"{description[slices * max_size:]}")
     else:
         print("None")
-    print(f"Parking - {user.parking}")
+    print(f"\nParking - {user.parking}")
     print()
     print(f"Address: {user.address}")
     print(f"Price: ${user.price:,}")
