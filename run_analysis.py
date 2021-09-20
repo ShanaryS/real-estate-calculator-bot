@@ -5,6 +5,7 @@ the 'Property' object.
 """
 
 
+import os.path
 import json
 import time
 from data.calculations import update_values, get_property_analysis, write_property_analyses, is_new_analyses
@@ -19,7 +20,7 @@ property_analyses = []
 
 
 try:
-    with open('urls.json') as json_file:
+    with open(os.path.join('output', 'urls.json')) as json_file:
         urls_json = json.load(json_file)
 
     print(f"\n{PrintColors.WARNING}--- Getting URLs from saved searches...{PrintColors.ENDC}\n")
@@ -34,7 +35,7 @@ try:
 
     # Update analysis.json if URLs were deleted
     try:
-        with open('analysis.json') as json_file:
+        with open(os.path.join('output', 'analysis.json')) as json_file:
             analysis_json = json.load(json_file)
 
         temp = []
@@ -45,13 +46,13 @@ try:
             analysis_json.pop(i)
 
         if temp:
-            with open('analysis.json', 'w') as json_file:
+            with open(os.path.join('output', 'analysis.json'), 'w') as json_file:
                 json.dump(analysis_json, json_file, indent=4)
 
     except FileNotFoundError:
         pass
     except (json.JSONDecodeError, TypeError):
-        with open('analysis.json', 'w') as json_file:
+        with open(os.path.join('output', 'analysis.json'), 'w') as json_file:
             json.dump({}, json_file, indent=4)
 
     print(f"{PrintColors.WARNING}--- Getting current interest rates...{PrintColors.ENDC}\n")
@@ -80,7 +81,9 @@ try:
     time.sleep(SLEEP_TIMER)  # Delays closing the program so user can read final text
 
 except FileNotFoundError:
-    print("Error: No URLs added.")
+    print(f"\n{PrintColors.FAIL}!!! Error: No URLs exist... !!!{PrintColors.ENDC}")
+    print(f"{PrintColors.OKGREEN}Run run_urls_update.py first.{PrintColors.ENDC}")
+    time.sleep(3)
 
 
 '''
