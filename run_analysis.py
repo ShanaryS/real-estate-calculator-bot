@@ -69,7 +69,7 @@ try:
     write_property_analyses(keys, property_analyses)
 
     if not all(is_new_analyses()):
-        print(f"\n{PrintColors.FAIL}No new analysis to add...{PrintColors.ENDC}")
+        print(f"\n{PrintColors.FAIL}No new analysis to add or update...{PrintColors.ENDC}")
 
 except FileNotFoundError:
     print("Error: No URLs added.")
