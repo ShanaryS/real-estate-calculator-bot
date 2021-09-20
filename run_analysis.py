@@ -17,6 +17,7 @@ from run_urls_update import SLEEP_TIMER
 
 keys = []
 property_analyses = []
+url_removed = False
 
 
 try:
@@ -47,6 +48,7 @@ try:
             analysis_json.pop(i)
 
         if temp:
+            url_removed = True
             with open(os.path.join('output', 'analysis.json'), 'w') as json_file:
                 json.dump(analysis_json, json_file, indent=4)
 
@@ -74,7 +76,7 @@ try:
 
     write_property_analyses(keys, property_analyses)
 
-    if any(is_new_analyses()):
+    if any(is_new_analyses()) or url_removed:
         print(f"\n{PrintColors.OKGREEN}"
               f"!!! Analyses were successfully added/updated! Ending program... !!!{PrintColors.ENDC}")
     else:
