@@ -8,6 +8,7 @@ the 'Property' object.
 import json
 import time
 from data.calculations import update_values, get_property_analysis, write_property_analyses, is_new_analyses
+from data.user import set_interest_rate
 from data.colors_for_print import PrintColors
 from webscrapers.get_property_info import TIME_BETWEEN_REQUESTS
 from run_urls_update import SLEEP_TIMER
@@ -53,14 +54,16 @@ try:
         with open('analysis.json', 'w') as json_file:
             json.dump({}, json_file, indent=4)
 
+    print(f"{PrintColors.OKGREEN}Getting current interest rates...{PrintColors.ENDC}\n")
+    set_interest_rate()
+
     num_urls = len(urls_json['Property'])
     print(f"{PrintColors.OKGREEN}Analyzing houses... {PrintColors.WARNING}Expected duration: "
           f"{PrintColors.OKCYAN}{int(num_urls * (1.75 + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
 
-    update_interest_rate = True
     for url in urls_json['Property']:
         print(url)
-        update_values(url=url, save_to_file=False, update_interest_rate=update_interest_rate)
+        update_values(url=url, save_to_file=False, update_interest_rate=False)
         key, property_analysis = get_property_analysis()
         keys.append(key)
         property_analyses.append(property_analysis)
