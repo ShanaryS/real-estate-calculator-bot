@@ -78,8 +78,9 @@ def get_url(property_url=False, taxes_url=False) -> str:
 def get_address() -> str:
     """Get the address of the house from zillow. Use for countyoffice.org/tax-records/"""
 
-    raw_address = str(zillow.find(id="ds-chip-property-address").span.string).rstrip(',').split()
-    city_state_zip = str(zillow.find(id="ds-chip-property-address")).split('-->')[-1].split('<')[0].split()
+    base = zillow.find(class_="Text-c11n-8-48-0__sc-aiai24-0 StyledHeading-c11n-8-48-0__sc-ktujwe-0 YmdCA")
+    raw_address = str(base.span.string).rstrip(',').split()
+    city_state_zip = str(base).split('-->')[-1].split('<')[0].split()
 
     house_number = raw_address[0]
     street_name = ''  # Handled below
