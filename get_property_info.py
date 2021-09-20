@@ -12,10 +12,6 @@ county_office: BeautifulSoup
 page: requests.Session()
 
 
-# TODO set_page_property_info() to take urls.json instead of just url at run time
-# TODO Only update interest rate when first running file, for subsequent properties use previous value. update_values(update_interest_rate=False)
-# TODO Store links to search in urls.json, add ability to write links to json, separate file to run add_urls.py
-# TODO Handle saved list and search them all:
 def _set_url_property(url) -> str:
     """Gets zillow URL from user or file when running analysis"""
 

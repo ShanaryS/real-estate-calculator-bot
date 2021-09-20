@@ -16,8 +16,10 @@ try:
         time.sleep(TIME_BETWEEN_REQUESTS)
     '''
 
+    update_interest_rate = True
     for url in urls_json['Property']:
-        update_values(url=url, save_to_file=True)
+        update_values(url=url, save_to_file=True, update_interest_rate=update_interest_rate)
+        update_interest_rate = False
         time.sleep(TIME_BETWEEN_REQUESTS)
 
 except FileNotFoundError:
