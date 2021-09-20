@@ -6,7 +6,8 @@ import requests
 import time
 
 
-TIME_BETWEEN_REQUESTS = 1  # Used by get_property_taxes() for county office exception handling
+TIME_BETWEEN_REQUESTS = 1  # Used by get_property_taxes(), get_address() and run_analysis.py
+NUM_TIMES_TO_RETRY_REQUESTS = 5
 url_property: str
 url_property_taxes: str
 zillow: BeautifulSoup
@@ -78,9 +79,27 @@ def get_url(property_url=False, taxes_url=False) -> str:
 def get_address() -> str:
     """Get the address of the house from zillow. Use for countyoffice.org/tax-records/"""
 
+    raw_address = ""
+    city_state_zip = ""
     base = zillow.find(class_="Text-c11n-8-48-0__sc-aiai24-0 StyledHeading-c11n-8-48-0__sc-ktujwe-0 YmdCA")
-    raw_address = str(base.span.string).rstrip(',').split()
-    city_state_zip = str(base).split('-->')[-1].split('<')[0].split()
+
+    try:
+        raw_address = str(base.span.string).rstrip(',').split()
+        city_state_zip = str(base).split('-->')[-1].split('<')[0].split()
+    except AttributeError:
+        # Sometimes it fails to get the data but it exists. Retrying usually works
+        for i in range(NUM_TIMES_TO_RETRY_REQUESTS):
+            time.sleep(TIME_BETWEEN_REQUESTS)
+            set_page_property_info()
+            try:
+                raw_address = str(base.span.string).rstrip(',').split()
+                city_state_zip = str(base).split('-->')[-1].split('<')[0].split()
+                break
+            except AttributeError:
+                pass
+            if i == NUM_TIMES_TO_RETRY_REQUESTS - 1:
+                raw_address = ""
+                city_state_zip = ""
 
     house_number = raw_address[0]
     street_name = ''  # Handled below
@@ -221,9 +240,8 @@ def get_property_taxes() -> tuple:
             found_property_taxes = False
             property_taxes = 0
         except IndexError:
-
             # Sometimes it fails to get the data but it exists. Retrying usually works
-            for i in range(5):
+            for i in range(NUM_TIMES_TO_RETRY_REQUESTS):
                 time.sleep(TIME_BETWEEN_REQUESTS)
                 get_address()
                 try:
@@ -233,7 +251,7 @@ def get_property_taxes() -> tuple:
                     break
                 except (TypeError, IndexError):
                     pass
-                if i == 4:
+                if i == NUM_TIMES_TO_RETRY_REQUESTS - 1:
                     found_property_taxes = False
                     property_taxes = 0
 

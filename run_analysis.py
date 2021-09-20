@@ -9,10 +9,10 @@ import json
 import time
 from data.calculations import update_values, get_property_analysis, write_property_analyses, is_new_analyses
 from data.colors_for_print import PrintColors
+from webscrapers.get_property_info import TIME_BETWEEN_REQUESTS
 from run_urls_update import SLEEP_TIMER
 
 
-TIME_BETWEEN_REQUESTS = 1
 keys = []
 property_analyses = []
 

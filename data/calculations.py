@@ -348,6 +348,8 @@ def write_property_analyses(keys, property_analyses) -> None:
 
         # Uses IO buffering to store data in dict, then only writes to file once when everything is done.
         for key, property_analysis in zip(keys, property_analyses):
+            print(property_analysis[key]["Property Info"]["Price ($)"])
+            print(analysis_json.get(key, dict()).get("Property Info", dict()).get("Price ($)", 0))
             if property_analysis[key]["Property Info"]["Price ($)"] \
                     != analysis_json.get(key, dict()).get("Property Info", dict()).get("Price ($)", 0):
                 analysis_json.update(property_analysis)
