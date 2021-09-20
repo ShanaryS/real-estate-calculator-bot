@@ -206,6 +206,7 @@ def get_property_taxes() -> tuple:
 
     temp = page.find('-->$')
     found_property_taxes = True
+    property_taxes = 0
 
     if temp > -1:
         property_taxes = int(page[temp+4:temp+9].replace(',', ''))
@@ -216,6 +217,21 @@ def get_property_taxes() -> tuple:
         except TypeError:
             found_property_taxes = False
             property_taxes = 0
+        except IndexError:
+
+            # Sometimes it fails to get the data but it exists. Retrying usually works
+            for i in range(5):
+                get_address()
+                try:
+                    property_taxes = str(county_office.find_all('tbody')[2])\
+                        .split('<td>$')[1].split('<')[0].replace(',', '')
+                    property_taxes = int(property_taxes)
+                    break
+                except (TypeError, IndexError):
+                    pass
+                if i == 4:
+                    found_property_taxes = False
+                    property_taxes = 0
 
     return property_taxes, found_property_taxes
 

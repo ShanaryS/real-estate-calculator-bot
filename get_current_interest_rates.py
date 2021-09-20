@@ -9,7 +9,7 @@ interest_rates = {}
 
 
 def set_page_interest_rates() -> None:
-    """Get page and stores interest rates"""
+    """Get page and stores interest rates. Only ran once the per session."""
 
     url = 'https://www.nerdwallet.com/mortgages/mortgage-rates'
     page = requests.get(url).text
