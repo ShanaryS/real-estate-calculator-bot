@@ -27,6 +27,19 @@ try:
         time.sleep(TIME_BETWEEN_REQUESTS)
     '''
 
+    # Update analysis.json if URLs were deleted
+    with open('analysis.json', 'r+') as json_file:
+        analysis_json = json.load(json_file)
+
+        temp = []
+        for i in analysis_json:
+            if analysis_json[i]["Property URL"] not in urls_json["Property"]:
+                temp.append(i)
+        for i in temp:
+            analysis_json.pop(i)
+
+        json.dump(analysis_json, json_file, indent=4)
+
     print(f"{PrintColors.WARNING}Analyzing houses... "
           f"Expected duration: {int(len(urls_json['Property']) * (1.5 + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
 
