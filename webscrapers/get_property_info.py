@@ -190,7 +190,11 @@ def get_lot_size() -> int:
         lot_size = float(str(zillow.find_all(class_="sc-pbvYO hMYTdE")[1].contents[2].span)
                          .split('>')[-2].split('s')[0].replace('Acre', '').strip().replace(',', ''))
     except IndexError:
-        return 0
+        try:
+            lot_size = float(str(zillow.find_all(class_="sc-qQKeD bSwWwA")[1].contents[2].span)
+                             .split('>')[-2].split('s')[0].replace('Acre', '').strip().replace(',', ''))
+        except IndexError:
+            return 0
 
     # Lot size can be sqft or acres so this handles it. Always returns sqft.
     if lot_size > 100:
@@ -199,6 +203,9 @@ def get_lot_size() -> int:
         lot_size = int(lot_size * 43560)
 
     return lot_size
+
+set_page_property_info('https://www.zillow.com/homedetails/36-E-Liberty-St-Chester-CT-06412/57839881_zpid/')
+print(get_lot_size())
 
 
 def get_parking() -> str:
@@ -213,7 +220,7 @@ def get_description() -> tuple:
     """Get the description of listing"""
 
     try:
-        description = zillow.find(class_="ds-overview-section").string
+        description = zillow.find(class_="ds-overview-section").contents[0].contents[0].string
         found_description = True
     except AttributeError:
         description = ""
