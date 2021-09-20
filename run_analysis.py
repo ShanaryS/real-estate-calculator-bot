@@ -19,11 +19,16 @@ try:
     with open('urls.json', 'r') as json_file:
         urls_json = json.load(json_file)
 
+    print(f"\n{PrintColors.OKCYAN}Getting URLs from saved searches...{PrintColors.ENDC}\n")
+
     '''
     for url in urls_json['Search']:
         # Add urls to urls.json under property
         time.sleep(TIME_BETWEEN_REQUESTS)
     '''
+
+    print(f"{PrintColors.WARNING}Analyzing houses... "
+          f"Expected duration: {int(len(urls_json['Property']) * (1.5 + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
 
     update_interest_rate = True
     for url in urls_json['Property']:
@@ -38,6 +43,7 @@ try:
 
 except FileNotFoundError:
     print("Error: No URLs added.")
+
 
 '''
 If not printing url:
