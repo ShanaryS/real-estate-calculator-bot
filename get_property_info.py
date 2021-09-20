@@ -141,8 +141,16 @@ def get_year() -> int:
 def get_sqft() -> int:
     """Get the sqft of the listing"""
 
-    sqft = int(zillow.find_all(class_="sc-pbvBv dZlnFS")[2].span.string.replace(',', ''))
+    # This does not assume that values can be acres.
+    # sqft = int(zillow.find_all(class_="sc-pbvBv dZlnFS")[2].span.string.replace(',', ''))
 
+    sqft = float(zillow.find_all(class_="sc-pbvBv dZlnFS")[2].span.string.replace(',', ''))
+
+    # House size may be given in acres like lot size for really big houses. Just covering my bases here.
+    if sqft > 10:
+        sqft = int(sqft)
+    else:
+        sqft = int(sqft * 43560)
     return sqft
 
 
@@ -158,8 +166,14 @@ def get_price_per_sqft() -> int:
 def get_lot_size() -> int:
     """Get the lot size of the listing"""
 
-    lot_size = int(str(zillow.find_all(class_="sc-pbvYO hMYTdE")[1].contents[2].span)
-                   .split('>')[-2].split('s')[0].strip().replace(',', ''))
+    lot_size = float(str(zillow.find_all(class_="sc-pbvYO hMYTdE")[1].contents[2].span)
+                     .split('>')[-2].split('s')[0].replace('Acre', '').strip().replace(',', ''))
+
+    # Lot size can be sqft or acres so this handles it. Always returns sqft.
+    if lot_size > 100:
+        lot_size = int(lot_size)
+    else:
+        lot_size = int(lot_size * 43560)
 
     return lot_size
 
