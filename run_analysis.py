@@ -38,6 +38,7 @@ try:
         with open(os.path.join('output', 'analysis.json')) as json_file:
             analysis_json = json.load(json_file)
 
+        # Think this can be simplified using set().intersection_update()
         temp = []
         for i in analysis_json:
             if analysis_json[i]["Property URL"] not in urls_json["Property"]:
@@ -60,7 +61,7 @@ try:
 
     num_urls = len(urls_json['Property'])
     print(f"{PrintColors.WARNING}--- Analyzing houses... Expected duration: "
-          f"{PrintColors.OKCYAN}{int(num_urls * (1.75 + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
+          f"{PrintColors.OKGREEN}{int(num_urls * (1.75 + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
 
     for url in urls_json['Property']:
         print(url)

@@ -23,7 +23,7 @@ property_info: dict
 estimations: dict
 
 # Used to check if any url or analysis was updated:
-new_analysis_list = [False]
+new_analysis_list = []
 
 
 def update_values(url=None, save_to_file=True, update_interest_rate=True) -> None:
@@ -352,13 +352,15 @@ def write_property_analyses(keys, property_analyses) -> None:
             if property_analysis[key]["Property Info"]["Price ($)"] \
                     != analysis_json.get(key, dict()).get("Property Info", dict()).get("Price ($)", 0):
                 analysis_json.update(property_analysis)
-                new_analysis_list.append(True)
+                new_analysis_list.append(True)  # Used to tell if file has been modified. Used by run_analysis.py
 
         if any(is_new_analyses()):
             with open(os.path.join('output', 'analysis.json'), 'w') as json_file:
                 json.dump(analysis_json, json_file, indent=4)
 
     except (FileNotFoundError, json.JSONDecodeError, TypeError):  # Explained in save_urls() above
+
+        new_analysis_list.append(True)  # Used to tell if file has been modified. Used by run_analysis.py
 
         # Creating a dict to store the multiple analyses. Allows writing to file once.
         analysis_json = {}
