@@ -42,7 +42,12 @@ def update_values(save_to_file=True, update_interest_rate=True) -> None:
     property_info = {
         "Address": user.address,
         "Price ($)": user.price,
+        "Year Built": user.year,
         "Description": user.description,
+        "Sqft (ft)": user.sqft,
+        "Price Per Sqft ($)": user.price_per_sqft,
+        "Lot size (ft)": user.lot_size,
+        "Parking": user.parking,
         "Down Payment (Fraction)": float(f"{user.down_payment_percent:.2f}"),
         "Fix Up Cost ($)": user.fix_up_cost,
         "Loan ($)": int(loan),
@@ -362,16 +367,25 @@ def print_property_info() -> None:
             print(f"{description[slices * max_size:]}")
     else:
         print("None")
+    print(f"Parking - {user.parking}")
     print()
     print(f"Address: {user.address}")
-    print(f"Price: ${user.price:,} - Down Payment: {user.down_payment_percent * 100:.0f}% "
-          f"- Fix Up Cost: ${user.fix_up_cost:,}")
-    print(f"Loan: ${int(loan):,} - Interest Rate: {user.interest_rate * 100:.2f}% - Loan Length (Years): {user.years}")
-    print(f"Mortgage Payment (Monthly): ${-amortization_table['Monthly Payment'][0]:,.2f} "
-          f"- Property Taxes (Monthly): ${property_taxes_monthly:,.2f} "
-          f"- Insurance (Monthly): ${-insurance_cost / 12:,.2f}")
-    print(f"Units: {user.num_units} - Rent per unit: ${user.rent_per_unit:,} "
-          f"- Vacancy: {user.vacancy_percent * 100:.0f}%")
+    print(f"Price: ${user.price:,}")
+    print(f"Year Built: {user.year}")
+    print(f"Sqft: {user.sqft}ft")
+    print(f"Price Per Sqft: ${user.price_per_sqft}")
+    print(f"Lot Size: {user.lot_size}")
+    print(f"Down Payment: {user.down_payment_percent * 100:.0f}%")
+    print(f"Fix Up Cost: ${user.fix_up_cost:,}")
+    print(f"Loan: ${int(loan):,}")
+    print(f"Interest Rate: {user.interest_rate * 100:.2f}%")
+    print(f"Loan Length (Years): {user.years}")
+    print(f"Mortgage Payment (Monthly): ${-amortization_table['Monthly Payment'][0]:,.2f}")
+    print(f"Property Taxes (Monthly): ${property_taxes_monthly:,.2f}")
+    print(f"Insurance (Monthly): ${-insurance_cost / 12:,.2f}")
+    print(f"Units: {user.num_units}")
+    print(f"Rent per unit: ${user.rent_per_unit:,}")
+    print(f"Vacancy: {user.vacancy_percent * 100:.0f}%")
     print()
     print("--------------------------------------------------------------------------------")
     print()

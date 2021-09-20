@@ -2,8 +2,8 @@
 
 
 from get_current_interest_rates import set_page_interest_rates, interest_rates
-from get_property_info import get_address, get_price, get_description,\
-                                get_property_taxes, get_num_units, get_rent_per_unit
+from get_property_info import get_address, get_price, get_year, get_description, get_property_taxes,\
+    get_num_units, get_rent_per_unit, get_sqft, get_price_per_sqft, get_lot_size, get_parking
 
 
 # Values to reset to if no input necessary. A few variables always require input.
@@ -31,7 +31,12 @@ found = {}
 # Values from web scraper
 address: str
 price: float
+year: int
 description: str
+sqft: int
+price_per_sqft: int
+lot_size: int
+parking: str
 property_taxes: int
 num_units: int
 rent_per_unit: int
@@ -40,13 +45,19 @@ rent_per_unit: int
 def set_info() -> None:
     """Sets the values from html pages"""
 
-    global address, price, description, property_taxes, num_units, rent_per_unit
+    global address, price, year, description, sqft, price_per_sqft
+    global lot_size, parking, property_taxes, num_units, rent_per_unit
 
     tdesc, ttaxes, tnum, trent = get_description(), get_property_taxes(), get_num_units(), get_rent_per_unit()
 
     address = get_address()
     price = get_price()
+    year = get_year()
     description = tdesc[0] if tdesc[1] else tdesc[0]
+    sqft = get_sqft()
+    price_per_sqft = get_price_per_sqft()
+    lot_size = get_lot_size()
+    parking = get_parking()
     property_taxes = ttaxes[0] if ttaxes[1] else use_default_property_taxes()
     num_units = tnum[0] if tnum[1] else use_default_num_units(tnum[0])
     rent_per_unit = trent[0] if trent[1] else use_default_rent_per_unit()
