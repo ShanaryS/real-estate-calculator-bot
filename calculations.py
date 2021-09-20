@@ -234,7 +234,7 @@ def returns_analysis() -> dict:
     return final_returns
 
 
-def save_urls(urls, overwrite=False, search=False) -> None:
+def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
     """Saves user inputted search URL. Does not preserve order."""
 
     if search:
@@ -242,16 +242,34 @@ def save_urls(urls, overwrite=False, search=False) -> None:
     else:
         key = 'Property'
 
+    if delete:
+        try:
+            with open('urls.json', 'r') as json_file:
+                urls_json = json.load(json_file)
+
+            # Check if new urls already in json. Also remove any duplicates in json if any got by.
+            values = set(urls_json[key]).difference(urls)
+
+            # Updates the file with new dict. Note, json doesn't accept set so must convert to list before.
+            urls_json[key] = list(values)
+            with open('urls.json', 'w') as json_file:
+                json.dump(urls_json, json_file, indent=4)
+            return
+        except FileNotFoundError:
+            return
+        except json.JSONDecodeError:
+            return  # When json file is empty.
+        except TypeError:
+            return  # When json file is not dict.
+
+    # Order of next two blocks matter. This block passes a condition onto the next one.
     if not overwrite:
         try:
             with open('urls.json', 'r') as json_file:
                 urls_json = json.load(json_file)
 
             # Check if new urls already in json. Also remove any duplicates in json if any got by.
-            values = set(urls_json[key])
-            for url in urls.difference(values):
-                print(url)
-                values.add(url)
+            values = set(urls_json[key]).union(urls)
 
             # Updates the file with new dict. Note, json doesn't accept set so must convert to list before.
             urls_json[key] = list(values)
