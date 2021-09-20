@@ -186,6 +186,7 @@ def get_num_units() -> tuple:
 
         if temp > -1:
             num_units = int(page[temp+24:temp+25])
+            num_units = num_units if num_units < 5 else 4
         else:
             num_units = 0
 

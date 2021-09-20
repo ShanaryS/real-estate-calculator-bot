@@ -13,7 +13,7 @@ LOAN_TYPE = 'Conventional'
 PROPERTY_TAXES = 4000
 FIX_UP_COST = 10000
 NUM_UNITS = 3
-RENT_PER_UNIT = 700
+RENT_PER_UNIT = 700  # Never used. use_default_rent_per_unit() uses a bit more sophistication in estimation
 VACANCY_PERCENT = 0.08
 MAINTENANCE_PERCENT = 0.15
 MANAGEMENT_PERCENT = 0.10
@@ -83,7 +83,15 @@ def use_default_rent_per_unit() -> int:
     """Returns default value for rent_per_unit and adjusts relevant variables. Use if rent_per_unit not found."""
     global found_rent_per_unit
     found_rent_per_unit = False
-    return RENT_PER_UNIT
+
+    if num_units == 1:
+        return 1000
+    elif num_units == 2:
+        return 800
+    elif num_units == 3:
+        return 650
+    elif num_units >= 4:
+        return 600
 
 
 # (INPUT REQUIRED) Default values used for calculator. Variables will be updated when performing real world calculations
