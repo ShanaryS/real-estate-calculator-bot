@@ -74,7 +74,6 @@ try:
 
     write_property_analyses(keys, property_analyses)
 
-    print(is_new_analyses())
     if any(is_new_analyses()):
         print(f"\n{PrintColors.OKGREEN}"
               f"!!! Analyses were successfully added/updated! Ending program... !!!{PrintColors.ENDC}")
