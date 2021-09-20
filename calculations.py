@@ -21,6 +21,9 @@ analysis: dict
 property_info: dict
 estimations: dict
 
+# Used to check if any url or analysis was updated:
+new_analysis: bool
+
 
 def update_values(url=None, save_to_file=True, update_interest_rate=True) -> None:
     """Updates the values when a new property is being evaluated."""
@@ -296,6 +299,9 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
 def save_analysis() -> None:
     """Saves analysis of property to analyzedProperties.json"""
 
+    global new_analysis
+    new_analysis = True
+
     key = get_property_key()
     property_analysis = {key: {
                               "Property URL": get_url(property_url=True),
@@ -315,9 +321,16 @@ def save_analysis() -> None:
             analysis_json.update(property_analysis)
             with open('analysis.json', 'w') as json_file:
                 json.dump(analysis_json, json_file, indent=4)
+        else:
+            new_analysis = False
     except (FileNotFoundError, json.JSONDecodeError, TypeError):  # Explained in save_urls() above
         with open('analysis.json', 'w') as json_file:
             json.dump(property_analysis, json_file, indent=4)
+
+
+def is_new_analysis() -> bool:
+    """Used to check if any url or analysis was updated"""
+    return new_analysis
 
 
 def print_amortization_table() -> None:

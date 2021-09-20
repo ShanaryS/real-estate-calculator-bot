@@ -5,12 +5,14 @@ the 'Property' object.
 """
 
 
-from calculations import update_values
+from calculations import update_values, is_new_analysis
+from colors_for_print import PrintColors
 import json
 import time
 
 
 TIME_BETWEEN_REQUESTS = 1
+new_analysis_list = []
 
 
 try:
@@ -27,8 +29,12 @@ try:
     for url in urls_json['Property']:
         print(url)
         update_values(url=url, save_to_file=True, update_interest_rate=update_interest_rate)
+        new_analysis_list.append(is_new_analysis())
         update_interest_rate = False
         time.sleep(TIME_BETWEEN_REQUESTS)
+
+    if not all(new_analysis_list):
+        print(f"\n{PrintColors.FAIL}No new analysis to add...{PrintColors.ENDC}")
 
 except FileNotFoundError:
     print("Error: No URLs added.")
