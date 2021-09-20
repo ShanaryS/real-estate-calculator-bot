@@ -252,7 +252,7 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
 
     if delete:
         try:
-            with open('../urls.json', 'r') as json_file:
+            with open('../urls.json') as json_file:
                 urls_json = json.load(json_file)
 
             # Check if new urls already in json. Also remove any duplicates in json if any got by.
@@ -273,7 +273,7 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
     # Order of next two blocks matter. This block passes a condition onto the next one.
     if not overwrite:
         try:
-            with open('../urls.json', 'r') as json_file:
+            with open('../urls.json') as json_file:
                 urls_json = json.load(json_file)
 
             # Check if new urls already in json. Also remove any duplicates in json if any got by.
@@ -323,7 +323,7 @@ def write_property_analysis(key, property_analysis) -> None:
     """Writes the data to analysis.json. Only handles a single property. write_property_analyses() for multiple."""
 
     try:
-        with open('../analysis.json', 'r') as json_file:
+        with open('../analysis.json') as json_file:
             analysis_json = json.load(json_file)
 
         if property_analysis[key]["Property Info"]["Price ($)"] \
@@ -343,7 +343,7 @@ def write_property_analyses(keys, property_analyses) -> None:
     new_analysis_list.clear()
 
     try:
-        with open('../analysis.json', 'r') as json_file:
+        with open('../analysis.json') as json_file:
             analysis_json = json.load(json_file)
 
         # Uses IO buffering to store data in dict, then only writes to file once when everything is done.

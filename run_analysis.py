@@ -17,10 +17,10 @@ property_analyses = []
 
 
 try:
-    with open('urls.json', 'r') as json_file:
+    with open('urls.json') as json_file:
         urls_json = json.load(json_file)
 
-    print(f"\n{PrintColors.OKCYAN}Getting URLs from saved searches...{PrintColors.ENDC}\n")
+    print(f"\n{PrintColors.OKGREEN}Getting URLs from saved searches...{PrintColors.ENDC}\n")
 
     '''
     for url in urls_json['Search']:
@@ -28,9 +28,11 @@ try:
         time.sleep(TIME_BETWEEN_REQUESTS)
     '''
 
+    print(f"{PrintColors.OKGREEN}Removing any analysis not tracked in urls.json...{PrintColors.ENDC}\n")
+
     # Update analysis.json if URLs were deleted
     try:
-        with open('analysis.json', 'r') as json_file:
+        with open('analysis.json') as json_file:
             analysis_json = json.load(json_file)
 
         temp = []
@@ -49,7 +51,7 @@ try:
         with open('analysis.json', 'w') as json_file:
             json.dump({}, json_file, indent=4)
 
-    print(f"{PrintColors.WARNING}Analyzing houses... "
+    print(f"{PrintColors.OKGREEN}Analyzing houses... "
           f"Expected duration: {int(len(urls_json['Property']) * (1.5 + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
 
     update_interest_rate = True
