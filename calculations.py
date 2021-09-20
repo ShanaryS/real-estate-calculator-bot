@@ -1,5 +1,6 @@
 """Hub for all the calculations needed"""
 
+
 import numpy_financial as npf
 import json
 import user
@@ -234,28 +235,37 @@ def returns_analysis() -> dict:
 
 
 def save_urls(urls, overwrite=False, search=False) -> None:
-    """Saves user inputted search URL"""
+    """Saves user inputted search URL. Does not preserve order."""
 
-    urls = list(urls)
     if search:
         key = 'Search'
     else:
         key = 'Property'
-    link = {key: urls}
 
     if not overwrite:
         try:
             with open('urls.json', 'r') as json_file:
                 urls_json = json.load(json_file)
 
-            if urls not in urls_json[key]:
-                urls_json[key].extend(urls)
-                with open('urls.json', 'w') as json_file:
-                    json.dump(urls_json, json_file, indent=4)
+            # Check if new urls already in json. Also remove any duplicates in json if any got by.
+            values = set(urls_json[key])
+            for url in urls.difference(values):
+                print(url)
+                values.add(url)
+
+            # Updates the file with new dict. Note, json doesn't accept set so must convert to list before.
+            urls_json[key] = list(values)
+            with open('urls.json', 'w') as json_file:
+                json.dump(urls_json, json_file, indent=4)
             return
         except FileNotFoundError:
             pass  # Handled below. Using pass to avoid duplicating code
+        except json.JSONDecodeError:
+            pass  # When json file is empty.
+        except TypeError:
+            pass  # When json file is not dict.
 
+    link = {key: list(urls)}
     with open('urls.json', 'w') as json_file:
         json.dump(link, json_file, indent=4)
 
