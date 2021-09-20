@@ -75,7 +75,7 @@ def analyze_properties() -> None:
 
     num_urls = len(urls_json['Property'])
     print(f"{PrintColors.WARNING}--- Analyzing properties... Expected duration: "
-          f"{PrintColors.OKGREEN}{int(num_urls * (1.75 + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
+          f"{PrintColors.OKCYAN}{int(num_urls * (1.75 + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
 
     for url in urls_json['Property']:
         print(url)
