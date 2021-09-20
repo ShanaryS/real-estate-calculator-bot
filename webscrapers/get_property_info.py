@@ -162,10 +162,9 @@ def get_year() -> int:
 def get_sqft() -> int:
     """Get the sqft of the listing"""
 
-    # This does not assume that values can be acres.
-    # sqft = int(zillow.find_all(class_="sc-pbvBv dZlnFS")[2].span.string.replace(',', ''))
-
-    sqft = float(zillow.find_all(class_="sc-pbvBv dZlnFS")[2].span.string.replace(',', ''))
+    # Assuming values can be acres so taking the float then converting it to sqft if necessary.
+    sqft = float(zillow.find_all(class_="ds-bed-bath-living-area-container")[-1]
+                 .contents[-1].span.string.replace(',', ''))
 
     # House size may be given in acres like lot size for really big houses. Just covering my bases here.
     if sqft > 10:
