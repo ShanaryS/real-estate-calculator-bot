@@ -13,7 +13,7 @@ s_p, search, property_, a_o_d = 's_p', 's', 'p', 'a_o_d'
 append, overwrite, delete, cancel, exe = 'a', 'o', 'd', 'c', 'e'
 
 # Used for delaying terminating program so user can read final text
-sleep_timer = 1
+SLEEP_TIMER = 1
 
 
 def quit_program() -> None:
@@ -24,7 +24,7 @@ def quit_program() -> None:
     urls.clear()
 
     print_captions(mode=cancel)
-    time.sleep(sleep_timer)
+    time.sleep(SLEEP_TIMER)
 
 
 def url_is_valid(url) -> bool:
@@ -52,7 +52,7 @@ def commit_updates_to_file() -> None:
         save_urls(urls, overwrite=to_overwrite, search=is_search, delete=to_delete)
 
     print_captions(execute=True)
-    time.sleep(sleep_timer)
+    time.sleep(SLEEP_TIMER)
 
 
 def print_captions(mode=None, e=False, valid=True, received=False, execute=False) -> None:

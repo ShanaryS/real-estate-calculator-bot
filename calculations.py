@@ -22,13 +22,13 @@ property_info: dict
 estimations: dict
 
 
-def update_values(save_to_file=True, update_interest_rate=True) -> None:
+def update_values(url=None, save_to_file=True, update_interest_rate=True) -> None:
     """Updates the values when a new property is being evaluated."""
 
     # These are what gets the html pages
     if update_interest_rate:
         user.set_interest_rate()
-    set_page_property_info()
+    set_page_property_info(url=url)
 
     # Gets values from html pages
     user.set_info()
