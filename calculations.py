@@ -22,7 +22,7 @@ property_info: dict
 estimations: dict
 
 # Used to check if any url or analysis was updated:
-new_analysis: bool
+new_analysis_list = [False]
 
 
 def update_values(url=None, save_to_file=True, update_interest_rate=True) -> None:
@@ -299,18 +299,28 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
 def save_analysis() -> None:
     """Saves analysis of property to analyzedProperties.json"""
 
-    global new_analysis
-    new_analysis = True
+    key, property_analysis = get_property_analysis()
+    write_property_analysis(key, property_analysis)
+
+
+def get_property_analysis() -> tuple:
+    """Gets the data that is eventually written to analysis.json"""
 
     key = get_property_key()
     property_analysis = {key: {
-                              "Property URL": get_url(property_url=True),
-                              "Property Taxes URL": get_url(taxes_url=True),
-                              "Property Info": property_info,
-                              "Analysis": print_analysis(dump=True),
-                              "Estimations": estimations
-                            }
-                         }
+        "Property URL": get_url(property_url=True),
+        "Property Taxes URL": get_url(taxes_url=True),
+        "Property Info": property_info,
+        "Analysis": print_analysis(dump=True),
+        "Estimations": estimations
+    }
+    }
+
+    return key, property_analysis
+
+
+def write_property_analysis(key, property_analysis) -> None:
+    """Writes the data to analysis.json. Only handles a single property. write_property_analyses() for multiple."""
 
     try:
         with open('analysis.json', 'r') as json_file:
@@ -321,16 +331,45 @@ def save_analysis() -> None:
             analysis_json.update(property_analysis)
             with open('analysis.json', 'w') as json_file:
                 json.dump(analysis_json, json_file, indent=4)
-        else:
-            new_analysis = False
     except (FileNotFoundError, json.JSONDecodeError, TypeError):  # Explained in save_urls() above
         with open('analysis.json', 'w') as json_file:
             json.dump(property_analysis, json_file, indent=4)
 
 
-def is_new_analysis() -> bool:
-    """Used to check if any url or analysis was updated"""
-    return new_analysis
+def write_property_analyses(keys, property_analyses) -> None:
+    """Writes multiple property analyses to analysis.json"""
+
+    global new_analysis_list
+    new_analysis_list.clear()
+
+    try:
+        with open('analysis.json', 'r') as json_file:
+            analysis_json = json.load(json_file)
+
+        # Uses IO buffering to store data in dict, then only writes to file once when everything is done.
+        for key, property_analysis in zip(keys, property_analyses):
+            if property_analysis[key]["Property Info"]["Price ($)"] \
+                    != analysis_json.get(key, dict()).get("Property Info", dict()).get("Price ($)", 0):
+                analysis_json.update(property_analysis)
+                new_analysis_list.append(True)
+
+        with open('analysis.json', 'w') as json_file:
+            json.dump(analysis_json, json_file, indent=4)
+
+    except (FileNotFoundError, json.JSONDecodeError, TypeError):  # Explained in save_urls() above
+
+        # Creating a dict to store the multiple analyses. Allows writing to file once.
+        analysis_json = {}
+        for _, property_analysis in zip(keys, property_analyses):
+            analysis_json.update(property_analysis)
+
+        with open('analysis.json', 'w') as json_file:
+            json.dump(analysis_json, json_file, indent=4)
+
+
+def is_new_analyses() -> list:
+    """Used to check if any analysis was updated"""
+    return new_analysis_list
 
 
 def print_amortization_table() -> None:

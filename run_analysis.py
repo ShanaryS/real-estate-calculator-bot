@@ -5,14 +5,15 @@ the 'Property' object.
 """
 
 
-from calculations import save_urls, update_values, is_new_analysis
+from calculations import save_urls, update_values, get_property_analysis, write_property_analyses, is_new_analyses
 from colors_for_print import PrintColors
 import json
 import time
 
 
 TIME_BETWEEN_REQUESTS = 1
-new_analysis_list = []
+keys = []
+property_analyses = []
 
 
 try:
@@ -28,8 +29,9 @@ try:
     '''
 
     # Update analysis.json if URLs were deleted
-    with open('analysis.json', 'r+') as json_file:
-        analysis_json = json.load(json_file)
+    try:
+        with open('analysis.json', 'r') as json_file:
+            analysis_json = json.load(json_file)
 
         temp = []
         for i in analysis_json:
@@ -38,7 +40,14 @@ try:
         for i in temp:
             analysis_json.pop(i)
 
-        json.dump(analysis_json, json_file, indent=4)
+        with open('analysis.json', 'w') as json_file:
+            json.dump(analysis_json, json_file, indent=4)
+
+    except FileNotFoundError:
+        pass
+    except (json.JSONDecodeError, TypeError):
+        with open('analysis.json', 'w') as json_file:
+            json.dump({}, json_file, indent=4)
 
     print(f"{PrintColors.WARNING}Analyzing houses... "
           f"Expected duration: {int(len(urls_json['Property']) * (1.5 + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
@@ -46,12 +55,16 @@ try:
     update_interest_rate = True
     for url in urls_json['Property']:
         print(url)
-        update_values(url=url, save_to_file=True, update_interest_rate=update_interest_rate)
-        new_analysis_list.append(is_new_analysis())
+        update_values(url=url, save_to_file=False, update_interest_rate=update_interest_rate)
+        key, property_analysis = get_property_analysis()
+        keys.append(key)
+        property_analyses.append(property_analysis)
         update_interest_rate = False
         time.sleep(TIME_BETWEEN_REQUESTS)
 
-    if not all(new_analysis_list):
+    write_property_analyses(keys, property_analyses)
+
+    if not all(is_new_analyses()):
         print(f"\n{PrintColors.FAIL}No new analysis to add...{PrintColors.ENDC}")
 
 except FileNotFoundError:
