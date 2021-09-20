@@ -204,7 +204,7 @@ def get_lot_size() -> int:
 def get_parking() -> str:
     """Get parking of the listing"""
 
-    parking = list(zillow.find(class_="ds-home-fact-list-item").next_siblings)[-2].contents[-1].string
+    parking = list(zillow.find(class_="ds-home-fact-list-item").next_siblings)[3].contents[-1].string
 
     return parking
 
@@ -213,7 +213,7 @@ def get_description() -> tuple:
     """Get the description of listing"""
 
     try:
-        description = zillow.find(class_="Text-c11n-8-48-0__sc-aiai24-0 sc-pQQXS gDpqEw").string
+        description = zillow.find(class_="ds-overview-section").string
         found_description = True
     except AttributeError:
         description = ""
