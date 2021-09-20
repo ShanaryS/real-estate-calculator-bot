@@ -204,9 +204,6 @@ def get_lot_size() -> int:
 
     return lot_size
 
-set_page_property_info('https://www.zillow.com/homedetails/36-E-Liberty-St-Chester-CT-06412/57839881_zpid/')
-print(get_lot_size())
-
 
 def get_parking() -> str:
     """Get parking of the listing"""
