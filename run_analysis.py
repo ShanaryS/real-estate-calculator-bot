@@ -42,8 +42,9 @@ try:
         for i in temp:
             analysis_json.pop(i)
 
-        with open('analysis.json', 'w') as json_file:
-            json.dump(analysis_json, json_file, indent=4)
+        if temp:
+            with open('analysis.json', 'w') as json_file:
+                json.dump(analysis_json, json_file, indent=4)
 
     except FileNotFoundError:
         pass

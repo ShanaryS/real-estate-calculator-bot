@@ -53,6 +53,10 @@ def get_url() -> str:
     return url_search
 
 
+def get_num_pages() -> int:
+    """Returns the number of pages in the search"""
+
+
 def get_property_url_from_search() -> str:
     """Gets url for property from search url"""
 
