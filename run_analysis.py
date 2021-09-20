@@ -51,8 +51,9 @@ try:
         with open('analysis.json', 'w') as json_file:
             json.dump({}, json_file, indent=4)
 
-    print(f"{PrintColors.OKGREEN}Analyzing houses... "
-          f"Expected duration: {int(len(urls_json['Property']) * (1.5 + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
+    num_urls = len(urls_json['Property'])
+    print(f"{PrintColors.OKGREEN}Analyzing houses... {PrintColors.WARNING}Expected duration: "
+          f"{PrintColors.OKCYAN}{int(num_urls * (1.75 + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
 
     update_interest_rate = True
     for url in urls_json['Property']:
