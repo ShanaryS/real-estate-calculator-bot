@@ -18,6 +18,7 @@ try:
 
     update_interest_rate = True
     for url in urls_json['Property']:
+        print(url)
         update_values(url=url, save_to_file=True, update_interest_rate=update_interest_rate)
         update_interest_rate = False
         time.sleep(TIME_BETWEEN_REQUESTS)
