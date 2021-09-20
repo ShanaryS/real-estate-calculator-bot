@@ -126,12 +126,54 @@ def get_address() -> str:
 
 
 def get_price() -> int:
-    """Get the price of the house from zillow."""
+    """Get the price of the listing"""
 
     price = zillow.find(class_="ds-summary-row").span.span.span
     price = int(str(price.string).lstrip('$').replace(',', ''))
 
     return price
+
+
+def get_year() -> int:
+    """Get the year of the listing"""
+
+    house_year = zillow.find(class_="ds-home-fact-list-item").next_sibling.contents[-1].string
+
+    return house_year
+
+
+def get_sqft() -> int:
+    """Get the sqft of the listing"""
+
+    sqft = int(zillow.find_all(class_="sc-pbvBv dZlnFS")[2].span.string.replace(',', ''))
+
+    return sqft
+
+
+def get_price_per_sqft() -> int:
+    """Get the price per sqft of the listing"""
+
+    price_sqft = int(list(zillow.find(class_="ds-home-fact-list-item")
+                          .next_siblings)[-1].contents[-1].string.lstrip('$'))
+
+    return price_sqft
+
+
+def get_lot_size() -> int:
+    """Get the lot size of the listing"""
+
+    lot_size = int(str(zillow.find_all(class_="sc-pbvYO hMYTdE")[1].contents[2].span)
+                   .split('>')[-2].split('<')[0].strip().replace(',', ''))
+
+    return lot_size
+
+
+def get_parking() -> str:
+    """Get parking of the listing"""
+
+    parking = list(zillow.find(class_="ds-home-fact-list-item").next_siblings)[-2].contents[-1].string
+
+    return parking
 
 
 def get_description() -> tuple:
@@ -169,6 +211,8 @@ def get_property_taxes() -> tuple:
 def get_num_units() -> tuple:
     """Get number of units from zillow. Fall backs to full bathrooms as units."""
 
+    # alternative in case other breaks
+    # house_type = zillow.find(class_="Text-c11n-8-48-0__sc-aiai24-0 sc-pJipy fgqdLj").string
     house_type = zillow.find(class_="ds-home-fact-list-item").contents[-1].string
     found_num_units = True
 
