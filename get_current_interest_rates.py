@@ -10,7 +10,7 @@ interest_rates = {}
 
 def set_page_interest_rates() -> None:
     """Get page and stores interest rates"""
-    print('Getting interest rates')
+
     url = 'https://www.nerdwallet.com/mortgages/mortgage-rates'
     page = requests.get(url).text
     doc = BeautifulSoup(page, 'html.parser')
