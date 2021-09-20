@@ -48,6 +48,14 @@ def set_page_search(url) -> None:
     zillow = BeautifulSoup(zillow_page, 'html.parser')
 
 
-def get_url():
-    """Returns URL for either property or property taxes on countyoffice.org/tax-records/"""
+def get_url() -> str:
+    """Returns URL for property"""
     return url_search
+
+
+def get_property_url() -> str:
+    """Gets url for property from search url"""
+
+
+def get_price() -> int:
+    """Gets price for property from search url"""

@@ -62,7 +62,7 @@ def _set_url_property_taxes(house_number, street_name, city, state) -> None:
     county_office = BeautifulSoup(county_office_page, 'html.parser')
 
 
-def get_url(property_url=False, taxes_url=False):
+def get_url(property_url=False, taxes_url=False) -> str:
     """Returns URL for either property or property taxes on countyoffice.org/tax-records/"""
 
     if property_url:

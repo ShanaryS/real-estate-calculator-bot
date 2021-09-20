@@ -47,9 +47,9 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> Non
         "Price ($)": user.price,
         "Year Built": user.year,
         "Description": user.description,
-        "Sqft (ft)": user.sqft,
-        "Price Per Sqft ($)": user.price_per_sqft,
-        "Lot size (ft)": user.lot_size,
+        "House Size (sqft)": user.sqft,
+        "Price/sqft ($)": user.price_per_sqft,
+        "Lot Size (sqft)": user.lot_size,
         "Parking": user.parking,
         "Down Payment (Fraction)": float(f"{user.down_payment_percent:.2f}"),
         "Fix Up Cost ($)": user.fix_up_cost,
@@ -60,7 +60,7 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> Non
         "Property Taxes (Monthly)": float(f"{property_taxes_monthly:.2f}"),
         "Insurance (Monthly)": float(f"{-insurance_cost / 12:.2f}"),
         "Units": user.num_units,
-        "Rent per unit ($)": user.rent_per_unit,
+        "Rent Per Unit ($)": user.rent_per_unit,
         "Vacancy (Fraction)": float(f"{user.vacancy_percent:.2f}")
     }
     estimations = {item: user.found[item][1] for item, value in user.found.items() if value[0] is False
@@ -385,9 +385,9 @@ def print_property_info() -> None:
     print(f"Address: {user.address}")
     print(f"Price: ${user.price:,}")
     print(f"Year Built: {user.year}")
-    print(f"Sqft: {user.sqft}ft")
-    print(f"Price Per Sqft: ${user.price_per_sqft}")
-    print(f"Lot Size: {user.lot_size}")
+    print(f"House Size: {user.sqft} sqft")
+    print(f"Price/sqft: ${user.price_per_sqft}")
+    print(f"Lot Size: {user.lot_size} sqft")
     print(f"Down Payment: {user.down_payment_percent * 100:.0f}%")
     print(f"Fix Up Cost: ${user.fix_up_cost:,}")
     print(f"Loan: ${int(loan):,}")
@@ -397,7 +397,7 @@ def print_property_info() -> None:
     print(f"Property Taxes (Monthly): ${property_taxes_monthly:,.2f}")
     print(f"Insurance (Monthly): ${-insurance_cost / 12:,.2f}")
     print(f"Units: {user.num_units}")
-    print(f"Rent per unit: ${user.rent_per_unit:,}")
+    print(f"Rent Per Unit: ${user.rent_per_unit:,}")
     print(f"Vacancy: {user.vacancy_percent * 100:.0f}%")
     print()
     print("--------------------------------------------------------------------------------")
