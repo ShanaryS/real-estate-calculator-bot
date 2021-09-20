@@ -186,15 +186,15 @@ def get_price_per_sqft() -> int:
 def get_lot_size() -> int:
     """Get the lot size of the listing"""
 
-    try:
-        lot_size = float(str(zillow.find_all(class_="sc-pbvYO hMYTdE")[1].contents[2].span)
-                         .split('>')[-2].split('s')[0].replace('Acre', '').strip().replace(',', ''))
-    except IndexError:
+    lot_size = 0
+    terms_to_try = ("sc-pbvYO hMYTdE", "sc-qQKeD bSwWwA")
+
+    for i in terms_to_try:
         try:
-            lot_size = float(str(zillow.find_all(class_="sc-qQKeD bSwWwA")[1].contents[2].span)
+            lot_size = float(str(zillow.find_all(class_=i)[1].contents[2].span)
                              .split('>')[-2].split('s')[0].replace('Acre', '').strip().replace(',', ''))
         except IndexError:
-            return 0
+            pass
 
     # Lot size can be sqft or acres so this handles it. Always returns sqft.
     if lot_size > 100:
