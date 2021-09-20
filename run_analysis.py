@@ -27,6 +27,7 @@ except FileNotFoundError:
     print("Error: No URLs added.")
 
 '''
+If not printing url:
 To troubleshoot problematic links, use urls.json. You CANNOT just look at the last analysis saved as the saved order
 is random. Something like searching the amount of times that address shows up in analysis.json should give the
 index of the problematic url in urls.json['Property']. The houses are done in order of that file. Note though, whenever 
