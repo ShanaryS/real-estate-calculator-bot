@@ -9,6 +9,7 @@ import json
 import time
 from data.calculations import update_values, get_property_analysis, write_property_analyses, is_new_analyses
 from data.colors_for_print import PrintColors
+from run_urls_update import SLEEP_TIMER
 
 
 TIME_BETWEEN_REQUESTS = 1
@@ -69,7 +70,10 @@ try:
     write_property_analyses(keys, property_analyses)
 
     if not all(is_new_analyses()):
-        print(f"\n{PrintColors.FAIL}No new analysis to add or update...{PrintColors.ENDC}")
+        print(f"\n{PrintColors.FAIL}No new analysis to add/update...{PrintColors.ENDC}")
+    else:
+        print(f"\n{PrintColors.OKGREEN}Analyses were successfully added/updated...{PrintColors.ENDC}")
+    time.sleep(SLEEP_TIMER)  # Delays closing the program so user can read final text
 
 except FileNotFoundError:
     print("Error: No URLs added.")

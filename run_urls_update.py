@@ -211,4 +211,5 @@ def _get_urls_from_input(mode) -> None:
         return
 
 
-add_link(s_p)
+if __name__ == '__main__':
+    add_link(s_p)
