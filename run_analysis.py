@@ -5,10 +5,10 @@ the 'Property' object.
 """
 
 
-from data.calculations import update_values, get_property_analysis, write_property_analyses, is_new_analyses
-from data.colors_for_print import PrintColors
 import json
 import time
+from data.calculations import update_values, get_property_analysis, write_property_analyses, is_new_analyses
+from data.colors_for_print import PrintColors
 
 
 TIME_BETWEEN_REQUESTS = 1

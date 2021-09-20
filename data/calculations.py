@@ -3,9 +3,9 @@
 
 import numpy_financial as npf
 import json
-import user
+from data import user
 from webscrapers.get_property_info import set_page_property_info, get_url
-from colors_for_print import PrintColors
+from data.colors_for_print import PrintColors
 
 
 # Basic calculations necessary module wide. Defining here for visibility.
@@ -222,7 +222,7 @@ def returns_analysis() -> dict:
     caprate_percent = round(net_operating_income / user.price * 100, 2)
     cashflow_per_month = cashflow / 12
     max_offer = ((effective_gross_income * 0.75 + -user.property_taxes - 600) * (0.37 / 0.12)) \
-                / (user.closing_percent + user.down_payment_percent) - user.fix_up_cost
+        / (user.closing_percent + user.down_payment_percent) - user.fix_up_cost
     emergency_fund = -yearly_cost / 2 if user.is_first_rental else -yearly_cost / 4
 
     return_on_investment_string = f"{return_on_investment_percent}%"
