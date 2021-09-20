@@ -18,7 +18,7 @@ def _set_url_search(url) -> str:
     else:
         _url = str(input("Enter full URL from zillow search: "))
 
-    while _url[:23] != 'https://www.zillow.com/' or len(_url) < 31:
+    while _url[:23] != 'https://www.zillow.com/' or len(_url) < 29:
         _url = str(input("Enter full URL from zillow search: "))
     print()
 
