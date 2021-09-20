@@ -163,7 +163,7 @@ def get_lot_size() -> int:
     """Get the lot size of the listing"""
 
     lot_size = int(str(zillow.find_all(class_="sc-pbvYO hMYTdE")[1].contents[2].span)
-                   .split('>')[-2].split('<')[0].strip().replace(',', ''))
+                   .split('>')[-2].split('s')[0].strip().replace(',', ''))
 
     return lot_size
 
