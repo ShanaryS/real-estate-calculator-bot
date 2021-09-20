@@ -96,7 +96,8 @@ def add_link() -> None:
 
             print_captions(a_o_d=True)
             append_overwrite_delete = input()
-            while append_overwrite_delete != 'a' and append_overwrite_delete != 'o' and append_overwrite_delete != 'c':
+            while append_overwrite_delete != 'a' and append_overwrite_delete != 'o'\
+                    and append_overwrite_delete != 'd' and append_overwrite_delete != 'c':
                 print_captions(a_o_d=True)
                 append_overwrite_delete = input()
 
