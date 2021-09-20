@@ -352,11 +352,10 @@ def write_property_analyses(keys, property_analyses) -> None:
                     != analysis_json.get(key, dict()).get("Property Info", dict()).get("Price ($)", 0):
                 analysis_json.update(property_analysis)
                 new_analysis_list.append(True)
-            else:
-                new_analysis_list.append(False)
 
-        with open('../analysis.json', 'w') as json_file:
-            json.dump(analysis_json, json_file, indent=4)
+        if any(is_new_analyses()):
+            with open('../analysis.json', 'w') as json_file:
+                json.dump(analysis_json, json_file, indent=4)
 
     except (FileNotFoundError, json.JSONDecodeError, TypeError):  # Explained in save_urls() above
 

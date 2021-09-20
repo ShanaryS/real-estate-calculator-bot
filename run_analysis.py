@@ -69,10 +69,10 @@ try:
 
     write_property_analyses(keys, property_analyses)
 
-    if not all(is_new_analyses()):
-        print(f"\n{PrintColors.FAIL}No new analysis to add/update...{PrintColors.ENDC}")
-    else:
+    if any(is_new_analyses()):
         print(f"\n{PrintColors.OKGREEN}Analyses were successfully added/updated...{PrintColors.ENDC}")
+    else:
+        print(f"\n{PrintColors.FAIL}No new analysis to add/update...{PrintColors.ENDC}")
     time.sleep(SLEEP_TIMER)  # Delays closing the program so user can read final text
 
 except FileNotFoundError:
