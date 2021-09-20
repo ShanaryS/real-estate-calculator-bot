@@ -53,9 +53,9 @@ def get_url() -> str:
     return url_search
 
 
-def get_property_url() -> str:
+def get_property_url_from_search() -> str:
     """Gets url for property from search url"""
 
 
-def get_price() -> int:
+def get_price_from_search() -> int:
     """Gets price for property from search url"""
