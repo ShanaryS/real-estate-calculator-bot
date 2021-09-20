@@ -248,7 +248,7 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
                 urls_json = json.load(json_file)
 
             # Check if new urls already in json. Also remove any duplicates in json if any got by.
-            values = set(urls_json[key]).difference(urls)
+            values = set(urls_json.setdefault(key, [])).difference(urls)
 
             # Updates the file with new dict. Note, json doesn't accept set so must convert to list before.
             urls_json[key] = list(values)
@@ -269,7 +269,7 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
                 urls_json = json.load(json_file)
 
             # Check if new urls already in json. Also remove any duplicates in json if any got by.
-            values = set(urls_json[key]).union(urls)
+            values = set(urls_json.setdefault(key, [])).union(urls)
 
             # Updates the file with new dict. Note, json doesn't accept set so must convert to list before.
             urls_json[key] = list(values)
