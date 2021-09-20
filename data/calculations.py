@@ -252,7 +252,7 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
 
     if delete:
         try:
-            with open('../urls.json') as json_file:
+            with open('urls.json') as json_file:
                 urls_json = json.load(json_file)
 
             # Check if new urls already in json. Also remove any duplicates in json if any got by.
@@ -260,7 +260,7 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
 
             # Updates the file with new dict. Note, json doesn't accept set so must convert to list before.
             urls_json[key] = list(values)
-            with open('../urls.json', 'w') as json_file:
+            with open('urls.json', 'w') as json_file:
                 json.dump(urls_json, json_file, indent=4)
             return
         except FileNotFoundError:
@@ -273,7 +273,7 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
     # Order of next two blocks matter. This block passes a condition onto the next one.
     if not overwrite:
         try:
-            with open('../urls.json') as json_file:
+            with open('urls.json') as json_file:
                 urls_json = json.load(json_file)
 
             # Check if new urls already in json. Also remove any duplicates in json if any got by.
@@ -281,7 +281,7 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
 
             # Updates the file with new dict. Note, json doesn't accept set so must convert to list before.
             urls_json[key] = list(values)
-            with open('../urls.json', 'w') as json_file:
+            with open('urls.json', 'w') as json_file:
                 json.dump(urls_json, json_file, indent=4)
             return
         except FileNotFoundError:
@@ -292,7 +292,7 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
             pass  # When json file is not dict.
 
     link = {key: list(urls)}
-    with open('../urls.json', 'w') as json_file:
+    with open('urls.json', 'w') as json_file:
         json.dump(link, json_file, indent=4)
 
 
@@ -323,16 +323,16 @@ def write_property_analysis(key, property_analysis) -> None:
     """Writes the data to analysis.json. Only handles a single property. write_property_analyses() for multiple."""
 
     try:
-        with open('../analysis.json') as json_file:
+        with open('analysis.json') as json_file:
             analysis_json = json.load(json_file)
 
         if property_analysis[key]["Property Info"]["Price ($)"] \
                 != analysis_json.get(key, dict()).get("Property Info", dict()).get("Price ($)", 0):
             analysis_json.update(property_analysis)
-            with open('../analysis.json', 'w') as json_file:
+            with open('analysis.json', 'w') as json_file:
                 json.dump(analysis_json, json_file, indent=4)
     except (FileNotFoundError, json.JSONDecodeError, TypeError):  # Explained in save_urls() above
-        with open('../analysis.json', 'w') as json_file:
+        with open('analysis.json', 'w') as json_file:
             json.dump(property_analysis, json_file, indent=4)
 
 
@@ -343,7 +343,7 @@ def write_property_analyses(keys, property_analyses) -> None:
     new_analysis_list.clear()
 
     try:
-        with open('../analysis.json') as json_file:
+        with open('analysis.json') as json_file:
             analysis_json = json.load(json_file)
 
         # Uses IO buffering to store data in dict, then only writes to file once when everything is done.
@@ -354,7 +354,7 @@ def write_property_analyses(keys, property_analyses) -> None:
                 new_analysis_list.append(True)
 
         if any(is_new_analyses()):
-            with open('../analysis.json', 'w') as json_file:
+            with open('analysis.json', 'w') as json_file:
                 json.dump(analysis_json, json_file, indent=4)
 
     except (FileNotFoundError, json.JSONDecodeError, TypeError):  # Explained in save_urls() above
@@ -364,7 +364,7 @@ def write_property_analyses(keys, property_analyses) -> None:
         for _, property_analysis in zip(keys, property_analyses):
             analysis_json.update(property_analysis)
 
-        with open('../analysis.json', 'w') as json_file:
+        with open('analysis.json', 'w') as json_file:
             json.dump(analysis_json, json_file, indent=4)
 
 
