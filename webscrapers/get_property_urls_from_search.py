@@ -7,6 +7,7 @@ import time
 
 
 PROPERTIES_PER_PAGE = 40  # Number of properties zillow displays per search page
+DRIVER_DELAY = 0.05  # Delay between actions for selenium driver
 url_search: str
 zillow: BeautifulSoup
 page: requests.Session()
@@ -51,7 +52,7 @@ def set_page_search(url) -> None:
     zillow = BeautifulSoup(zillow_page, 'html.parser')
 
 
-def browser() -> None:
+def load_js_elements_on_page() -> None:
     """Runs chrome browser with selenium"""
 
     global zillow
@@ -59,10 +60,25 @@ def browser() -> None:
     chrome = webdriver.Chrome()
     chrome.get(url_search)
 
+    # Use this url to test captcha
+    # chrome.get('https://www.zillow.com/captchaPerimeterX/?url=%2fhomes%2fCT_rb%2f&uuid=dd265dba-1ac2-11ec-a883-615050666d69&vid=')
+
+    if 'captcha' in chrome.current_url.lower():
+        time.sleep(1)
+        target = chrome.find_element_by_id('px-captcha')
+        action = webdriver.ActionChains(chrome)
+        action.click_and_hold(on_element=target)
+        action.perform()
+        time.sleep(5)
+        action.release(on_element=target)
+        action.perform()
+        time.sleep(10)
+
     from selenium.webdriver.common.keys import Keys
     target = chrome.find_element_by_tag_name("body")
     for i in range(10):
         target.send_keys(Keys.PAGE_DOWN)
+        time.sleep(DRIVER_DELAY)
 
     zillow_page = chrome.page_source
     zillow = BeautifulSoup(zillow_page, 'html.parser')
@@ -113,12 +129,14 @@ def get_num_pages_and_lisings() -> tuple:
 def get_all_urls_and_prices() -> dict:
     """Gets urls and prices for all properties on a zillow search page"""
 
-    browser()
+    load_js_elements_on_page()
 
     base = zillow.find('div', id="grid-search-results").find('ul')
 
     properties_url_price = {}
-    for li in base.find_all('li'):
+    for li in base.contents:
+        if li.find('div', id="nav-ad-container"):
+            continue
         properties_url_price[_get_property_url_from_search(li)] = _get_price_from_search(li)
 
     return properties_url_price
@@ -138,3 +156,6 @@ def _get_price_from_search(li) -> int:
     price = int(li.find('div', class_="list-card-price").string.lstrip('$').replace(',', ''))
 
     return price
+
+set_page_search('https://www.zillow.com/homes/CT_rb/')
+print(get_all_urls_and_prices())
