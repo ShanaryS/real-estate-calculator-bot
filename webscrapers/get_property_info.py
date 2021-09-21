@@ -234,7 +234,7 @@ def get_property_taxes() -> tuple:
     property_taxes = 0
 
     if temp > -1:
-        property_taxes = int(page[temp+4:temp+9].replace(',', ''))
+        property_taxes = int(page[temp+4:temp+11].split('<')[0].replace(',', ''))
     else:
         try:
             property_taxes = str(county_office.find_all('tbody')[2]).split('<td>$')[1].split('<')[0].replace(',', '')
@@ -259,6 +259,9 @@ def get_property_taxes() -> tuple:
                     property_taxes = 0
 
     return property_taxes, found_property_taxes
+
+set_page_property_info('https://www.zillow.com/homedetails/569-Round-Hill-Rd-Greenwich-CT-06831/57312357_zpid/')
+print(get_property_taxes())
 
 
 def get_num_units() -> tuple:
