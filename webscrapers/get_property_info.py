@@ -260,9 +260,6 @@ def get_property_taxes() -> tuple:
 
     return property_taxes, found_property_taxes
 
-set_page_property_info('https://www.zillow.com/homedetails/569-Round-Hill-Rd-Greenwich-CT-06831/57312357_zpid/')
-print(get_property_taxes())
-
 
 def get_num_units() -> tuple:
     """Get number of units from zillow. Fall backs to full bathrooms as units."""
