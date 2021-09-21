@@ -34,12 +34,16 @@ def quit_program() -> None:
 def url_is_valid(url) -> bool:
     """Checks if URL is valid"""
 
+    print_captions(verifying_url=True)
+
     # If not zillow URL, return false
     if url[:23] != 'https://www.zillow.com/' or len(url) <= 29:
         return False
 
-    if not is_url_valid(url):
-        return False
+    # Handles special case of search url
+    if url[:28] == 'https://www.zillow.com/homes':
+        if not is_search:
+            return False
 
     # Search page filters are only stored in URLs when they are 100+ characters.
     # This prevents URLs with less from being added.
@@ -48,6 +52,10 @@ def url_is_valid(url) -> bool:
     if len(url) < 100:
         if is_search:
             return False
+
+    # Sends a get request to see if page returns and error
+    if not is_url_valid(url):
+        return False
 
     # If a property URL, return depending on mode user picked.
     if url[:27] == 'https://www.zillow.com/home' and len(url) >= 35:
@@ -70,7 +78,8 @@ def commit_updates_to_file() -> None:
     time.sleep(SLEEP_TIMER)
 
 
-def print_captions(mode=None, e=False, valid=True, received=False, execute=False, search_limitations=False) -> None:
+def print_captions(mode=None, e=False, verifying_url=False, valid=True,
+                   received=False, execute=False, search_limitations=False) -> None:
     """Prints text that tells the user what the programing is doing"""
 
     BAD, OK, GOOD, GREAT = PrintColors.FAIL, PrintColors.WARNING, PrintColors.OKCYAN, PrintColors.OKGREEN
@@ -101,6 +110,8 @@ def print_captions(mode=None, e=False, valid=True, received=False, execute=False
     elif mode == 'c':
         print(f"\n{BAD}!!! No changes were made! Ending program... !!!{END}")
 
+    elif verifying_url:
+        print(f"\n{OK}... Verifying URL ...{END}")
     elif not valid:
         print(f"\n{BAD}!!! Invalid URL... Try again! (Correct URL for Search/Property?) !!!{END}")
     elif received:
