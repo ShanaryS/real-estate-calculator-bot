@@ -123,9 +123,10 @@ def print_captions(mode=None, e=False, verifying_url=False, valid=True,
               f"Zillow only displays 400 properties per search. If listings is above 400, certain properties\n"
               f"CANNOT be accessed. Instead, filter number of listings heavily to make sure it does not\n"
               f"exceed 400. Split the search criteria into multiple separate searches.\n\n"
-              f"{OK}For example: Instead of a single URL with a price range of $100k-$1M,\n"
-              f"use two URLs with price ranges of $100k-$500k and $500k-$1M.\n"
-              f"Assuming each of those searches return less than 400 listings.\n"
+              
+              f"{OK}For example: Instead of a single URL with a price range of $100k-$1M, use two URLs with price\n"
+              f"ranges of $100k-$500k and $500k-$1M. Assuming each of those searches return less than 400 listings.\n"
+              f"P.S 'Agent' listing URLs doesn't include 'Other' properties. Add both URLs to include all properties.\n"
               f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!{END}\n")
 
 
