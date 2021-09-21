@@ -37,6 +37,11 @@ def url_is_valid(url) -> bool:
     if url[:23] != 'https://www.zillow.com/' or len(url) <= 29:
         return False
 
+    if url[:28] == 'https://www.zillow.com/homes':
+        if is_search:
+            return True
+        return False
+
     # If a property URL, return depending on mode user picked.
     if url[:27] == 'https://www.zillow.com/home' and len(url) >= 35:
         if is_search:
