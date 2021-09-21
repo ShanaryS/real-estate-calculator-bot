@@ -195,7 +195,7 @@ test3 = 'https://www.zillow.com/ct/13_p/?searchQueryState=%7B%22pagination%22%3A
 # print(_get_current_page())
 # print(_set_url_to_first_page())
 # print(_get_num_pages_and_listings())
-# print(_get_url_for_next_page(url))
+# print(_get_url_for_next_page())
 
 
 # print(get_all_urls_and_prices('https://www.zillow.com/homes/CT_rb/'))
