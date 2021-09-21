@@ -40,8 +40,8 @@ def set_page_search(url) -> None:
                       ' (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
     }
     with requests.Session() as s:
-        url_property = _set_url_search(url)
-        zillow_page = s.get(url_property, headers=req_headers).text
+        url_search = _set_url_search(url)
+        zillow_page = s.get(url_search, headers=req_headers).text
         page = zillow_page  # Hoping this reduces unnecessary calls to zillow for certain functions
 
     # Creates beautiful soup object
@@ -79,10 +79,26 @@ def get_url() -> str:
 def get_num_pages() -> int:
     """Returns the number of pages in the search"""
 
+    PROPERTIES_PER_PAGE = 40  # Number of properties zillow displays per search page
 
-def get_property_url_from_search() -> str:
-    """Gets url for property from search url"""
+    # Checks if looking at agent listings or other listings. Other listings will always have 'cat2' in url.
+    if 'cat2' not in url_search:
+        num_pages = int(zillow.find_all(class_="total-text")[0].string.replace(',', ''))
+        num_pages = -(-num_pages // PROPERTIES_PER_PAGE)  # Ceiling division
+    else:
+        num_pages = int(zillow.find_all(class_="total-text")[1].string.replace(',', ''))
+        num_pages = -(-num_pages // PROPERTIES_PER_PAGE)  # Ceiling division
+
+    return num_pages
 
 
-def get_price_from_search() -> int:
-    """Gets price for property from search url"""
+# def get_property_url_from_search() -> str:
+#     """Gets url for property from search url"""
+#
+#     return property_url
+#
+#
+# def get_price_from_search() -> int:
+#     """Gets price for property from search url"""
+#
+#     return price
