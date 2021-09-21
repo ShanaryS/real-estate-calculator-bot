@@ -4,13 +4,14 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import requests
+import time
 
 
-driver = webdriver.PhantomJS()
 PROPERTIES_PER_PAGE = 40  # Number of properties zillow displays per search page
 url_search: str
 zillow: BeautifulSoup
 page: requests.Session()
+driver: webdriver.Chrome
 
 
 def _set_url_search(url) -> str:
@@ -49,6 +50,16 @@ def set_page_search(url) -> None:
 
     # Creates beautiful soup object
     zillow = BeautifulSoup(zillow_page, 'html.parser')
+
+
+def browser() -> None:
+    """Runs chrome browser with selenium"""
+
+    chrome = webdriver.Chrome(options=webdriver.ChromeOptions().add_argument('--headless'))
+    chrome.get('https://www.amazon.com/')
+    time.sleep(5)
+
+browser()
 
 
 def is_url_valid(url) -> bool:
@@ -93,7 +104,21 @@ def get_num_pages_and_lisings() -> tuple:
     return num_pages, listings
 
 
-def get_property_url_from_search(li) -> str:
+def get_all_urls_and_prices() -> dict:
+    """Gets urls and prices for all properties on a zillow search page"""
+
+    base = zillow.find('div', id="grid-search-results").find('ul')
+
+    properties_url_price = {}
+    for li in base.find_all('li'):
+        properties_url_price[_get_property_url_from_search(li)] = _get_price_from_search(li)
+
+    return properties_url_price
+
+# set_page_search('https://www.zillow.com/homes/CT_rb/')
+# print(get_all_urls_and_prices())
+
+def _get_property_url_from_search(li) -> str:
     """Gets url for property from search url"""
 
     property_url = li.find('a', href=True)['href']
@@ -101,20 +126,9 @@ def get_property_url_from_search(li) -> str:
     return property_url
 
 
-def get_price_from_search(li) -> int:
+def _get_price_from_search(li) -> int:
     """Gets price for property from search url"""
 
     price = int(li.find('div', class_="list-card-price").string.lstrip('$').replace(',', ''))
 
     return price
-
-
-def get_all_urls_and_prices() -> dict:
-
-    base = zillow.find('div', id="grid-search-results").find('ul')
-
-    properties_url_price = {}
-    for li in base.find_all('li'):
-        properties_url_price[get_property_url_from_search(li)] = get_price_from_search(li)
-
-    return properties_url_price
