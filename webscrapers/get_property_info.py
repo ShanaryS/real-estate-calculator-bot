@@ -48,8 +48,8 @@ def _set_url_property(url=None) -> str:
     else:
         _url = str(input("Enter full URL for zillow property: "))
 
-    while _url[:27] != 'https://www.zillow.com/home' or len(_url) < 35:
-        _url = str(input("Enter full URL for zillow property: "))
+        while _url[:27] != 'https://www.zillow.com/home' or len(_url) < 35:
+            _url = str(input("Enter full URL for zillow property: "))
 
     return _url
 
