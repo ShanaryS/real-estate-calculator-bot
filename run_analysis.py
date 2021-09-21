@@ -1,4 +1,4 @@
-"""Main script to run. Saves analysis to file based on urls.json. Add to urls.json by running run_urls_update.py.
+"""Main script to run. Saves analysis to file based on urls.json. Add to urls.json by running run_property_tracker.py.
 For search urls, the URLs for the houses are found at run time and then added urls.json inside 'Property' object. This
 is the same place where adding a single property would also be stored. Then program gets the info for all houses in
 the 'Property' object.
@@ -12,7 +12,7 @@ from data.calculations import update_values, get_property_analysis, write_proper
 from data.user import set_interest_rate
 from data.colors_for_print import PrintColors
 from webscrapers.get_property_info import TIME_BETWEEN_REQUESTS
-from run_urls_update import SLEEP_TIMER
+from run_property_tracker import SLEEP_TIMER
 
 
 keys = []
@@ -113,5 +113,5 @@ if __name__ == '__main__':
 
     except FileNotFoundError:
         print(f"\n{PrintColors.FAIL}!!! Error: No URLs exist... !!!{PrintColors.ENDC}")
-        print(f"{PrintColors.OKGREEN}Run run_urls_update.py first.{PrintColors.ENDC}")
+        print(f"{PrintColors.OKGREEN}Run run_property_tracker.py first.{PrintColors.ENDC}")
         time.sleep(3)
