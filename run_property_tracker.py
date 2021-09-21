@@ -5,6 +5,7 @@ import time
 from data.calculations import save_urls
 from data.user import get_url_from_input
 from data.colors_for_print import PrintColors
+from webscrapers.get_property_urls_from_search import is_url_valid
 
 
 # Stores the urls from inputs. Gets written to file after add_link() is completed. If was cancelled, it gets cleared.
@@ -37,6 +38,15 @@ def url_is_valid(url) -> bool:
     if url[:23] != 'https://www.zillow.com/' or len(url) <= 29:
         return False
 
+    if not is_url_valid(url):
+        return False
+
+    # Handles special case of search url
+    if url[:28] == 'https://www.zillow.com/homes':
+        if is_search:
+            return True
+        return False
+
     # Search page information is only stored in URLs when they are 100+ characters.
     # This prevents URLs with less from being added.
     # Any search URL that has less than 400 listings (a hard requirement),
@@ -44,12 +54,6 @@ def url_is_valid(url) -> bool:
     if len(url) < 100:
         if is_search:
             return False
-
-    # Handles special case of search url
-    if url[:28] == 'https://www.zillow.com/homes':
-        if is_search:
-            return True
-        return False
 
     # If a property URL, return depending on mode user picked.
     if url[:27] == 'https://www.zillow.com/home' and len(url) >= 35:
