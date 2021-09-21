@@ -15,20 +15,6 @@ county_office: BeautifulSoup
 page: requests.Session()
 
 
-def _set_url_property(url) -> str:
-    """Gets zillow URL from user or file when running analysis"""
-
-    if url:
-        _url = url
-    else:
-        _url = str(input("Enter full URL for zillow property: "))
-
-    while _url[:27] != 'https://www.zillow.com/home' or len(_url) < 35:
-        _url = str(input("Enter full URL for zillow property: "))
-
-    return _url
-
-
 def set_page_property_info(url=None) -> None:
     """Gets html page to parse"""
 
@@ -52,6 +38,20 @@ def set_page_property_info(url=None) -> None:
     # Creates beautiful soup object
     zillow = BeautifulSoup(zillow_page, 'html.parser')
     county_office = BeautifulSoup('', 'html.parser')
+
+
+def _set_url_property(url=None) -> str:
+    """Gets zillow URL from user or file when running analysis"""
+
+    if url:
+        _url = url
+    else:
+        _url = str(input("Enter full URL for zillow property: "))
+
+    while _url[:27] != 'https://www.zillow.com/home' or len(_url) < 35:
+        _url = str(input("Enter full URL for zillow property: "))
+
+    return _url
 
 
 def _set_url_property_taxes(house_number, street_name, city, state) -> None:

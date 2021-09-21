@@ -52,7 +52,7 @@ def set_page_search(url) -> None:
     zillow = BeautifulSoup(zillow_page, 'html.parser')
 
 
-def _set_url_search(url) -> str:
+def _set_url_search(url=None) -> str:
     """Gets zillow search URL from user or file when running analysis"""
 
     if url:
