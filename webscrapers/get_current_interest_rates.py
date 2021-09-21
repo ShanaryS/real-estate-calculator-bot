@@ -17,7 +17,7 @@ def set_page_interest_rates() -> None:
 
     table = doc.find('tbody')
 
-    for index, tr in enumerate(table.find_all('tr')):
+    for tr in table.find_all('tr'):
         loan_type = tr.find('th').string
         rate = float(str(tr.find('td').string).split('%')[0]) / 100
         interest_rates[loan_type] = rate
