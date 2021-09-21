@@ -269,13 +269,13 @@ def get_num_units() -> tuple:
     house_type = zillow.find(class_="ds-home-fact-list-item").contents[-1].string
     found_num_units = True
 
-    if house_type == 'Single Family Residence' or house_type == 'SINGLE_FAMILY':
+    if 'single' in house_type.lower():
         num_units = 1
-    elif house_type == 'Duplex':
+    elif 'duplex' in house_type.lower():
         num_units = 2
-    elif house_type == 'Triplex':
+    elif 'triplex' in house_type.lower():
         num_units = 3
-    elif house_type == 'Quadruplex':
+    elif 'quadruplex' in house_type.lower():
         num_units = 4
     else:
         found_num_units = False
