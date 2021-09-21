@@ -64,7 +64,7 @@ def commit_updates_to_file() -> None:
     time.sleep(SLEEP_TIMER)
 
 
-def print_captions(mode=None, e=False, valid=True, received=False, execute=False) -> None:
+def print_captions(mode=None, e=False, valid=True, received=False, execute=False, search_limitations=False) -> None:
     """Prints text that tells the user what the programing is doing"""
 
     BAD, OK, GOOD, GREAT = PrintColors.FAIL, PrintColors.WARNING, PrintColors.OKCYAN, PrintColors.OKGREEN
@@ -101,6 +101,15 @@ def print_captions(mode=None, e=False, valid=True, received=False, execute=False
         print(f"\n{GREAT}!!! URL received! !!!{END}")
     elif execute:
         print(f"\n{GREAT}!!! Committed changes to file! Ending program... !!!{END}")
+    elif search_limitations:
+        print(f"\n\n{BAD}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
+              f"Zillow only displays 400 properties per search. If listings is above 400, certain properties\n"
+              f"CANNOT be accessed. Instead, filter number of listings heavily to make sure it does not\n"
+              f"exceed 400. Split the search criteria into multiple separate searches.\n\n"
+              f"{OK}For example: Instead of a single URL with a price range of $100k-$1M,\n"
+              f"use two URLs with price ranges of $100k-$500k and $500k-$1M.\n"
+              f"Assuming each of those searches return less than 400 listings.\n"
+              f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!{END}\n")
 
 
 def add_link(mode) -> None:
@@ -116,6 +125,7 @@ def add_link(mode) -> None:
 
     if search_or_property != cancel:
         if search_or_property == search:
+            print_captions(search_limitations=True)
             is_search = True
             _choose_options(a_o_d)
         elif search_or_property == property_:
