@@ -37,6 +37,14 @@ def url_is_valid(url) -> bool:
     if url[:23] != 'https://www.zillow.com/' or len(url) <= 29:
         return False
 
+    # Search page information is only stored in URLs when they are 100+ characters.
+    # This prevents URLs with less from being added.
+    # Any search URL that has less than 400 listings (a hard requirement),
+    # will have enough characters to never be affected by this.
+    if len(url) < 100:
+        if is_search:
+            return False
+
     # Handles special case of search url
     if url[:28] == 'https://www.zillow.com/homes':
         if is_search:
