@@ -20,7 +20,7 @@ property_analyses = []
 url_removed = False
 
 
-def add_urls_to_property_from_search() -> None:
+def add_urls_from_search() -> None:
     """Calls web scraper for search urls then????????"""
 
     print(f"\n{PrintColors.WARNING}--- Getting URLs from saved searches...{PrintColors.ENDC}\n")
@@ -105,7 +105,7 @@ if __name__ == '__main__':
         with open(os.path.join('output', 'urls.json')) as json_file:
             urls_json = json.load(json_file)
 
-        add_urls_to_property_from_search()
+        add_urls_from_search()
         sync_urls_and_analysis_data()
         get_interest_rate()
         analyze_properties()
