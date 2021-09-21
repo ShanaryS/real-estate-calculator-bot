@@ -76,29 +76,47 @@ def get_url() -> str:
     return url_search
 
 
-def get_num_pages() -> int:
+def get_num_pages_and_lisings() -> tuple:
     """Returns the number of pages in the search"""
 
     PROPERTIES_PER_PAGE = 40  # Number of properties zillow displays per search page
 
     # Checks if looking at agent listings or other listings. Other listings will always have 'cat2' in url.
     if 'cat2' not in url_search:
-        num_pages = int(zillow.find_all(class_="total-text")[0].string.replace(',', ''))
-        num_pages = -(-num_pages // PROPERTIES_PER_PAGE)  # Ceiling division
+        listings = int(zillow.find_all(class_="total-text")[0].string.replace(',', ''))
+        num_pages = -(-listings // PROPERTIES_PER_PAGE)  # Ceiling division
     else:
-        num_pages = int(zillow.find_all(class_="total-text")[1].string.replace(',', ''))
-        num_pages = -(-num_pages // PROPERTIES_PER_PAGE)  # Ceiling division
+        listings = int(zillow.find_all(class_="total-text")[1].string.replace(',', ''))
+        num_pages = -(-listings // PROPERTIES_PER_PAGE)  # Ceiling division
 
-    return num_pages
+    return num_pages, listings
 
 
-# def get_property_url_from_search() -> str:
-#     """Gets url for property from search url"""
-#
-#     return property_url
-#
-#
-# def get_price_from_search() -> int:
-#     """Gets price for property from search url"""
-#
-#     return price
+def get_property_url_from_search(base, index) -> str:
+    """Gets url for property from search url"""
+
+    property_url = base.contents[index].find('a', href=True)['href']
+
+    return property_url
+
+
+def get_price_from_search(base, index) -> int:
+    """Gets price for property from search url"""
+
+    price = int(base.contents[index].find('div', class_="list-card-price").string.lstrip('$').replace(',', ''))
+
+    return price
+
+# combine both url and price func, run loop for all items
+def get_all_urls_and_prices() -> tuple:
+
+    urls, prices = [], []
+
+    base = zillow.find('div', id="grid-search-results").find('ul')
+    print(get_property_url_from_search(base, 0))
+    print(get_price_from_search(base, 0))
+
+    return urls, prices
+
+set_page_search('https://www.zillow.com/homes/CT_rb/')
+get_all_urls_and_prices()
