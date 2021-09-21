@@ -1,6 +1,5 @@
 """Web scrapes properties from zillow search URL."""
-
-
+import selenium.webdriver.common.action_chains
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import requests
@@ -55,11 +54,18 @@ def set_page_search(url) -> None:
 def browser() -> None:
     """Runs chrome browser with selenium"""
 
-    chrome = webdriver.Chrome(options=webdriver.ChromeOptions().add_argument('--headless'))
-    chrome.get('https://www.amazon.com/')
-    time.sleep(5)
+    global zillow
 
-browser()
+    chrome = webdriver.Chrome()
+    chrome.get(url_search)
+
+    from selenium.webdriver.common.keys import Keys
+    target = chrome.find_element_by_tag_name("body")
+    for i in range(10):
+        target.send_keys(Keys.PAGE_DOWN)
+
+    zillow_page = chrome.page_source
+    zillow = BeautifulSoup(zillow_page, 'html.parser')
 
 
 def is_url_valid(url) -> bool:
@@ -107,6 +113,8 @@ def get_num_pages_and_lisings() -> tuple:
 def get_all_urls_and_prices() -> dict:
     """Gets urls and prices for all properties on a zillow search page"""
 
+    browser()
+
     base = zillow.find('div', id="grid-search-results").find('ul')
 
     properties_url_price = {}
@@ -115,8 +123,6 @@ def get_all_urls_and_prices() -> dict:
 
     return properties_url_price
 
-# set_page_search('https://www.zillow.com/homes/CT_rb/')
-# print(get_all_urls_and_prices())
 
 def _get_property_url_from_search(li) -> str:
     """Gets url for property from search url"""
