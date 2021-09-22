@@ -15,21 +15,10 @@ from webscrapers.get_property_info import TIME_BETWEEN_REQUESTS
 from run_property_tracker import SLEEP_TIMER
 
 
+GET_REQUEST_EXPECTED_TIME = 1.75
 keys = []
 property_analyses = []
 url_removed = False
-
-
-def add_urls_from_search() -> None:
-    """Calls web scraper for search urls then????????"""
-
-    print(f"\n{PrintColors.WARNING}--- Getting URLs from saved searches...{PrintColors.ENDC}\n")
-
-    '''
-    for url in urls_json['Search']:
-        # Add urls to urls.json under property, save_urls
-        time.sleep(TIME_BETWEEN_REQUESTS)
-    '''
 
 
 def sync_urls_and_analysis_data() -> None:
@@ -73,18 +62,34 @@ def get_interest_rate() -> None:
 def analyze_properties() -> None:
     """Gets info for all properties and saves them to analysis.json"""
 
-    num_urls = len(urls_json['Property'])
-    print(f"{PrintColors.WARNING}--- Analyzing properties... Expected duration: "
-          f"{PrintColors.OKCYAN}{int(num_urls * (1.75 + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
+    # Tell user how long analysis is expected to take
+    num_property_urls = len(urls_json.setdefault('Property', dict()))
+    num_search_urls = 0
+    for search_url in urls_json.setdefault('Search', dict()):
+        num_search_urls += len(search_url)
+    num_urls = num_search_urls + num_property_urls
+    print(f"{PrintColors.WARNING}--- Analyzing properties... Expected duration: {PrintColors.OKCYAN}"
+          f"{int(num_urls * (GET_REQUEST_EXPECTED_TIME + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
 
-    for url in urls_json['Property']:
+    for url in urls_json.setdefault('Property', dict()):
         print(url)
         update_values(url=url, save_to_file=False, update_interest_rate=False)
         key, property_analysis = get_property_analysis()
         keys.append(key)
         property_analyses.append(property_analysis)
         time.sleep(TIME_BETWEEN_REQUESTS)
+    write_property_analyses(keys, property_analyses)
 
+    # Could just call write_property_analyses() once after loops, but want to separate these to act like a save point.
+    keys.clear(), property_analyses.clear()
+    for search_url in urls_json.setdefault('Search', dict()):
+        for url in search_url:
+            print(url)
+            update_values(url=url, save_to_file=False, update_interest_rate=False)
+            key, property_analysis = get_property_analysis()
+            keys.append(key)
+            property_analyses.append(property_analysis)
+            time.sleep(TIME_BETWEEN_REQUESTS)
     write_property_analyses(keys, property_analyses)
 
 
@@ -105,7 +110,6 @@ if __name__ == '__main__':
         with open(os.path.join('output', 'urls.json')) as json_file:
             urls_json = json.load(json_file)
 
-        add_urls_from_search()
         sync_urls_and_analysis_data()
         get_interest_rate()
         analyze_properties()
