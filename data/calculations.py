@@ -26,7 +26,7 @@ estimations: dict
 new_analysis_list = []
 
 
-def update_values(url=None, save_to_file=True, update_interest_rate=True) -> None:
+def update_values(url=None, save_to_file=True, update_interest_rate=True) -> bool:
     """Updates the values when a new property is being evaluated."""
 
     # These are what gets the html pages
@@ -34,8 +34,30 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> Non
         user.set_interest_rate()
     set_page_property_info(url=url)
 
-    # Gets values from html pages
-    user.set_info()
+    # Logs errors if there are any and stop analysis of this specific property ONLY.
+    try:
+        # Gets values from html pages
+        user.set_info()
+
+    # THE GOAL IS FOR THIS BLOCK TO NEVER BE EXECUTED.
+    # IF IT DOES, THE PROGRAM STOPS THE ANALYSIS FOR THIS SPECIFIC PROPERTY.
+    # Yes I know you shouldn't use broad exceptions. But I just want to log the error to a file what ever it is so
+    # I can fix it. This is not trying to ignore the errors. Well, it just ignores them so far as not coupling the
+    # failure to get one piece of info about the property to the entire analysis.
+    except Exception as e:
+        if not url:
+            url = get_url()
+
+        # "###" can be used to navigate between errors in log file.
+        error = f"### {url}: [\n" \
+                f"{e}" \
+                "]\n\n"
+
+        with open(os.path.join('output', 'errors.log'), 'a') as file:
+            file.write(error)
+
+        # Ends current analysis
+        return False
 
     basic_calculations()
 
@@ -69,6 +91,8 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> Non
 
     if save_to_file:
         save_analysis()
+
+    return True
 
 
 def basic_calculations() -> None:

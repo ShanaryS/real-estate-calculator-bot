@@ -59,6 +59,22 @@ def get_interest_rate() -> None:
     set_interest_rate()
 
 
+def analyze_property(url) -> None:
+    """Analyze a single property"""
+
+    # If statement ignores property if there was an error getting the data.
+    if update_values(url=url, save_to_file=False, update_interest_rate=False):
+        print()  # Moves to next line as previous print statement ended with end=""
+        key, property_analysis = get_property_analysis()
+        keys.append(key)
+        property_analyses.append(property_analysis)
+    else:
+        print(f" !!! {PrintColors.FAIL}ERROR ANALYZING THIS PROPERTY."
+              f"CHECK errors.log FOR DETAILS. !!!{PrintColors.ENDC}")
+
+    time.sleep(TIME_BETWEEN_REQUESTS)
+
+
 def analyze_properties() -> None:
     """Gets info for all properties and saves them to analysis.json"""
 
@@ -73,15 +89,12 @@ def analyze_properties() -> None:
     print(f"{PrintColors.WARNING}--- Analyzing properties... Expected duration: {PrintColors.OKCYAN}"
           f"{expected_time}s{PrintColors.ENDC}\n")
 
+    # Gets analysis and writes to file for the individually added properties
     for index, url in enumerate(urls_json.setdefault('Property', dict())):
         print(f"{PrintColors.WARNING}TIME REMAINING: "
               f"{PrintColors.OKCYAN}{-int(-(expected_time - index * TIME_CONST))}s{PrintColors.ENDC}",
-              "---", url)
-        update_values(url=url, save_to_file=False, update_interest_rate=False)
-        key, property_analysis = get_property_analysis()
-        keys.append(key)
-        property_analyses.append(property_analysis)
-        time.sleep(TIME_BETWEEN_REQUESTS)
+              "---", url, end="")
+        analyze_property(url)
     write_property_analyses(keys, property_analyses)
 
     # If above changed the file, save that fact to print closing text.
@@ -96,12 +109,8 @@ def analyze_properties() -> None:
         for index, url in enumerate(urls_json['Search'][search_url]):
             print(f"{PrintColors.WARNING}TIME REMAINING: "
                   f"{PrintColors.OKCYAN}{-int(-(expected_time - index * TIME_CONST))}s{PrintColors.ENDC}",
-                  "---", url)
-            update_values(url=url, save_to_file=False, update_interest_rate=False)
-            key, property_analysis = get_property_analysis()
-            keys.append(key)
-            property_analyses.append(property_analysis)
-            time.sleep(TIME_BETWEEN_REQUESTS)
+                  "---", url, end="")
+            analyze_property(url)
     write_property_analyses(keys, property_analyses)
 
     if updated:
