@@ -205,6 +205,9 @@ def _get_url_for_next_page(url, current_page_num) -> str:
 def _is_auction(li: bs4.element.Tag) -> bool:
     """Checks if house is an auction"""
 
+    valid = False if 'auction' not in li.find('li', class_="list-card-statusText").text.lower() else True
+
+
     try:
         valid = False if 'auction' not in li.find('li', class_="list-card-statusText").text.lower() else True
     except AttributeError:
@@ -255,8 +258,7 @@ def get_all_urls_and_prices(url) -> dict:
 
         _scroll_to_page_bottom()
 
-        if page > 1:
-            set_page_search()
+        set_page_search()
         base = zillow.find('div', id="grid-search-results").find('ul')
 
         for li in base.contents:
@@ -264,7 +266,6 @@ def get_all_urls_and_prices(url) -> dict:
                 continue
             if _is_auction(li):
                 continue
-            print(_get_property_url_from_search(li), _get_price_from_search(li))
             properties_url_price[_get_property_url_from_search(li)] = _get_price_from_search(li)
 
         if page < num_pages:
@@ -272,7 +273,6 @@ def get_all_urls_and_prices(url) -> dict:
             chrome.get(url)
 
     chrome.close()
-    print(len(properties_url_price))
 
     return properties_url_price
 
