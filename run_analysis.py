@@ -89,7 +89,7 @@ def analyze_properties() -> None:
     # Could just call write_property_analyses() once after loops, but want to separate these to act like a save point.
     keys.clear(), property_analyses.clear()
     for search_url in urls_json.setdefault('Search', dict()):
-        for url in search_url:
+        for url in urls_json['Search'][search_url]:
             print(url)
             update_values(url=url, save_to_file=False, update_interest_rate=False)
             key, property_analysis = get_property_analysis()
