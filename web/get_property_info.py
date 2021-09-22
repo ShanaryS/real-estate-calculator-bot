@@ -229,7 +229,7 @@ def get_description() -> tuple:
 def get_property_taxes() -> tuple:
     """Get property tax from zillow if it exist. Else use county_office. Must call get_address() prior."""
 
-    temp = page.find('-->$')
+    temp = page.rfind('-->$')
     found_property_taxes = True
     property_taxes = 0
 
