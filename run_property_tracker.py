@@ -59,11 +59,7 @@ def url_is_valid(url_test) -> bool:
     if not is_url_valid(url_test):
         return False
 
-    # If a property URL, return depending on mode user picked.
-    if url_test[:27] == 'https://www.zillow.com/home' and len(url_test) >= 35:
-        return True
-    else:
-        return False
+    return True
 
 
 def commit_updates_to_file() -> None:

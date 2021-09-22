@@ -246,6 +246,7 @@ def get_all_urls_and_prices(url) -> list:
         _solve_captcha()
 
     num_pages, num_listings = _get_num_pages_and_listings(url)
+    num_pages = num_pages if num_pages < 30 else 30
 
     property_urls = []
     for page in range(1, num_pages+1):
