@@ -72,7 +72,7 @@ def commit_updates_to_file() -> None:
     if urls:
         save_urls(urls, overwrite=to_overwrite, search=is_search, delete=to_delete)
 
-    if is_search:
+    if is_search and not to_delete:
         print_captions(execute_s=True)
         time.sleep(DELAY_TO_GET_URLS)
         _get_urls_from_search()
@@ -269,7 +269,6 @@ def _get_urls_from_search() -> None:
             urls_json = json.load(json_file)
 
         for search_url in urls_json.setdefault('Search', dict()):
-            print(type(search_url))
             urls_json['Search'][search_url] = get_all_urls_and_prices(search_url)
 
         with open(os.path.join('output', 'urls.json'), 'w') as json_file:
