@@ -44,8 +44,8 @@ def is_url_valid(url) -> bool:
     valid = False if temp.find(id="zillow-error-page") else True
 
     try:
-        valid_2 = False if 'auction' in \
-                           zillow.find('div', class_="ds-home-details-chip").contents[2].text.lower() else True
+        valid_2 = True if 'auction' not in \
+                           zillow.find('div', class_="ds-home-details-chip").contents[2].text.lower() else False
     except AttributeError:
         valid_2 = True
 
@@ -205,15 +205,12 @@ def _get_url_for_next_page(url, current_page_num) -> str:
 def _is_auction(li: bs4.element.Tag) -> bool:
     """Checks if house is an auction"""
 
-    valid = False if 'auction' not in li.find('li', class_="list-card-statusText").text.lower() else True
-
-
     try:
-        valid = False if 'auction' not in li.find('li', class_="list-card-statusText").text.lower() else True
+        is_auction = False if 'auction' not in li.find('li', class_="list-card-statusText").text.lower() else True
     except AttributeError:
-        valid = True
+        is_auction = False
 
-    return valid
+    return is_auction
 
 
 def _get_property_url_from_search(li: bs4.element.Tag) -> str:
@@ -271,6 +268,8 @@ def get_all_urls_and_prices(url) -> dict:
         if page < num_pages:
             url = _get_url_for_next_page(url, page)
             chrome.get(url)
+            if chrome.current_url != url:  # If no more pages to go through
+                break
 
     chrome.close()
 
@@ -282,5 +281,5 @@ test2 = 'https://www.zillow.com/ct/9_p/?searchQueryState=%7B%22usersSearchTerm%2
 test3 = 'https://www.zillow.com/ct/13_p/?searchQueryState=%7B%22pagination%22%3A%7B%22currentPage%22%3A13%7D%2C%22usersSearchTerm%22%3A%22CT%22%2C%22mapBounds%22%3A%7B%22west%22%3A-74.36425648828126%2C%22east%22%3A-71.15075551171876%2C%22south%22%3A40.66259092879424%2C%22north%22%3A42.33283762638384%7D%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A11%2C%22regionType%22%3A2%7D%5D%2C%22isMapVisible%22%3Atrue%2C%22filterState%22%3A%7B%22ah%22%3A%7B%22value%22%3Atrue%7D%7D%2C%22isListVisible%22%3Atrue%2C%22mapZoom%22%3A9%7D'
 captcha = 'https://www.zillow.com/captchaPerimeterX/?url=%2fhomes%2fCT_rb%2f&uuid=dd265dba-1ac2-11ec-a883-615050666d69&vid='
 
-print(get_all_urls_and_prices(test1))
+print(get_all_urls_and_prices(test3))
 # Values are looping
