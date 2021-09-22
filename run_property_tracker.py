@@ -91,8 +91,8 @@ def print_captions(mode=None, e=False, verifying_url=False, valid=True,
     END = PrintColors.ENDC
 
     if mode == 's_p_r':
-        print(f"{GOOD}Do you want to update search URLs '{GREAT}s{GOOD}', update property URLs '{GREAT}p{GOOD}', "
-              f"or refresh URLs from search '{GREAT}r{GOOD}'? ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
+        print(f"{GOOD}Do you want to update Search URLs '{GREAT}s{GOOD}', update Property URLs '{GREAT}p{GOOD}', "
+              f"or refresh Search URLs '{GREAT}r{GOOD}'? ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
     elif mode == 'a_o_d':
         print(f"{GOOD}Do you want to append '{GREAT}a{GOOD}', overwrite '{GREAT}o{GOOD}', or delete '{GREAT}d{GOOD}'? "
               f"[NOTE: Applies to both Search and Property URLs!] ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
