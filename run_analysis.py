@@ -21,37 +21,6 @@ property_analyses = []
 url_removed = False
 
 
-def sync_urls_and_analysis_data() -> None:
-    """Updates analysis.json if URLs were deleted"""
-
-    print(f"{PrintColors.WARNING}--- Removing any analysis not tracked in urls.json...{PrintColors.ENDC}\n")
-
-    # Update analysis.json if URLs were deleted
-    try:
-        with open(os.path.join('output', 'analysis.json')) as file:
-            analysis_json = json.load(file)
-
-        # Think this can be simplified using set().intersection_update()
-        temp = []
-        for i in analysis_json:
-            if analysis_json[i]["Property URL"] not in urls_json["Property"]:
-                temp.append(i)
-        for i in temp:
-            analysis_json.pop(i)
-
-        if temp:
-            global url_removed
-            url_removed = True
-            with open(os.path.join('output', 'analysis.json'), 'w') as file:
-                json.dump(analysis_json, file, indent=4)
-
-    except FileNotFoundError:
-        pass
-    except (json.JSONDecodeError, TypeError):
-        with open(os.path.join('output', 'analysis.json'), 'w') as file:
-            json.dump({}, file, indent=4)
-
-
 def get_interest_rate() -> None:
     """Gets current interest rate to use for analyses in current session"""
 
@@ -134,7 +103,6 @@ if __name__ == '__main__':
         with open(os.path.join('output', 'urls.json')) as json_file:
             urls_json = json.load(json_file)
 
-        # sync_urls_and_analysis_data()
         get_interest_rate()
         analyze_properties()
 

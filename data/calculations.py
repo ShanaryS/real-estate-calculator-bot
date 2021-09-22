@@ -291,9 +291,22 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
         try:
             with open(os.path.join('output', 'urls.json')) as json_file:
                 urls_json = json.load(json_file)
+            with open(os.path.join('output', 'analysis.json')) as json_file:
+                analysis_json = json.load(json_file)
 
             # Check if new urls already in json. Also remove any duplicates in json if any got by.
             values = set(urls_json.setdefault(key, [])).difference(urls)
+
+            # Updates the relevant analysis that need to be deleted due to deletion of urls
+            if search:
+                for search_url in urls:
+                    for url in urls_json[key][search_url]:
+                        analysis_json.pop(f"https://www.zillow.com/homedetails/{url.split('/')[-2]}/", None)
+            else:
+                for url in urls:
+                    analysis_json.pop(f"https://www.zillow.com/homedetails/{url.split('/')[-2]}/", None)
+            with open(os.path.join('output', 'analysis.json'), 'w') as json_file:
+                json.dump(analysis_json, json_file, indent=4)
 
             # Updates the file with new dict. Note, json doesn't accept set so must convert to list before.
             urls_json[key] = {value: [] for value in values}
