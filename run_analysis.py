@@ -68,13 +68,15 @@ def analyze_properties() -> None:
     for search_url in urls_json.setdefault('Search', dict()):
         num_search_urls += len(urls_json['Search'][search_url])
     num_urls = num_search_urls + num_property_urls
-    expected_time = int(num_urls * (GET_REQUEST_EXPECTED_TIME + TIME_BETWEEN_REQUESTS))
+    TIME_CONST = GET_REQUEST_EXPECTED_TIME + TIME_BETWEEN_REQUESTS
+    expected_time = int(num_urls * TIME_CONST)
     print(f"{PrintColors.WARNING}--- Analyzing properties... Expected duration: {PrintColors.OKCYAN}"
           f"{expected_time}s{PrintColors.ENDC}\n")
 
     for index, url in enumerate(urls_json.setdefault('Property', dict())):
-        print(url, "---", f"{PrintColors.WARNING}TIME REMAINING: "
-                          f"{PrintColors.OKCYAN}{expected_time - index}s{PrintColors.ENDC}")
+        print(f"{PrintColors.WARNING}TIME REMAINING: "
+              f"{PrintColors.OKCYAN}{-int(-(expected_time - index * TIME_CONST))}s{PrintColors.ENDC}",
+              "---", url)
         update_values(url=url, save_to_file=False, update_interest_rate=False)
         key, property_analysis = get_property_analysis()
         keys.append(key)
@@ -92,8 +94,9 @@ def analyze_properties() -> None:
     keys.clear(), property_analyses.clear()
     for search_url in urls_json.setdefault('Search', dict()):
         for index, url in enumerate(urls_json['Search'][search_url]):
-            print(url, "---", f"{PrintColors.WARNING}TIME REMAINING: "
-                              f"{PrintColors.OKCYAN}{expected_time - index}s{PrintColors.ENDC}")
+            print(f"{PrintColors.WARNING}TIME REMAINING: "
+                  f"{PrintColors.OKCYAN}{-int(-(expected_time - index * TIME_CONST))}s{PrintColors.ENDC}",
+                  "---", url)
             update_values(url=url, save_to_file=False, update_interest_rate=False)
             key, property_analysis = get_property_analysis()
             keys.append(key)
