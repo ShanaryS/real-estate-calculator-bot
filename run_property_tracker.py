@@ -1,11 +1,13 @@
 """Use before run_analysis.py to choose urls. Can add property urls or search urls."""
 
 
+import os.path
+import json
 import time
 from data.calculations import save_urls
 from data.user import get_url_from_input
 from data.colors_for_print import PrintColors
-from webscrapers.get_property_urls_from_search import is_url_valid
+from webscrapers.get_property_urls_from_search import is_url_valid, get_all_urls_and_prices
 
 
 # Stores the urls from inputs. Gets written to file after add_link() is completed. If was cancelled, it gets cleared.
@@ -31,17 +33,17 @@ def quit_program() -> None:
     time.sleep(SLEEP_TIMER)
 
 
-def url_is_valid(url) -> bool:
+def url_is_valid(url_test) -> bool:
     """Checks if URL is valid"""
 
     print_captions(verifying_url=True)
 
     # If not zillow URL, return false
-    if url[:23] != 'https://www.zillow.com/' or len(url) <= 29:
+    if url_test[:23] != 'https://www.zillow.com/' or len(url_test) <= 29:
         return False
 
     # Handles special case of search url
-    if url[:28] == 'https://www.zillow.com/homes':
+    if url_test[:28] == 'https://www.zillow.com/homes':
         if not is_search:
             return False
 
@@ -49,22 +51,17 @@ def url_is_valid(url) -> bool:
     # This prevents URLs with less from being added.
     # Any search URL that has less than 400 listings (a hard requirement),
     # will have enough characters to never be affected by this.
-    if len(url) < 100:
-        if is_search:
-            return False
+    if len(url_test) < 100 and is_search:
+        return False
 
     # Sends a get request to see if page returns an error. As well as check if property is an auction.
-    if not is_url_valid(url):
+    if not is_url_valid(url_test):
         return False
 
     # If a property URL, return depending on mode user picked.
-    if url[:27] == 'https://www.zillow.com/home' and len(url) >= 35:
-        if is_search:
-            return False
+    if url_test[:27] == 'https://www.zillow.com/home' and len(url_test) >= 35:
         return True
     else:
-        if is_search:
-            return True
         return False
 
 
@@ -248,4 +245,16 @@ def _get_urls_from_input(mode) -> None:
 if __name__ == '__main__':
     add_link(s_p)
 
-    # with open()
+    try:
+        with open(os.path.join('output', 'urls.json')) as json_file:
+            urls_json = json.load(json_file)
+
+        for url in urls_json.setdefault('Search', dict()):
+            urls_json.update(get_all_urls_and_prices(url))
+
+        with open(os.path.join('output', 'urls.json'), 'w') as json_file:
+            json.dump(urls_json, json_file, indent=4)
+
+    except (FileNotFoundError, json.JSONDecodeError, TypeError):
+        with open(os.path.join('output', 'urls.json'), 'w') as json_file:
+            json.dump({'Search': {}, 'Property': {}}, json_file, indent=4)

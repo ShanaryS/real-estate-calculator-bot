@@ -45,7 +45,7 @@ def is_url_valid(url) -> bool:
 
     try:
         valid_2 = True if 'auction' not in \
-                           zillow.find('div', class_="ds-home-details-chip").contents[2].text.lower() else False
+                           temp.find('div', class_="ds-home-details-chip").contents[2].text.lower() else False
     except AttributeError:
         valid_2 = True
 
