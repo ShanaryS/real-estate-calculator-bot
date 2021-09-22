@@ -20,7 +20,7 @@ append, overwrite, delete, cancel, exe = 'a', 'o', 'd', 'c', 'e'
 
 # Used for delaying terminating program so user can read final text
 SLEEP_TIMER = 1
-DELAY_TO_GET_URLS = 5
+DELAY_TO_GET_URLS = 7
 
 
 def quit_program() -> None:
@@ -32,6 +32,10 @@ def quit_program() -> None:
 
 def url_is_valid(url_test) -> bool:
     """Checks if URL is valid"""
+
+    # If user is deleting URL, no need to verify
+    if to_delete:
+        return True
 
     print_captions(verifying_url=True)
 
@@ -72,41 +76,47 @@ def commit_updates_to_file() -> None:
         print_captions(execute_s=True)
         time.sleep(DELAY_TO_GET_URLS)
         _get_urls_from_search()
+        print_captions(execute=True)
     else:
-        print_captions(execute_p=True)
-        time.sleep(SLEEP_TIMER)
+        print_captions(execute=True)
+
+    time.sleep(SLEEP_TIMER)
 
 
 def print_captions(mode=None, e=False, verifying_url=False, valid=True,
-                   received=False, execute_s=False, execute_p=False, search_limitations=False) -> None:
+                   received=False, execute_s=False, execute=False, search_limitations=False) -> None:
     """Prints text that tells the user what the programing is doing"""
 
     BAD, OK, GOOD, GREAT = PrintColors.FAIL, PrintColors.WARNING, PrintColors.OKCYAN, PrintColors.OKGREEN
     END = PrintColors.ENDC
 
     if mode == 's_p_r':
-        print(f"{GOOD}Do you want to update search URLs 's', update property URLs 'p', "
-              f"or refresh URLs from search 'r'? ('c' to cancel):{END}", end=" ")
+        print(f"{GOOD}Do you want to update search URLs '{GREAT}s{GOOD}', update property URLs '{GREAT}p{GOOD}', "
+              f"or refresh URLs from search '{GREAT}r{GOOD}'? ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
     elif mode == 'a_o_d':
-        print(f"{GOOD}Do you want to append 'a', overwrite 'o', or delete 'd'? ('c' to cancel):{END}", end=" ")
+        print(f"{GOOD}Do you want to append '{GREAT}a{GOOD}', overwrite '{GREAT}o{GOOD}', or delete '{GREAT}d{GOOD}'? "
+              f"[NOTE: Applies to both Search and Property URLs!] ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
     elif mode == 'a':
         print(f"\n{OK}--- APPEND MODE... URLs in this session will be appended to file! ---{END}")
         if e:
-            print(f"{GOOD}Enter another URL to append ('e' to execute changes, 'c' to cancel):{END}", end=" ")
+            print(f"{GOOD}Enter another URL to append ('{GREAT}e{GOOD}' to execute changes, "
+                  f"'{GREAT}c{GOOD}' to cancel):{END}", end=" ")
         else:
-            print(f"{GOOD}- Enter URL to append ('c' to cancel):{END}", end=" ")
+            print(f"{GOOD}- Enter URL to append ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
     elif mode == 'o':
         print(f"\n{OK}--- OVERWRITE MODE... URLs before this session will be lost! ---{END}")
         if e:
-            print(f"{GOOD}Enter another URL to write ('e' to execute changes, 'c' to cancel):{END}", end=" ")
+            print(f"{GOOD}Enter another URL to write ('{GREAT}e{GOOD}' to execute changes, "
+                  f"'{GREAT}c{GOOD}' to cancel):{END}", end=" ")
         else:
-            print(f"{GOOD}Enter URL to write ('c' to cancel):{END}", end=" ")
+            print(f"{GOOD}Enter URL to write ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
     elif mode == 'd':
-        print(f"\n{OK}--- DELETE MODE... URLs in session will be lost! ---{END}")
+        print(f"\n{OK}--- DELETE MODE... URLs in session will be removed! ---{END}")
         if e:
-            print(f"{GOOD}Enter another URL to delete ('e' to execute changes, 'c' to cancel):{END}", end=" ")
+            print(f"{GOOD}Enter another URL to delete ('{GREAT}e{GOOD}' to execute changes, "
+                  f"'{GREAT}c{GOOD}' to cancel):{END}", end=" ")
         else:
-            print(f"{GOOD}Enter URL to delete ('c' to cancel):{END}", end=" ")
+            print(f"{GOOD}Enter URL to delete ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
     elif mode == 'c':
         print(f"\n{BAD}!!! No changes were made! Ending program... !!!{END}")
 
@@ -117,11 +127,10 @@ def print_captions(mode=None, e=False, verifying_url=False, valid=True,
     elif received:
         print(f"\n{GREAT}!!! URL received! !!!{END}")
     elif execute_s:
-        print(f"\n{GREAT}!!! Committed changes to file! !!!{END}")
-        print(f"\n{OK}!!! WILL START GETTING PROPERTY URLs FROM NEWLY ADDED SEARCH URLS IN - "
-              f"{GOOD}{DELAY_TO_GET_URLS}s{OK}... !!!{END}"
-              f"\n{BAD}!!! Expected Duration: 25s PER 100 LISTINGS IN SEARCH. DO NOT TOUCH ANYTHING. !!!{END}")
-    elif execute_p:
+        print(f"\n{OK}!!! WILL START GETTING PROPERTY URLs FROM SEARCH URLs IN: {GOOD}{DELAY_TO_GET_URLS}s{OK} !!!{END}"
+              f"\n{OK}!!! Expected Duration: {GOOD}25s{OK} PER {GOOD}100{OK} LISTINGS IN SEARCH! !!!{END}"
+              f"\n{BAD}!!! DO NOT TOUCH ANYTHING. IT MAY PAUSE FOR UP TO {GOOD}10s{BAD}. THIS IS NORMAL. !!!{END}")
+    elif execute:
         print(f"\n{GREAT}!!! Committed changes to file! Ending program... !!!{END}")
     elif search_limitations:
         print(f"\n\n{BAD}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
