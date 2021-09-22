@@ -57,15 +57,19 @@ def get_url() -> str:
     return url_search
 
 
-def set_page_search(url) -> None:
+def open_chrome(url) -> None:
     """Opens chromedriver using selenium"""
 
-    global url_search, chrome, zillow
-
-    url_search = url
+    global chrome
 
     chrome = webdriver.Chrome()
-    chrome.get(url_search)
+    chrome.get(url)
+
+
+def set_page_search() -> None:
+    """Opens chromedriver using selenium"""
+
+    global zillow
 
     # Creates beautiful soup object
     zillow_page = chrome.page_source
@@ -103,12 +107,12 @@ def _solve_captcha() -> None:
     time.sleep(REDIRECT_WAIT)  # Wait for redirect from captcha. Can some times be long.
 
 
-def _set_url_to_first_page(current_page_num) -> str:
+def _set_url_to_first_page(url, current_page_num) -> str:
     """Makes sure that the url given starts on first page"""
 
-    temp = url_search.split('/')
+    temp = url.split('/')
     temp.pop(-2 - extra)
-    if _currentpage_is_last(url_search):
+    if _currentpage_is_last(url):
         temp[-1 - extra] = _rreplace(
             temp[-1 - extra], f"%2C%22pagination%22%3A%7B%22currentPage%22%3A{current_page_num}%7D%7D", '%7D', 1)
     else:
@@ -175,7 +179,7 @@ def _get_url_for_next_page(url, current_page_num) -> str:
 
     if current_page_num == 1:
         temp = url.split('/')
-        temp.insert(-2 - extra, '2_p')
+        temp.insert(-1 - extra, '2_p')
         if _currentpage_is_last(url):
             temp[-1 - extra] = _rreplace(
                 temp[-1 - extra], '%7D', '%2C%22pagination%22%3A%7B%22currentPage%22%3A2%7D%7D', 1)
@@ -228,29 +232,31 @@ def _get_price_from_search(li: bs4.element.Tag) -> int:
 def get_all_urls_and_prices(url) -> dict:
     """Gets urls and prices for all properties on a zillow search page"""
 
-    set_page_search(url)
+    global zillow, url_search
+
+    _url_has_extra_slash(url)
+    current_page_num = _get_current_page(url)
+    url_search = _set_url_to_first_page(url, current_page_num)
+    url = url_search
+
+    open_chrome(url)
+    set_page_search()
 
     if 'captcha' in chrome.current_url.lower():
         _solve_captcha()
-
-    _url_has_extra_slash(url_search)
-
-    current_page_num = _get_current_page(url_search)
-
-    if current_page_num != 1:
-        url = _set_url_to_first_page(current_page_num)
-    else:
-        url = url_search
 
     num_pages, num_listings = _get_num_pages_and_listings(url)
 
     properties_url_price = {}
     for page in range(1, num_pages+1):
+
         if 'captcha' in chrome.current_url.lower():
             _solve_captcha()
 
         _scroll_to_page_bottom()
 
+        if page > 1:
+            set_page_search()
         base = zillow.find('div', id="grid-search-results").find('ul')
 
         for li in base.contents:
@@ -261,13 +267,20 @@ def get_all_urls_and_prices(url) -> dict:
             print(_get_property_url_from_search(li), _get_price_from_search(li))
             properties_url_price[_get_property_url_from_search(li)] = _get_price_from_search(li)
 
-        url = _get_url_for_next_page(url, page)
-        chrome.get(url)
+        if page < num_pages:
+            url = _get_url_for_next_page(url, page)
+            chrome.get(url)
+
+    chrome.close()
+    print(len(properties_url_price))
 
     return properties_url_price
 
-test = 'https://www.zillow.com/ct/9_p/?searchQueryState=%7B%22usersSearchTerm%22%3A%22CT%22%2C%22mapBounds%22%3A%7B%22west%22%3A-74.36425648828126%2C%22east%22%3A-71.15075551171876%2C%22south%22%3A40.66259092879424%2C%22north%22%3A42.33283762638384%7D%2C%22mapZoom%22%3A9%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A11%2C%22regionType%22%3A2%7D%5D%2C%22isMapVisible%22%3Atrue%2C%22filterState%22%3A%7B%22ah%22%3A%7B%22value%22%3Atrue%7D%7D%2C%22isListVisible%22%3Atrue%2C%22category%22%3A%22cat2%22%2C%22pagination%22%3A%7B%22currentPage%22%3A9%7D%7D'
-test2 = 'https://www.zillow.com/waterbury-ct/duplex/2_p/?searchQueryState=%7B%22pagination%22%3A%7B%22currentPage%22%3A2%7D%2C%22mapBounds%22%3A%7B%22west%22%3A-73.12574140551757%2C%22east%22%3A-72.92489759448242%2C%22south%22%3A41.51236007362086%2C%22north%22%3A41.61665220271312%7D%2C%22mapZoom%22%3A13%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A34671%2C%22regionType%22%3A6%7D%5D%2C%22isMapVisible%22%3Afalse%2C%22filterState%22%3A%7B%22price%22%3A%7B%22max%22%3A250000%7D%2C%22beds%22%3A%7B%22min%22%3A0%7D%2C%22con%22%3A%7B%22value%22%3Afalse%7D%2C%22pmf%22%3A%7B%22value%22%3Atrue%7D%2C%22apa%22%3A%7B%22value%22%3Afalse%7D%2C%22sch%22%3A%7B%22value%22%3Afalse%7D%2C%22mp%22%3A%7B%22max%22%3A1250%7D%2C%22ah%22%3A%7B%22value%22%3Atrue%7D%2C%22sort%22%3A%7B%22value%22%3A%22globalrelevanceex%22%7D%2C%22sf%22%3A%7B%22value%22%3Afalse%7D%2C%22land%22%3A%7B%22value%22%3Afalse%7D%2C%22tow%22%3A%7B%22value%22%3Afalse%7D%2C%22manu%22%3A%7B%22value%22%3Afalse%7D%2C%22pf%22%3A%7B%22value%22%3Atrue%7D%2C%22apco%22%3A%7B%22value%22%3Afalse%7D%7D%2C%22isListVisible%22%3Atrue%7D'
+
+test1 = 'https://www.zillow.com/waterbury-ct/duplex/2_p/?searchQueryState=%7B%22pagination%22%3A%7B%22currentPage%22%3A2%7D%2C%22mapBounds%22%3A%7B%22west%22%3A-73.12574140551757%2C%22east%22%3A-72.92489759448242%2C%22south%22%3A41.51236007362086%2C%22north%22%3A41.61665220271312%7D%2C%22mapZoom%22%3A13%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A34671%2C%22regionType%22%3A6%7D%5D%2C%22isMapVisible%22%3Afalse%2C%22filterState%22%3A%7B%22price%22%3A%7B%22max%22%3A250000%7D%2C%22beds%22%3A%7B%22min%22%3A0%7D%2C%22con%22%3A%7B%22value%22%3Afalse%7D%2C%22pmf%22%3A%7B%22value%22%3Atrue%7D%2C%22apa%22%3A%7B%22value%22%3Afalse%7D%2C%22sch%22%3A%7B%22value%22%3Afalse%7D%2C%22mp%22%3A%7B%22max%22%3A1250%7D%2C%22ah%22%3A%7B%22value%22%3Atrue%7D%2C%22sort%22%3A%7B%22value%22%3A%22globalrelevanceex%22%7D%2C%22sf%22%3A%7B%22value%22%3Afalse%7D%2C%22land%22%3A%7B%22value%22%3Afalse%7D%2C%22tow%22%3A%7B%22value%22%3Afalse%7D%2C%22manu%22%3A%7B%22value%22%3Afalse%7D%2C%22pf%22%3A%7B%22value%22%3Atrue%7D%2C%22apco%22%3A%7B%22value%22%3Afalse%7D%7D%2C%22isListVisible%22%3Atrue%7D'
+test2 = 'https://www.zillow.com/ct/9_p/?searchQueryState=%7B%22usersSearchTerm%22%3A%22CT%22%2C%22mapBounds%22%3A%7B%22west%22%3A-74.36425648828126%2C%22east%22%3A-71.15075551171876%2C%22south%22%3A40.66259092879424%2C%22north%22%3A42.33283762638384%7D%2C%22mapZoom%22%3A9%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A11%2C%22regionType%22%3A2%7D%5D%2C%22isMapVisible%22%3Atrue%2C%22filterState%22%3A%7B%22ah%22%3A%7B%22value%22%3Atrue%7D%7D%2C%22isListVisible%22%3Atrue%2C%22category%22%3A%22cat2%22%2C%22pagination%22%3A%7B%22currentPage%22%3A9%7D%7D'
 test3 = 'https://www.zillow.com/ct/13_p/?searchQueryState=%7B%22pagination%22%3A%7B%22currentPage%22%3A13%7D%2C%22usersSearchTerm%22%3A%22CT%22%2C%22mapBounds%22%3A%7B%22west%22%3A-74.36425648828126%2C%22east%22%3A-71.15075551171876%2C%22south%22%3A40.66259092879424%2C%22north%22%3A42.33283762638384%7D%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A11%2C%22regionType%22%3A2%7D%5D%2C%22isMapVisible%22%3Atrue%2C%22filterState%22%3A%7B%22ah%22%3A%7B%22value%22%3Atrue%7D%7D%2C%22isListVisible%22%3Atrue%2C%22mapZoom%22%3A9%7D'
 captcha = 'https://www.zillow.com/captchaPerimeterX/?url=%2fhomes%2fCT_rb%2f&uuid=dd265dba-1ac2-11ec-a883-615050666d69&vid='
-print(get_all_urls_and_prices(captcha))
+
+print(get_all_urls_and_prices(test1))
+# Values are looping
