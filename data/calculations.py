@@ -2,6 +2,7 @@
 
 
 import os.path
+from traceback import format_tb
 import numpy_financial as npf
 import json
 from data import user
@@ -41,17 +42,27 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
 
     # THE GOAL IS FOR THIS BLOCK TO NEVER BE EXECUTED.
     # IF IT DOES, THE PROGRAM STOPS THE ANALYSIS FOR THIS SPECIFIC PROPERTY.
-    # Yes I know you shouldn't use broad exceptions. But I just want to log the error to a file what ever it is so
-    # I can fix it. This is not trying to ignore the errors. Well, it just ignores them so far as not coupling the
-    # failure to get one piece of info about the property to the entire analysis.
-    except Exception as e:
+    # This logs the error to ..\output\errors.log, what ever it is.
+    # Complete with the problematic property url, traceback, and type of exception.
+    except Exception as exception:
+
+        # When printing analysis of a single property, url=None. This allows that URL to be saved as well.
         if not url:
             url = get_url()
 
+        # Get exception name as well as traceback info for easy debugging.
+        tb_title = "Traceback (most recent call last):"
+        traceback = format_tb(exception.__traceback__)
+        tb_string = ""
+        for tb in traceback:
+            tb_string += tb
+        exception_name = exception.__class__.__qualname__
+
         # "###" can be used to navigate between errors in log file.
         error = f"### {url}: [\n" \
-                f"{e}\n" \
-                f"{e.__traceback__}\n" \
+                f"{tb_title}\n" \
+                f"{tb_string}" \
+                f"{exception_name}: {exception}\n" \
                 "]\n\n"
 
         with open(os.path.join('output', 'errors.log'), 'a') as file:
