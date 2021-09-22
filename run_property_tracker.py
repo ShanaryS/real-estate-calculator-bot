@@ -248,8 +248,8 @@ def _get_urls_from_input(mode) -> None:
         return
 
 
-if __name__ == '__main__':
-    add_link(s_p)
+def _get_urls_from_search() -> None:
+    """Get the property urls from the search url"""
 
     try:
         with open(os.path.join('output', 'urls.json')) as json_file:
@@ -264,3 +264,8 @@ if __name__ == '__main__':
     except (FileNotFoundError, json.JSONDecodeError, TypeError):
         with open(os.path.join('output', 'urls.json'), 'w') as json_file:
             json.dump({'Search': {}, 'Property': {}}, json_file, indent=4)
+
+
+if __name__ == '__main__':
+    add_link(s_p)
+    _get_urls_from_search()
