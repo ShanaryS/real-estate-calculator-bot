@@ -193,7 +193,7 @@ def get_lot_size() -> int:
         try:
             lot_size = float(str(zillow.find_all(class_=i)[1].contents[2].span)
                              .split('>')[-2].split('s')[0].replace('Acre', '').strip().replace(',', ''))
-        except IndexError:
+        except (IndexError, ValueError):
             pass
 
     # Lot size can be sqft or acres so this handles it. Always returns sqft.
