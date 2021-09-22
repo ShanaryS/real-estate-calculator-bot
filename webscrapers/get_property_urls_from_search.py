@@ -229,7 +229,7 @@ def _get_price_from_search(li: bs4.element.Tag) -> int:
     return price
 
 
-def get_all_urls_and_prices(url) -> dict:
+def get_all_urls_and_prices(url) -> list:
     """Main function to call. Gets urls and prices for all properties on a zillow search page"""
 
     global zillow, url_search
@@ -247,7 +247,7 @@ def get_all_urls_and_prices(url) -> dict:
 
     num_pages, num_listings = _get_num_pages_and_listings(url)
 
-    properties_url_price = {}
+    property_urls = []
     for page in range(1, num_pages+1):
 
         if 'captcha' in chrome.current_url.lower():
@@ -263,7 +263,7 @@ def get_all_urls_and_prices(url) -> dict:
                 continue
             if _is_auction(li):
                 continue
-            properties_url_price[_get_property_url_from_search(li)] = _get_price_from_search(li)
+            property_urls.append(_get_property_url_from_search(li))
 
         if page < num_pages:
             url = _get_url_for_next_page(url, page)
@@ -274,4 +274,4 @@ def get_all_urls_and_prices(url) -> dict:
 
     chrome.close()
 
-    return properties_url_price
+    return property_urls
