@@ -80,6 +80,12 @@ def analyze_properties() -> None:
         time.sleep(TIME_BETWEEN_REQUESTS)
     write_property_analyses(keys, property_analyses)
 
+    # If above changed the file, save that fact to print closing text.
+    if any(is_new_analyses()) or url_removed:
+        updated = True
+    else:
+        updated = False
+
     # Could just call write_property_analyses() once after loops, but want to separate these to act like a save point.
     keys.clear(), property_analyses.clear()
     for search_url in urls_json.setdefault('Search', dict()):
@@ -92,11 +98,14 @@ def analyze_properties() -> None:
             time.sleep(TIME_BETWEEN_REQUESTS)
     write_property_analyses(keys, property_analyses)
 
+    if updated:
+        check_if_analysis_json_updated(check=True)
 
-def check_if_analysis_json_updated() -> None:
+
+def check_if_analysis_json_updated(check=False) -> None:
     """Checks if the analysis performed yielded any new results"""
 
-    if any(is_new_analyses()) or url_removed:
+    if any(is_new_analyses()) or url_removed or check:
         print(f"\n{PrintColors.OKGREEN}"
               f"!!! Analyses were successfully added/updated! Ending program... !!!{PrintColors.ENDC}")
     else:
@@ -113,7 +122,6 @@ if __name__ == '__main__':
         sync_urls_and_analysis_data()
         get_interest_rate()
         analyze_properties()
-        check_if_analysis_json_updated()
 
     except FileNotFoundError:
         print(f"\n{PrintColors.FAIL}!!! Error: No URLs exist... !!!{PrintColors.ENDC}")

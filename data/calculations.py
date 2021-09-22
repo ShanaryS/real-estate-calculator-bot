@@ -340,7 +340,6 @@ def write_property_analysis(key, property_analysis) -> None:
 def write_property_analyses(keys, property_analyses) -> None:
     """Writes multiple property analyses to analysis.json"""
 
-    global new_analysis_list
     new_analysis_list.clear()
 
     try:
