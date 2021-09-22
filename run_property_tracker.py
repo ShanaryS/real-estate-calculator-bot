@@ -20,6 +20,7 @@ append, overwrite, delete, cancel, exe = 'a', 'o', 'd', 'c', 'e'
 
 # Used for delaying terminating program so user can read final text
 SLEEP_TIMER = 1
+DELAY_TO_GET_URLS = 5
 
 
 def quit_program() -> None:
@@ -49,7 +50,7 @@ def url_is_valid(url_test) -> bool:
 
     # Search page filters are only stored in URLs when they are 100+ characters.
     # This prevents URLs with less from being added.
-    # Any search URL that has less than 400 listings (a hard requirement),
+    # Any search URL that has less than 800 listings (a hard requirement),
     # will have enough characters to never be affected by this.
     if len(url_test) < 100 and is_search:
         return False
@@ -71,12 +72,12 @@ def commit_updates_to_file() -> None:
     if urls:
         save_urls(urls, overwrite=to_overwrite, search=is_search, delete=to_delete)
 
-    print_captions(execute=True)
+    print_captions(execute_s=True) if is_search else print_captions(execute_p=True)
     time.sleep(SLEEP_TIMER)
 
 
 def print_captions(mode=None, e=False, verifying_url=False, valid=True,
-                   received=False, execute=False, search_limitations=False) -> None:
+                   received=False, execute_s=False, execute_p=False, search_limitations=False) -> None:
     """Prints text that tells the user what the programing is doing"""
 
     BAD, OK, GOOD, GREAT = PrintColors.FAIL, PrintColors.WARNING, PrintColors.OKCYAN, PrintColors.OKGREEN
@@ -113,16 +114,21 @@ def print_captions(mode=None, e=False, verifying_url=False, valid=True,
         print(f"\n{BAD}!!! Invalid URL... (Correct URL for Search/Property? Auction? [Not allowed]) !!!{END}")
     elif received:
         print(f"\n{GREAT}!!! URL received! !!!{END}")
-    elif execute:
+    elif execute_s:
+        print(f"\n{GREAT}!!! Committed changes to file! !!!{END}")
+        print(f"\n{OK}!!! WILL START GETTING PROPERTY URLs FROM NEWLY ADDED SEARCH URLS IN - "
+              f"{GOOD}{DELAY_TO_GET_URLS}s{OK}... !!!{END}"
+              f"\n{BAD}!!! Expected Duration: 25s PER 100 LISTINGS IN SEARCH. DO NOT TOUCH ANYTHING. !!!{END}")
+    elif execute_p:
         print(f"\n{GREAT}!!! Committed changes to file! Ending program... !!!{END}")
     elif search_limitations:
         print(f"\n\n{BAD}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
-              f"Zillow only displays 400 properties per search. If listings is above 400, certain properties\n"
+              f"Zillow only displays 800 properties per search. If listings is above 800, certain properties\n"
               f"CANNOT be accessed. Instead, filter number of listings heavily to make sure it does not\n"
-              f"exceed 400. Split the search criteria into multiple separate searches.\n\n"
+              f"exceed 800. Split the search criteria into multiple separate searches.\n\n"
               
               f"{OK}For example: Instead of a single URL with a price range of $100k-$1M, use two URLs with price\n"
-              f"ranges of $100k-$500k and $500k-$1M. Assuming each of those searches return less than 400 listings.\n"
+              f"ranges of $100k-$500k and $500k-$1M. Assuming each of those searches return less than 800 listings.\n"
               f"P.S 'Agent' listing URLs doesn't include 'Other' properties. Add both URLs to include all properties.\n"
               f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!{END}\n")
 
