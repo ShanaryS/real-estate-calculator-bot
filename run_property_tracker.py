@@ -122,7 +122,7 @@ def print_captions(mode=None, e=False, verifying_url=False, valid=True,
         print(f"\n{GREAT}!!! URL received! !!!{END}")
     elif execute_s:
         print(f"\n{OK}!!! WILL START GETTING PROPERTY URLs FROM SEARCH URLs IN: {GOOD}{DELAY_TO_GET_URLS}s{OK} !!!{END}"
-              f"\n{OK}!!! Expected Duration: {GOOD}25s{OK} PER {GOOD}100{OK} LISTINGS IN SEARCH! !!!{END}"
+              f"\n{OK}!!! Expected Duration: {GOOD}10s{OK} PER {GOOD}100{OK} LISTINGS IN SEARCH URLs! !!!{END}"
               f"\n{BAD}!!! DO NOT TOUCH ANYTHING. IT MAY PAUSE FOR UP TO {GOOD}10s{BAD}. THIS IS NORMAL. !!!{END}")
     elif execute:
         print(f"\n{GREAT}!!! Committed changes to file! Ending program... !!!{END}")
