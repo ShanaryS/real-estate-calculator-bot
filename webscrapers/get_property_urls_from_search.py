@@ -9,7 +9,7 @@ import time
 
 # Delay between actions for selenium driver
 SCROLL_DELAY = 0.05
-PAGE_LOAD_WAIT = 1
+PAGE_LOAD_WAIT = 0
 HOLD_LENGTH = 5
 REDIRECT_WAIT = 10
 
@@ -42,7 +42,13 @@ def is_url_valid(url) -> bool:
 
     valid = False if temp.find(id="zillow-error-page") else True
 
-    return valid
+    try:
+        valid_2 = False if 'auction' in \
+                           zillow.find('div', class_="ds-home-details-chip").contents[2].text.lower() else True
+    except AttributeError:
+        valid_2 = True
+
+    return all([valid, valid_2])
 
 
 def get_url() -> str:
@@ -59,7 +65,6 @@ def set_page_search(url) -> None:
 
     chrome = webdriver.Chrome()
     chrome.get(url_search)
-    _scroll_to_page_bottom()
 
     # Creates beautiful soup object
     zillow_page = chrome.page_source
@@ -98,19 +103,14 @@ def _solve_captcha() -> None:
     time.sleep(REDIRECT_WAIT)  # Wait for redirect from captcha. Can some times be long.
 
 
-def _set_url_to_first_page() -> str:
+def _set_url_to_first_page(current_page_num) -> str:
     """Makes sure that the url given starts on first page"""
 
-    current_page_num = _get_current_page(url_search)
-
-    if current_page_num == 1:
-        first_page_url = url_search
-    else:
-        temp = url_search.split('/')
-        temp.pop(-2 - extra)
-        temp[-1 - extra] = temp[-1 - extra].replace(
-            f'%22pagination%22%3A%7B%22currentPage%22%3A{current_page_num}%7D%2C', '')
-        first_page_url = '/'.join(temp)
+    temp = url_search.split('/')
+    temp.pop(-2 - extra)
+    temp[-1 - extra] = temp[-1 - extra].replace(
+        f'%22pagination%22%3A%7B%22currentPage%22%3A{current_page_num}%7D%2C', '')
+    first_page_url = '/'.join(temp)
 
     return first_page_url
 
@@ -126,7 +126,7 @@ def _get_current_page(url) -> int:
     return current_page_num
 
 
-def url_has_extra_slash(url) -> None:
+def _url_has_extra_slash(url) -> None:
     """Checks if URL has extra / which other functions need to compensate for"""
 
     global extra
@@ -137,24 +137,22 @@ def url_has_extra_slash(url) -> None:
         extra = 0
 
 
-def _get_num_pages_and_listings() -> tuple:
+def _get_num_pages_and_listings(url) -> tuple:
     """Returns the number of pages in the search"""
 
     # Checks if looking at Agent listings or Other listings. Other listings will always have 'cat2' in url.
-    if 'cat2' not in url_search:
-        listings = int(zillow.find_all(class_="total-text")[0].string.replace(',', ''))
-        num_pages = -(-listings // PROPERTIES_PER_PAGE)  # Ceiling division
+    if 'cat2' not in url:
+        num_listings = int(zillow.find_all(class_="total-text")[0].string.replace(',', ''))
+        num_pages = -(-num_listings // PROPERTIES_PER_PAGE)  # Ceiling division
     else:
-        listings = int(zillow.find_all(class_="total-text")[1].string.replace(',', ''))
-        num_pages = -(-listings // PROPERTIES_PER_PAGE)  # Ceiling division
+        num_listings = int(zillow.find_all(class_="total-text")[1].string.replace(',', ''))
+        num_pages = -(-num_listings // PROPERTIES_PER_PAGE)  # Ceiling division
 
-    return num_pages, listings
+    return num_pages, num_listings
 
 
-def _get_url_for_next_page(url) -> str:
+def _get_url_for_next_page(url, current_page_num) -> str:
     """Gets the url for the next page. Only for pages 2+"""
-
-    current_page_num = _get_current_page(url)
 
     if current_page_num == 1:
         temp = url.split('/')
@@ -169,6 +167,14 @@ def _get_url_for_next_page(url) -> str:
     next_page_url = '/'.join(temp)
 
     return next_page_url
+
+
+def _is_auction(li: bs4.element.Tag) -> bool:
+    """Checks if house is an auction"""
+
+    valid = False if 'auction' not in li.find('li', class_="list-card-statusText").text.lower() else True
+
+    return valid
 
 
 def _get_property_url_from_search(li: bs4.element.Tag) -> str:
@@ -187,22 +193,43 @@ def _get_price_from_search(li: bs4.element.Tag) -> int:
     return price
 
 
-def get_all_urls_and_prices() -> dict:
+def get_all_urls_and_prices(url) -> dict:
     """Gets urls and prices for all properties on a zillow search page"""
 
-    # for url in ...
-    # url_has_extra_slash(url)
+    set_page_search(url)
 
-    _scroll_to_page_bottom()
+    _url_has_extra_slash(url_search)
 
-    base = zillow.find('div', id="grid-search-results").find('ul')
+    current_page_num = _get_current_page(url_search)
+
+    if current_page_num != 1:
+        url = _set_url_to_first_page(current_page_num)
+    else:
+        url = url_search
+
+    num_pages, num_listings = _get_num_pages_and_listings(url)
 
     properties_url_price = {}
-    for li in base.contents:
-        if li.find('div', id="nav-ad-container"):
-            continue
-        properties_url_price[_get_property_url_from_search(li)] = _get_price_from_search(li)
+    for page in range(1, num_pages+1):
+
+        _scroll_to_page_bottom()
+
+        base = zillow.find('div', id="grid-search-results").find('ul')
+
+        for li in base.contents:
+            if li.find('div', id="nav-ad-container"):
+                continue
+            if _is_auction(li):
+                continue
+            properties_url_price[_get_property_url_from_search(li)] = _get_price_from_search(li)
+
+        url = _get_url_for_next_page(url, page)
+        chrome.get(url)
 
     return properties_url_price
 
-# print(get_all_urls_and_prices('https://www.zillow.com/homes/CT_rb/'))
+test = 'https://www.zillow.com/ct/9_p/?searchQueryState=%7B%22usersSearchTerm%22%3A%22CT%22%2C%22mapBounds%22%3A%7B%22west%22%3A-74.36425648828126%2C%22east%22%3A-71.15075551171876%2C%22south%22%3A40.66259092879424%2C%22north%22%3A42.33283762638384%7D%2C%22mapZoom%22%3A9%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A11%2C%22regionType%22%3A2%7D%5D%2C%22isMapVisible%22%3Atrue%2C%22filterState%22%3A%7B%22ah%22%3A%7B%22value%22%3Atrue%7D%7D%2C%22isListVisible%22%3Atrue%2C%22category%22%3A%22cat2%22%2C%22pagination%22%3A%7B%22currentPage%22%3A9%7D%7D'
+test2 = 'https://www.zillow.com/waterbury-ct/duplex/2_p/?searchQueryState=%7B%22pagination%22%3A%7B%22currentPage%22%3A2%7D%2C%22mapBounds%22%3A%7B%22west%22%3A-73.12574140551757%2C%22east%22%3A-72.92489759448242%2C%22south%22%3A41.51236007362086%2C%22north%22%3A41.61665220271312%7D%2C%22mapZoom%22%3A13%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A34671%2C%22regionType%22%3A6%7D%5D%2C%22isMapVisible%22%3Afalse%2C%22filterState%22%3A%7B%22price%22%3A%7B%22max%22%3A250000%7D%2C%22beds%22%3A%7B%22min%22%3A0%7D%2C%22con%22%3A%7B%22value%22%3Afalse%7D%2C%22pmf%22%3A%7B%22value%22%3Atrue%7D%2C%22apa%22%3A%7B%22value%22%3Afalse%7D%2C%22sch%22%3A%7B%22value%22%3Afalse%7D%2C%22mp%22%3A%7B%22max%22%3A1250%7D%2C%22ah%22%3A%7B%22value%22%3Atrue%7D%2C%22sort%22%3A%7B%22value%22%3A%22globalrelevanceex%22%7D%2C%22sf%22%3A%7B%22value%22%3Afalse%7D%2C%22land%22%3A%7B%22value%22%3Afalse%7D%2C%22tow%22%3A%7B%22value%22%3Afalse%7D%2C%22manu%22%3A%7B%22value%22%3Afalse%7D%2C%22pf%22%3A%7B%22value%22%3Atrue%7D%2C%22apco%22%3A%7B%22value%22%3Afalse%7D%7D%2C%22isListVisible%22%3Atrue%7D'
+test3 = 'https://www.zillow.com/ct/13_p/?searchQueryState=%7B%22pagination%22%3A%7B%22currentPage%22%3A13%7D%2C%22usersSearchTerm%22%3A%22CT%22%2C%22mapBounds%22%3A%7B%22west%22%3A-74.36425648828126%2C%22east%22%3A-71.15075551171876%2C%22south%22%3A40.66259092879424%2C%22north%22%3A42.33283762638384%7D%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A11%2C%22regionType%22%3A2%7D%5D%2C%22isMapVisible%22%3Atrue%2C%22filterState%22%3A%7B%22ah%22%3A%7B%22value%22%3Atrue%7D%7D%2C%22isListVisible%22%3Atrue%2C%22mapZoom%22%3A9%7D'
+
+print(get_all_urls_and_prices(test))

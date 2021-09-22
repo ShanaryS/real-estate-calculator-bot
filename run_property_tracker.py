@@ -53,7 +53,7 @@ def url_is_valid(url) -> bool:
         if is_search:
             return False
 
-    # Sends a get request to see if page returns and error
+    # Sends a get request to see if page returns an error. As well as check if property is an auction.
     if not is_url_valid(url):
         return False
 
@@ -113,7 +113,7 @@ def print_captions(mode=None, e=False, verifying_url=False, valid=True,
     elif verifying_url:
         print(f"\n{OK}... Verifying URL ...{END}")
     elif not valid:
-        print(f"\n{BAD}!!! Invalid URL... Try again! (Correct URL for Search/Property?) !!!{END}")
+        print(f"\n{BAD}!!! Invalid URL... (Correct URL for Search/Property? Auction? [Not allowed]) !!!{END}")
     elif received:
         print(f"\n{GREAT}!!! URL received! !!!{END}")
     elif execute:
