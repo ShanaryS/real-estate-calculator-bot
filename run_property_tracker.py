@@ -269,12 +269,13 @@ def _get_urls_from_search() -> None:
             urls_json = json.load(json_file)
 
         for search_url in urls_json.setdefault('Search', dict()):
+            print(type(search_url))
             urls_json['Search'][search_url] = get_all_urls_and_prices(search_url)
 
         with open(os.path.join('output', 'urls.json'), 'w') as json_file:
             json.dump(urls_json, json_file, indent=4)
 
-    except (FileNotFoundError, json.JSONDecodeError, TypeError):
+    except (FileNotFoundError, json.JSONDecodeError):
         with open(os.path.join('output', 'urls.json'), 'w') as json_file:
             json.dump({'Search': {}, 'Property': {}}, json_file, indent=4)
 

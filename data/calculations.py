@@ -260,7 +260,7 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
             values = set(urls_json.setdefault(key, [])).difference(urls)
 
             # Updates the file with new dict. Note, json doesn't accept set so must convert to list before.
-            urls_json[key] = list(values)
+            urls_json[key] = {value: [] for value in values}
             with open(os.path.join('output', 'urls.json'), 'w') as json_file:
                 json.dump(urls_json, json_file, indent=4)
             return
@@ -281,7 +281,7 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
             values = set(urls_json.setdefault(key, [])).union(urls)
 
             # Updates the file with new dict. Note, json doesn't accept set so must convert to list before.
-            urls_json[key] = list(values)
+            urls_json[key] = {value: [] for value in values}
             with open(os.path.join('output', 'urls.json'), 'w') as json_file:
                 json.dump(urls_json, json_file, indent=4)
             return
@@ -292,7 +292,7 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
         except TypeError:
             pass  # When json file is not dict.
 
-    link = {key: list(urls)}
+    link = {key: {url: [] for url in urls}}
     with open(os.path.join('output', 'urls.json'), 'w') as json_file:
         json.dump(link, json_file, indent=4)
 
