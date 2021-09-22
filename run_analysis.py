@@ -73,8 +73,8 @@ def analyze_properties() -> None:
           f"{expected_time}s{PrintColors.ENDC}\n")
 
     for index, url in enumerate(urls_json.setdefault('Property', dict())):
-        print(url, "---",
-              f"{PrintColors.WARNING}TIME REMAINING: {PrintColors.OKCYAN}{expected_time - index}s{PrintColors.ENDC}")
+        print(url, "---", f"{PrintColors.WARNING}TIME REMAINING: "
+                          f"{PrintColors.OKCYAN}{expected_time - index}s{PrintColors.ENDC}")
         update_values(url=url, save_to_file=False, update_interest_rate=False)
         key, property_analysis = get_property_analysis()
         keys.append(key)
@@ -92,8 +92,8 @@ def analyze_properties() -> None:
     keys.clear(), property_analyses.clear()
     for search_url in urls_json.setdefault('Search', dict()):
         for index, url in enumerate(urls_json['Search'][search_url]):
-            print(url, "---",
-                  f"{PrintColors.WARNING}TIME REMAINING: {PrintColors.OKCYAN}{expected_time - index}s{PrintColors.ENDC}")
+            print(url, "---", f"{PrintColors.WARNING}TIME REMAINING: "
+                              f"{PrintColors.OKCYAN}{expected_time - index}s{PrintColors.ENDC}")
             update_values(url=url, save_to_file=False, update_interest_rate=False)
             key, property_analysis = get_property_analysis()
             keys.append(key)
