@@ -172,7 +172,10 @@ def _get_url_for_next_page(url, current_page_num) -> str:
 def _is_auction(li: bs4.element.Tag) -> bool:
     """Checks if house is an auction"""
 
-    valid = False if 'auction' not in li.find('li', class_="list-card-statusText").text.lower() else True
+    try:
+        valid = False if 'auction' not in li.find('li', class_="list-card-statusText").text.lower() else True
+    except AttributeError:
+        valid = True
 
     return valid
 
