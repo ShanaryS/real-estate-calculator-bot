@@ -68,11 +68,13 @@ def analyze_properties() -> None:
     for search_url in urls_json.setdefault('Search', dict()):
         num_search_urls += len(urls_json['Search'][search_url])
     num_urls = num_search_urls + num_property_urls
+    expected_time = int(num_urls * (GET_REQUEST_EXPECTED_TIME + TIME_BETWEEN_REQUESTS))
     print(f"{PrintColors.WARNING}--- Analyzing properties... Expected duration: {PrintColors.OKCYAN}"
-          f"{int(num_urls * (GET_REQUEST_EXPECTED_TIME + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
+          f"{expected_time}s{PrintColors.ENDC}\n")
 
-    for url in urls_json.setdefault('Property', dict()):
-        print(url)
+    for index, url in enumerate(urls_json.setdefault('Property', dict())):
+        print(url, "---",
+              f"{PrintColors.WARNING}TIME REMAINING: {PrintColors.OKCYAN}{expected_time - index}s{PrintColors.ENDC}")
         update_values(url=url, save_to_file=False, update_interest_rate=False)
         key, property_analysis = get_property_analysis()
         keys.append(key)
@@ -89,8 +91,9 @@ def analyze_properties() -> None:
     # Could just call write_property_analyses() once after loops, but want to separate these to act like a save point.
     keys.clear(), property_analyses.clear()
     for search_url in urls_json.setdefault('Search', dict()):
-        for url in urls_json['Search'][search_url]:
-            print(url)
+        for index, url in enumerate(urls_json['Search'][search_url]):
+            print(url, "---",
+                  f"{PrintColors.WARNING}TIME REMAINING: {PrintColors.OKCYAN}{expected_time - index}s{PrintColors.ENDC}")
             update_values(url=url, save_to_file=False, update_interest_rate=False)
             key, property_analysis = get_property_analysis()
             keys.append(key)
