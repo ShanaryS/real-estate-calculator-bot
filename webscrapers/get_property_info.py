@@ -6,7 +6,7 @@ import requests
 import time
 
 
-TIME_BETWEEN_REQUESTS = 1  # Used by get_property_taxes(), get_address() and run_analysis.py
+TIME_BETWEEN_REQUESTS = 0  # Used by get_property_taxes(), get_address() and run_analysis.py
 NUM_TIMES_TO_RETRY_REQUESTS = 5
 url_property: str
 url_property_taxes: str
