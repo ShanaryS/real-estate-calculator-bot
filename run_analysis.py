@@ -66,7 +66,7 @@ def analyze_properties() -> None:
     num_property_urls = len(urls_json.setdefault('Property', dict()))
     num_search_urls = 0
     for search_url in urls_json.setdefault('Search', dict()):
-        num_search_urls += len(search_url)
+        num_search_urls += len(urls_json['Search'][search_url])
     num_urls = num_search_urls + num_property_urls
     print(f"{PrintColors.WARNING}--- Analyzing properties... Expected duration: {PrintColors.OKCYAN}"
           f"{int(num_urls * (GET_REQUEST_EXPECTED_TIME + TIME_BETWEEN_REQUESTS))}s{PrintColors.ENDC}\n")
