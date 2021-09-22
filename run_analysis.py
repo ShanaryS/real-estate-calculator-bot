@@ -15,7 +15,7 @@ from web.get_property_info import TIME_BETWEEN_REQUESTS
 from run_property_tracker import SLEEP_TIMER
 
 
-GET_REQUEST_EXPECTED_TIME = 1.75
+GET_REQUEST_EXPECTED_TIME = 2
 keys = []
 property_analyses = []
 url_removed = False
@@ -134,7 +134,7 @@ if __name__ == '__main__':
         with open(os.path.join('output', 'urls.json')) as json_file:
             urls_json = json.load(json_file)
 
-        sync_urls_and_analysis_data()
+        # sync_urls_and_analysis_data()
         get_interest_rate()
         analyze_properties()
 
