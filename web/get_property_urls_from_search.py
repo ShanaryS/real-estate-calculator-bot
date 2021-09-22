@@ -11,7 +11,7 @@ import time
 SCROLL_DELAY = 0.05
 PAGE_LOAD_WAIT = 1
 CAPTCHA_LOAD_WAIT = 1
-HOLD_LENGTH = 5
+HOLD_LENGTH = 7
 REDIRECT_WAIT = 10
 
 PROPERTIES_PER_PAGE = 40  # Number of properties zillow displays per search page
