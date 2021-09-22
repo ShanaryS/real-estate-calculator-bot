@@ -9,7 +9,8 @@ import time
 
 # Delay between actions for selenium driver
 SCROLL_DELAY = 0.05
-PAGE_LOAD_WAIT = 0
+PAGE_LOAD_WAIT = 1
+CAPTCHA_LOAD_WAIT = 1
 HOLD_LENGTH = 5
 REDIRECT_WAIT = 10
 
@@ -76,13 +77,7 @@ def _scroll_to_page_bottom() -> None:
 
     time.sleep(PAGE_LOAD_WAIT)  # Give time for the page to fully load. Though it should without, being cautious.
 
-    # Handles zillow captcha that sometimes appear
-    # Use this url to test captcha
-    # chrome.get('https://www.zillow.com/captchaPerimeterX/?url=%2fhomes%2fCT_rb%2f&uuid=dd265dba-1ac2-11ec-a883-615050666d69&vid=')
-    if 'captcha' in chrome.current_url.lower():
-        _solve_captcha()
-
-    # Clicks presses page down multiple times to scroll to bottom of page.
+    # Presses page down multiple times to scroll to bottom of page.
     target = chrome.find_element_by_tag_name("body")
     for i in range(10):
         target.send_keys(Keys.PAGE_DOWN)
@@ -90,7 +85,12 @@ def _scroll_to_page_bottom() -> None:
 
 
 def _solve_captcha() -> None:
-    """Solves the captcha"""
+    """Solves the captcha that sometimes appear.
+    Use this url to test captcha:chrome.get(
+    'https://www.zillow.com/captchaPerimeterX/?url=%2fhomes%2fCT_rb%2f&uuid=dd265dba-1ac2-11ec-a883-615050666d69&vid=')
+    """
+
+    time.sleep(CAPTCHA_LOAD_WAIT)
 
     target = chrome.find_element_by_id('px-captcha')
     action = webdriver.ActionChains(chrome)
@@ -108,8 +108,12 @@ def _set_url_to_first_page(current_page_num) -> str:
 
     temp = url_search.split('/')
     temp.pop(-2 - extra)
-    temp[-1 - extra] = temp[-1 - extra].replace(
-        f'%22pagination%22%3A%7B%22currentPage%22%3A{current_page_num}%7D%2C', '')
+    if _currentpage_is_last(url_search):
+        temp[-1 - extra] = _rreplace(
+            temp[-1 - extra], f"%2C%22pagination%22%3A%7B%22currentPage%22%3A{current_page_num}%7D%7D", '%7D', 1)
+    else:
+        temp[-1 - extra] = temp[-1 - extra].replace(
+            f'%22pagination%22%3A%7B%22currentPage%22%3A{current_page_num}%7D%2C', '')
     first_page_url = '/'.join(temp)
 
     return first_page_url
@@ -124,6 +128,14 @@ def _get_current_page(url) -> int:
         current_page_num = int(url.split('/')[-2 - extra].split('_')[0])
 
     return current_page_num
+
+
+def _currentpage_is_last(url) -> bool:
+    """Checks if current page is last in url"""
+
+    if len(url) - url.lower().find('currentpage') < 30:
+        return True
+    return False
 
 
 def _url_has_extra_slash(url) -> None:
@@ -151,18 +163,35 @@ def _get_num_pages_and_listings(url) -> tuple:
     return num_pages, num_listings
 
 
+def _rreplace(s, old, new, occurrence):
+    """Replaces last occurrence of string"""
+
+    a = s.rsplit(old, occurrence)
+    return new.join(a)
+
+
 def _get_url_for_next_page(url, current_page_num) -> str:
     """Gets the url for the next page. Only for pages 2+"""
 
     if current_page_num == 1:
         temp = url.split('/')
         temp.insert(-2 - extra, '2_p')
-        temp[-1 - extra] = temp[-1 - extra].replace('%7B', '%7B%22pagination%22%3A%7B%22currentPage%22%3A2%7D%2C')
+        if _currentpage_is_last(url):
+            temp[-1 - extra] = _rreplace(
+                temp[-1 - extra], '%7D', '%2C%22pagination%22%3A%7B%22currentPage%22%3A2%7D%7D', 1)
+        else:
+            temp[-1 - extra] = temp[-1 - extra].replace(
+                '%7B', '%7B%22pagination%22%3A%7B%22currentPage%22%3A2%7D%2C', 1)
     else:
         temp = url.split('/')
         temp[-2 - extra] = f'{current_page_num + 1}_p'
-        temp[-1 - extra] = temp[-1 - extra].replace(
-            f"currentPage%22%3A{current_page_num}%7D%2C", f"currentPage%22%3A{current_page_num + 1}%7D%2C")
+        if _currentpage_is_last(url):
+            temp[-1 - extra] = _rreplace(
+                temp[-1 - extra],
+                f"currentPage%22%3A{current_page_num}%7D%7D", f"currentPage%22%3A{current_page_num + 1}%7D%7D", 1)
+        else:
+            temp[-1 - extra] = temp[-1 - extra].replace(
+                f"currentPage%22%3A{current_page_num}%7D%2C", f"currentPage%22%3A{current_page_num + 1}%7D%2C")
 
     next_page_url = '/'.join(temp)
 
@@ -201,6 +230,9 @@ def get_all_urls_and_prices(url) -> dict:
 
     set_page_search(url)
 
+    if 'captcha' in chrome.current_url.lower():
+        _solve_captcha()
+
     _url_has_extra_slash(url_search)
 
     current_page_num = _get_current_page(url_search)
@@ -214,6 +246,8 @@ def get_all_urls_and_prices(url) -> dict:
 
     properties_url_price = {}
     for page in range(1, num_pages+1):
+        if 'captcha' in chrome.current_url.lower():
+            _solve_captcha()
 
         _scroll_to_page_bottom()
 
@@ -224,6 +258,7 @@ def get_all_urls_and_prices(url) -> dict:
                 continue
             if _is_auction(li):
                 continue
+            print(_get_property_url_from_search(li), _get_price_from_search(li))
             properties_url_price[_get_property_url_from_search(li)] = _get_price_from_search(li)
 
         url = _get_url_for_next_page(url, page)
@@ -234,5 +269,5 @@ def get_all_urls_and_prices(url) -> dict:
 test = 'https://www.zillow.com/ct/9_p/?searchQueryState=%7B%22usersSearchTerm%22%3A%22CT%22%2C%22mapBounds%22%3A%7B%22west%22%3A-74.36425648828126%2C%22east%22%3A-71.15075551171876%2C%22south%22%3A40.66259092879424%2C%22north%22%3A42.33283762638384%7D%2C%22mapZoom%22%3A9%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A11%2C%22regionType%22%3A2%7D%5D%2C%22isMapVisible%22%3Atrue%2C%22filterState%22%3A%7B%22ah%22%3A%7B%22value%22%3Atrue%7D%7D%2C%22isListVisible%22%3Atrue%2C%22category%22%3A%22cat2%22%2C%22pagination%22%3A%7B%22currentPage%22%3A9%7D%7D'
 test2 = 'https://www.zillow.com/waterbury-ct/duplex/2_p/?searchQueryState=%7B%22pagination%22%3A%7B%22currentPage%22%3A2%7D%2C%22mapBounds%22%3A%7B%22west%22%3A-73.12574140551757%2C%22east%22%3A-72.92489759448242%2C%22south%22%3A41.51236007362086%2C%22north%22%3A41.61665220271312%7D%2C%22mapZoom%22%3A13%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A34671%2C%22regionType%22%3A6%7D%5D%2C%22isMapVisible%22%3Afalse%2C%22filterState%22%3A%7B%22price%22%3A%7B%22max%22%3A250000%7D%2C%22beds%22%3A%7B%22min%22%3A0%7D%2C%22con%22%3A%7B%22value%22%3Afalse%7D%2C%22pmf%22%3A%7B%22value%22%3Atrue%7D%2C%22apa%22%3A%7B%22value%22%3Afalse%7D%2C%22sch%22%3A%7B%22value%22%3Afalse%7D%2C%22mp%22%3A%7B%22max%22%3A1250%7D%2C%22ah%22%3A%7B%22value%22%3Atrue%7D%2C%22sort%22%3A%7B%22value%22%3A%22globalrelevanceex%22%7D%2C%22sf%22%3A%7B%22value%22%3Afalse%7D%2C%22land%22%3A%7B%22value%22%3Afalse%7D%2C%22tow%22%3A%7B%22value%22%3Afalse%7D%2C%22manu%22%3A%7B%22value%22%3Afalse%7D%2C%22pf%22%3A%7B%22value%22%3Atrue%7D%2C%22apco%22%3A%7B%22value%22%3Afalse%7D%7D%2C%22isListVisible%22%3Atrue%7D'
 test3 = 'https://www.zillow.com/ct/13_p/?searchQueryState=%7B%22pagination%22%3A%7B%22currentPage%22%3A13%7D%2C%22usersSearchTerm%22%3A%22CT%22%2C%22mapBounds%22%3A%7B%22west%22%3A-74.36425648828126%2C%22east%22%3A-71.15075551171876%2C%22south%22%3A40.66259092879424%2C%22north%22%3A42.33283762638384%7D%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A11%2C%22regionType%22%3A2%7D%5D%2C%22isMapVisible%22%3Atrue%2C%22filterState%22%3A%7B%22ah%22%3A%7B%22value%22%3Atrue%7D%7D%2C%22isListVisible%22%3Atrue%2C%22mapZoom%22%3A9%7D'
-
-print(get_all_urls_and_prices(test))
+captcha = 'https://www.zillow.com/captchaPerimeterX/?url=%2fhomes%2fCT_rb%2f&uuid=dd265dba-1ac2-11ec-a883-615050666d69&vid='
+print(get_all_urls_and_prices(captcha))
