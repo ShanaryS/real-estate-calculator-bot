@@ -15,7 +15,7 @@ urls = set()
 
 # Variables that dictate how each option that the user chooses is handled
 to_overwrite = is_search = to_delete = False
-s_p, search, property_, a_o_d = 's_p', 's', 'p', 'a_o_d'
+s_p_r, search, property_, refresh, a_o_d = 's_p_r', 's', 'p', 'r', 'a_o_d'
 append, overwrite, delete, cancel, exe = 'a', 'o', 'd', 'c', 'e'
 
 # Used for delaying terminating program so user can read final text
@@ -25,10 +25,6 @@ DELAY_TO_GET_URLS = 5
 
 def quit_program() -> None:
     """Quits programing without saving an data"""
-
-    global to_overwrite, is_search, to_delete
-    to_overwrite = is_search = to_delete = False
-    urls.clear()
 
     print_captions(mode=cancel)
     time.sleep(SLEEP_TIMER)
@@ -72,8 +68,13 @@ def commit_updates_to_file() -> None:
     if urls:
         save_urls(urls, overwrite=to_overwrite, search=is_search, delete=to_delete)
 
-    print_captions(execute_s=True) if is_search else print_captions(execute_p=True)
-    time.sleep(SLEEP_TIMER)
+    if is_search:
+        print_captions(execute_s=True)
+        time.sleep(DELAY_TO_GET_URLS)
+        _get_urls_from_search()
+    else:
+        print_captions(execute_p=True)
+        time.sleep(SLEEP_TIMER)
 
 
 def print_captions(mode=None, e=False, verifying_url=False, valid=True,
@@ -83,8 +84,9 @@ def print_captions(mode=None, e=False, verifying_url=False, valid=True,
     BAD, OK, GOOD, GREAT = PrintColors.FAIL, PrintColors.WARNING, PrintColors.OKCYAN, PrintColors.OKGREEN
     END = PrintColors.ENDC
 
-    if mode == 's_p':
-        print(f"{GOOD}Do you want to update search URLs 's' or property URLs 'p'? ('c' to cancel):{END}", end=" ")
+    if mode == 's_p_r':
+        print(f"{GOOD}Do you want to update search URLs 's', update property URLs 'p', "
+              f"or refresh URLs from search 'r'? ('c' to cancel):{END}", end=" ")
     elif mode == 'a_o_d':
         print(f"{GOOD}Do you want to append 'a', overwrite 'o', or delete 'd'? ('c' to cancel):{END}", end=" ")
     elif mode == 'a':
@@ -139,20 +141,24 @@ def add_link(mode) -> None:
     global is_search
 
     print_captions(mode=mode)
-    search_or_property = input()
-    while search_or_property != search and search_or_property != property_ and search_or_property != cancel:
+    search_property_update = input()
+    while search_property_update != search and search_property_update != property_ \
+            and search_property_update != refresh and search_property_update != cancel:
         print_captions(mode=mode)
-        search_or_property = input()
+        search_property_update = input()
 
-    if search_or_property != cancel:
-        if search_or_property == search:
+    if search_property_update != cancel:
+        if search_property_update == search:
             print_captions(search_limitations=True)
             is_search = True
             _choose_options(a_o_d)
-        elif search_or_property == property_:
+        elif search_property_update == property_:
             is_search = False
             _choose_options(a_o_d)
-    elif search_or_property == cancel:
+        elif search_property_update == refresh:
+            is_search = True
+            commit_updates_to_file()
+    elif search_property_update == cancel:
         quit_program()
         return
 
@@ -255,8 +261,8 @@ def _get_urls_from_search() -> None:
         with open(os.path.join('output', 'urls.json')) as json_file:
             urls_json = json.load(json_file)
 
-        for url in urls_json.setdefault('Search', dict()):
-            urls_json.update(get_all_urls_and_prices(url))
+        for search_url in urls_json.setdefault('Search', dict()):
+            urls_json['Search'][search_url] = get_all_urls_and_prices(search_url)
 
         with open(os.path.join('output', 'urls.json'), 'w') as json_file:
             json.dump(urls_json, json_file, indent=4)
@@ -267,5 +273,4 @@ def _get_urls_from_search() -> None:
 
 
 if __name__ == '__main__':
-    add_link(s_p)
-    _get_urls_from_search()
+    add_link(s_p_r)
