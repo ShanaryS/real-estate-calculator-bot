@@ -51,7 +51,8 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
         # "###" can be used to navigate between errors in log file.
         error = f"### {url}: [\n" \
                 f"{e}\n" \
-                "]\n\n"
+                f"{e.__traceback__}" \
+                "\n]\n\n"
 
         with open(os.path.join('output', 'errors.log'), 'a') as file:
             file.write(error)
