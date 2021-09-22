@@ -89,7 +89,7 @@ def print_captions(mode=None, e=False, verifying_url=False, valid=True,
               f"or refresh Search URLs '{GREAT}r{GOOD}'? ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
     elif mode == 'a_o_d':
         print(f"{GOOD}Do you want to append '{GREAT}a{GOOD}', overwrite '{GREAT}o{GOOD}', or delete '{GREAT}d{GOOD}'? "
-              f"[NOTE: Applies to both Search and Property URLs!] ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
+              f"('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
     elif mode == 'a':
         print(f"\n{OK}--- APPEND MODE... URLs in this session will be appended to file! ---{END}")
         if e:

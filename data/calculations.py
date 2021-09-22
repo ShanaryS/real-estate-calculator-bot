@@ -300,7 +300,7 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
             # Updates the relevant analysis that need to be deleted due to deletion of urls
             if search:
                 for search_url in urls:
-                    for url in urls_json[key][search_url]:
+                    for url in urls_json[key].get(search_url, None):
                         analysis_json.pop(f"https://www.zillow.com/homedetails/{url.split('/')[-2]}/", None)
             else:
                 for url in urls:
@@ -315,13 +315,13 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
             return
         except FileNotFoundError:
             return
-        except json.JSONDecodeError:
-            return  # When json file is empty.
-        except TypeError:
-            return  # When json file is not dict.
+        except json.JSONDecodeError:  # When json file is empty.
+            return
+        except TypeError:  # When json file is not dict.
+            return
 
-    # Order of next two blocks matter. This block passes a condition onto the next one.
-    if not overwrite:
+    # Order of next two blocks matter. May delete analysis when appending URLs if moved.
+    if not overwrite:  # This is what appends URLs
         try:
             with open(os.path.join('output', 'urls.json')) as json_file:
                 urls_json = json.load(json_file)
@@ -334,16 +334,40 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
             with open(os.path.join('output', 'urls.json'), 'w') as json_file:
                 json.dump(urls_json, json_file, indent=4)
             return
-        except FileNotFoundError:
-            pass  # Handled below. Using pass to avoid duplicating code
-        except json.JSONDecodeError:
-            pass  # When json file is empty.
-        except TypeError:
-            pass  # When json file is not dict.
+        except (FileNotFoundError, json.JSONDecodeError, TypeError):
+            link = {key: {url: [] for url in urls}}
+            with open(os.path.join('output', 'urls.json'), 'w') as json_file:
+                json.dump(link, json_file, indent=4)
+            return
 
-    link = {key: {url: [] for url in urls}}
-    with open(os.path.join('output', 'urls.json'), 'w') as json_file:
-        json.dump(link, json_file, indent=4)
+    # Code for overwriting files. Only reached during overwrite.
+    try:
+        with open(os.path.join('output', 'urls.json')) as json_file:
+            urls_json = json.load(json_file)
+        with open(os.path.join('output', 'analysis.json')) as json_file:
+            analysis_json = json.load(json_file)
+
+        # Updates the relevant analysis that need to be deleted due to overwriting of urls
+        if search:
+            for search_url in urls:
+                for url in urls_json[key].get(search_url, None):
+                    analysis_json.pop(f"https://www.zillow.com/homedetails/{url.split('/')[-2]}/", None)
+        else:
+            for url in urls:
+                analysis_json.pop(f"https://www.zillow.com/homedetails/{url.split('/')[-2]}/", None)
+        with open(os.path.join('output', 'analysis.json'), 'w') as json_file:
+            json.dump(analysis_json, json_file, indent=4)
+
+        # Overwrites URLs of Search or Property depending on selection.
+        urls_json[key] = {url: [] for url in urls}
+        with open(os.path.join('output', 'urls.json'), 'w') as json_file:
+            json.dump(urls_json, json_file, indent=4)
+
+    # Overwrites URLs of Search or Property depending on selection.
+    except (FileNotFoundError, json.JSONDecodeError, TypeError):
+        link = {key: {url: [] for url in urls}}
+        with open(os.path.join('output', 'urls.json'), 'w') as json_file:
+            json.dump(link, json_file, indent=4)
 
 
 def save_analysis() -> None:
