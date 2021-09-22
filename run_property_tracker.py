@@ -19,7 +19,7 @@ s_p_r, search, property_, refresh, a_o_d = 's_p_r', 's', 'p', 'r', 'a_o_d'
 append, overwrite, delete, cancel, exe = 'a', 'o', 'd', 'c', 'e'
 
 # Used for delaying terminating program so user can read final text
-SLEEP_TIMER = 3
+SLEEP_TIMER = 2
 DELAY_TO_GET_URLS = 7
 
 
@@ -76,10 +76,8 @@ def commit_updates_to_file() -> None:
         print_captions(execute_s=True)
         time.sleep(DELAY_TO_GET_URLS)
         _get_urls_from_search()
-        print_captions(execute=True)
-    else:
-        print_captions(execute=True)
 
+    print_captions(execute=True)
     time.sleep(SLEEP_TIMER)
 
 
