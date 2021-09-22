@@ -11,7 +11,7 @@ import time
 from data.calculations import update_values, get_property_analysis, write_property_analyses, is_new_analyses
 from data.user import set_interest_rate
 from data.colors_for_print import PrintColors
-from webscrapers.get_property_info import TIME_BETWEEN_REQUESTS
+from web.get_property_info import TIME_BETWEEN_REQUESTS
 from run_property_tracker import SLEEP_TIMER
 
 

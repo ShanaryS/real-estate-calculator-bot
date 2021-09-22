@@ -5,7 +5,7 @@ import os.path
 import numpy_financial as npf
 import json
 from data import user
-from webscrapers.get_property_info import set_page_property_info, get_url
+from web.get_property_info import set_page_property_info, get_url
 from data.colors_for_print import PrintColors
 
 

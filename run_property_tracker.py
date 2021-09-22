@@ -7,7 +7,7 @@ import time
 from data.calculations import save_urls
 from data.user import get_url_from_input
 from data.colors_for_print import PrintColors
-from webscrapers.get_property_urls_from_search import is_url_valid, get_all_urls_and_prices
+from web.get_property_urls_from_search import is_url_valid, get_all_urls_and_prices
 
 
 # Stores the urls from inputs. Gets written to file after add_link() is completed. If was cancelled, it gets cleared.
