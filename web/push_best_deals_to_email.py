@@ -74,7 +74,7 @@ def _construct_message(analysis_json, best_deal, best_deals) -> str:
 
     subject_line = f"Subject: Real Estate Bot - " \
                    f"{_get_deal_value(analysis_json, best_deal)}%{est} ConC Return" \
-                   f" @ ${best_property['Property Info']['Price ($)']}!"
+                   f" @ ${best_property['Property Info']['Price ($)']:,}!"
 
     # Body of message filled according to find_best_deals()
     deals = ""
@@ -85,9 +85,13 @@ def _construct_message(analysis_json, best_deal, best_deals) -> str:
         # 'https://' Doesn't get sent in email for some reason so slicing to zillow.
         deals += f"Property: {analysis_json[deal]['Property URL'][12:]}\n"
 
-        deals += f"    Price: ${info['Price ($)']} - Units: {info['Units']} - Rent: ${info['Rent Per Unit ($)']}\n" \
-                 f"    Analysis: {json.dumps(analysis_json[deal]['Analysis'], indent=4)}\n" \
-                 f"    Estimations: {json.dumps(analysis_json[deal]['Estimations'], indent=4)}\n"
+        deals += f'    Property Info: {{\n' \
+                 f'        "Price": ${info["Price ($)"]:,}\n' \
+                 f'        "Units": {info["Units"]:,}\n' \
+                 f'        "Rent": ${info["Rent Per Unit ($)"]:,}\n}}\n'\
+                 f'    Analysis: {json.dumps(analysis_json[deal]["Analysis"], indent=8)}\n' \
+                 f'    Estimations: {json.dumps(analysis_json[deal]["Estimations"], indent=8)}\n' \
+                 f'{"-"*196}\n'
 
     # Entire message with subject line and body to send
     message = f"{subject_line}\n\n" \
