@@ -12,7 +12,7 @@ from data.calculations import update_values, get_property_analysis, write_proper
 from data.user import set_interest_rate
 from data.colors_for_print import PrintColors
 from web.get_property_info import TIME_BETWEEN_REQUESTS
-from run_property_tracker import SLEEP_TIMER
+from run_property_tracker import EXIT_TIMER
 
 
 GET_REQUEST_EXPECTED_TIME = 2
@@ -94,7 +94,7 @@ def check_if_analysis_json_updated(check=False) -> None:
               f"!!! Analyses were successfully added/updated! Ending program... !!!{PrintColors.ENDC}")
     else:
         print(f"\n{PrintColors.FAIL}!!! No new analysis to add/update! Ending program... !!!{PrintColors.ENDC}")
-    time.sleep(SLEEP_TIMER)  # Delays closing the program so user can read final text
+    time.sleep(EXIT_TIMER)  # Delays closing the program so user can read final text
 
 
 # Calls all the above functions to perform the analysis

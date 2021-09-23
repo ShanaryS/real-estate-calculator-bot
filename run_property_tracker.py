@@ -19,7 +19,7 @@ s_p_r, search, property_, refresh, a_o_d = 's_p_r', 's', 'p', 'r', 'a_o_d'
 append, overwrite, delete, cancel, exe = 'a', 'o', 'd', 'c', 'e'
 
 # Used for delaying terminating program so user can read final text
-SLEEP_TIMER = 1
+EXIT_TIMER = 1
 DELAY_TO_GET_URLS = 5
 
 
@@ -27,7 +27,7 @@ def quit_program() -> None:
     """Quits programing without saving an data"""
 
     print_captions(mode=cancel)
-    time.sleep(SLEEP_TIMER)
+    time.sleep(EXIT_TIMER)
 
 
 def url_is_valid(url_test) -> bool:
@@ -74,7 +74,7 @@ def commit_updates_to_file() -> None:
         _get_urls_from_search()
 
     print_captions(execute=True)
-    time.sleep(SLEEP_TIMER)
+    time.sleep(EXIT_TIMER)
 
 
 def print_captions(mode=None, e=False, verifying_url=False, valid=True,
