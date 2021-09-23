@@ -91,9 +91,9 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
         "Loan ($)": int(loan),
         "Interest Rate (Fraction)": float(f"{user.interest_rate:.4f}"),
         "Loan Length (Years)": user.years,
-        "Mortgage Payment (Monthly)": float(f"{-amortization_table['Monthly Payment'][0]:.2f}"),
-        "Property Taxes (Monthly)": float(f"{property_taxes_monthly:.2f}"),
-        "Insurance (Monthly)": float(f"{-insurance_cost / 12:.2f}"),
+        "Mortgage Payment [Monthly] ($)": float(f"{-amortization_table['Monthly Payment'][0]:.2f}"),
+        "Property Taxes [Monthly] ($)": float(f"{property_taxes_monthly:.2f}"),
+        "Insurance [Monthly] ($)": float(f"{-insurance_cost / 12:.2f}"),
         "Units": user.num_units,
         "Rent Per Unit ($)": user.rent_per_unit,
         "Vacancy (Fraction)": float(f"{user.vacancy_percent:.2f}")
