@@ -1,4 +1,4 @@
-This folder is for storing saved URLs, analyses, and logging errors.
+This folder contains all files relating to the output of the program.
 
 These are specific to the user and are thus created at runtime as necessary.
 
