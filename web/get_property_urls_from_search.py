@@ -111,7 +111,8 @@ def _set_url_to_first_page(url, current_page_num) -> str:
     """Makes sure that the url given starts on first page"""
 
     temp = url.split('/')
-    temp.pop(-2 - extra)
+    if current_page_num > 1:
+        temp.pop(-2 - extra)
     if _currentpage_is_last(url):
         temp[-1 - extra] = _rreplace(
             temp[-1 - extra], f"%2C%22pagination%22%3A%7B%22currentPage%22%3A{current_page_num}%7D%7D", '%7D', 1)
