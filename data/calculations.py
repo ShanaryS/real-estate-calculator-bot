@@ -124,30 +124,6 @@ def get_property_key() -> str:
     return f"https://www.zillow.com/homedetails/{get_url().split('/')[-2]}/"
 
 
-def get_amortization_table() -> dict:
-    """Get the mortgage amortization table. Second function to interact with."""
-    update_values()
-    return amortization_table
-
-
-def get_info() -> dict:
-    """Gets property info"""
-    update_values()
-    return property_info
-
-
-def get_analysis() -> dict:
-    """Calls required functions needed for analysis. Main function to interact with."""
-    update_values()
-    return analysis
-
-
-def get_estimations() -> dict:
-    """Gets what values the web scraper couldn't find"""
-    update_values()
-    return estimations
-
-
 def mortgage_amortization() -> dict:
     """Returns amortization table for given args. If no args, defaults to constants in calculations.py
 
