@@ -230,7 +230,7 @@ def _get_price_from_search(li: bs4.element.Tag) -> int:
     return price
 
 
-def get_all_urls_and_prices(url) -> list:
+def get_all_urls(url) -> list:
     """Main function to call. Gets urls and prices for all properties on a zillow search page"""
 
     global zillow, url_search

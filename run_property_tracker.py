@@ -7,7 +7,7 @@ import time
 from data.calculations import save_urls
 from data.user import get_url_from_input
 from data.colors_for_print import PrintColors
-from web.get_property_urls_from_search import is_url_valid, get_all_urls_and_prices
+from web.get_property_urls_from_search import is_url_valid, get_all_urls
 
 
 # Stores the urls from inputs. Gets written to file after add_link() is completed. If was cancelled, it gets cleared.
@@ -269,7 +269,16 @@ def _get_urls_from_search() -> None:
         # Coverts result list -> set -> list to remove any potential duplicates. Should be none but don't want any
         # chance of making redundant get request for the analysis.
         for search_url in urls_json.setdefault('Search', dict()):
-            urls_json['Search'][search_url] = list(set(get_all_urls_and_prices(search_url)))
+
+            # Gets all URLs from the search link. Any duplicate properties compared to urls in 'Property' in urls.json
+            # is removed. This way if user deletes a specific property to track, the analysis of that property
+            # can be easily deleted as well.
+            urls_search = set(get_all_urls(search_url))
+            urls_properties = set(urls_json.get('Property', set()))
+            urls_search.difference_update(urls_properties)
+
+            # Converts urls_search back to list to add to json. It does not accept sets.
+            urls_json['Search'][search_url] = list(urls_search)
 
         with open(os.path.join('output', 'urls.json'), 'w') as json_file:
             json.dump(urls_json, json_file, indent=4)
