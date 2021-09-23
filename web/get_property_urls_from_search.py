@@ -1,4 +1,6 @@
 """Web scrapes properties from zillow search URL."""
+
+
 import bs4.element
 from bs4 import BeautifulSoup
 from selenium import webdriver
