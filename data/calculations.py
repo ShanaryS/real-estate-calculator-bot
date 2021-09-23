@@ -291,22 +291,27 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
         try:
             with open(os.path.join('output', 'urls.json')) as json_file:
                 urls_json = json.load(json_file)
-            with open(os.path.join('output', 'analysis.json')) as json_file:
-                analysis_json = json.load(json_file)
+
+            # Deletes anaylsis for soon to be deleted urls
+            try:
+                with open(os.path.join('output', 'analysis.json')) as json_file:
+                    analysis_json = json.load(json_file)
+
+                # Updates the relevant analysis that need to be deleted due to deletion of urls
+                if search:
+                    for search_url in urls:
+                        for url in urls_json[key].get(search_url, []):
+                            analysis_json.pop(f"https://www.zillow.com/homedetails/{url.split('/')[-2]}/", None)
+                else:
+                    for url in urls:
+                        analysis_json.pop(f"https://www.zillow.com/homedetails/{url.split('/')[-2]}/", None)
+                with open(os.path.join('output', 'analysis.json'), 'w') as json_file:
+                    json.dump(analysis_json, json_file, indent=4)
+            except (FileNotFoundError, json.JSONDecodeError, TypeError):
+                pass
 
             # Check if new urls already in json. Also remove any duplicates in json if any got by.
             values = set(urls_json.setdefault(key, [])).difference(urls)
-
-            # Updates the relevant analysis that need to be deleted due to deletion of urls
-            if search:
-                for search_url in urls:
-                    for url in urls_json[key].get(search_url, None):
-                        analysis_json.pop(f"https://www.zillow.com/homedetails/{url.split('/')[-2]}/", None)
-            else:
-                for url in urls:
-                    analysis_json.pop(f"https://www.zillow.com/homedetails/{url.split('/')[-2]}/", None)
-            with open(os.path.join('output', 'analysis.json'), 'w') as json_file:
-                json.dump(analysis_json, json_file, indent=4)
 
             # Updates the file with new dict. Note, json doesn't accept set so must convert to list before.
             urls_json[key] = {value: [] for value in values}
@@ -344,19 +349,26 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
     try:
         with open(os.path.join('output', 'urls.json')) as json_file:
             urls_json = json.load(json_file)
-        with open(os.path.join('output', 'analysis.json')) as json_file:
-            analysis_json = json.load(json_file)
 
-        # Updates the relevant analysis that need to be deleted due to overwriting of urls
-        if search:
-            for search_url in urls:
-                for url in urls_json[key].get(search_url, None):
-                    analysis_json.pop(f"https://www.zillow.com/homedetails/{url.split('/')[-2]}/", None)
-        else:
-            for url in urls:
-                analysis_json.pop(f"https://www.zillow.com/homedetails/{url.split('/')[-2]}/", None)
-        with open(os.path.join('output', 'analysis.json'), 'w') as json_file:
-            json.dump(analysis_json, json_file, indent=4)
+        # Deletes analysis files that were previously for the urls being deleted
+        try:
+            with open(os.path.join('output', 'analysis.json')) as json_file:
+                analysis_json = json.load(json_file)
+
+            # Take all the previous analyses and remove them. Ignoring the new overwriting ones.
+            if search:
+                for search_url in urls_json.setdefault(key, {}):
+                    if search_url not in urls:
+                        for url in urls_json[key].get(search_url, []):
+                            analysis_json.pop(f"https://www.zillow.com/homedetails/{url.split('/')[-2]}/", None)
+            else:
+                for url in urls_json.setdefault(key, {}):
+                    if url not in urls:
+                        analysis_json.pop(f"https://www.zillow.com/homedetails/{url.split('/')[-2]}/", None)
+            with open(os.path.join('output', 'analysis.json'), 'w') as json_file:
+                json.dump(analysis_json, json_file, indent=4)
+        except (FileNotFoundError, json.JSONDecodeError, TypeError):
+            pass
 
         # Overwrites URLs of Search or Property depending on selection.
         urls_json[key] = {url: [] for url in urls}
