@@ -6,6 +6,7 @@ import smtplib
 import ssl
 from dotenv import load_dotenv
 import json
+from data.colors_for_print import PrintColors
 
 
 def email_best_deals() -> None:
@@ -15,7 +16,10 @@ def email_best_deals() -> None:
 
     # If analysis_json is empty, there is no analyses
     if not analysis_json:
+        print(f"{PrintColors.FAIL}\n!!!   No email sent. Ending program...   !!!{PrintColors.ENDC}")
         return
+
+    print(f"{PrintColors.OKCYAN}\n!!!   Emailing best deals!   !!!{PrintColors.ENDC}")
 
     best_deal, best_deals = _find_best_deals(analysis_json)
     message = _construct_message(analysis_json, best_deal, best_deals)
@@ -104,9 +108,18 @@ def _send_email(message) -> None:
     password = os.getenv('REAL_ESTATE_CALCULATOR_BOT_PASSWORD')
     receiver = sender
 
+    # Handles if .env file is missing
+    if not sender or not password:
+        print(f"\n{PrintColors.FAIL}!!!   Error: No email or password found.  !!!{PrintColors.ENDC}")
+        print(f"{PrintColors.WARNING}This is likely due to missing .env file. "
+              f"Follow instructions for emailing on github.{PrintColors.ENDC}")
+        return
+
     # Send email
     PORT = 465
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", PORT, context=context) as server:
         server.login(sender, password)
         server.sendmail(sender, receiver, message)
+
+    print(f"\n{PrintColors.OKGREEN}!!!   Email successfully sent! Ending program...   !!!{PrintColors.ENDC}")

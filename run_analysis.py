@@ -9,6 +9,7 @@ import os.path
 import json
 import time
 from data.calculations import update_values, get_property_analysis, write_property_analyses, is_new_analyses
+from web.push_best_deals_to_email import email_best_deals
 from data.user import set_interest_rate
 from data.colors_for_print import PrintColors
 from web.get_property_info import TIME_BETWEEN_REQUESTS
@@ -94,9 +95,9 @@ def check_if_analysis_json_updated(check=False) -> None:
 
     if any(is_new_analyses()) or url_removed or check:
         print(f"\n{PrintColors.OKGREEN}"
-              f"!!! Analyses were successfully added/updated! Ending program... !!!{PrintColors.ENDC}")
+              f"!!! Analyses were successfully added/updated! !!!{PrintColors.ENDC}")
     else:
-        print(f"\n{PrintColors.FAIL}!!! No new analysis to add/update! Ending program... !!!{PrintColors.ENDC}")
+        print(f"\n{PrintColors.FAIL}!!! No new analysis to add/update! !!!{PrintColors.ENDC}")
     time.sleep(EXIT_TIMER)  # Delays closing the program so user can read final text
 
 
@@ -108,6 +109,7 @@ if __name__ == '__main__':
 
         get_interest_rate()
         analyze_properties()
+        email_best_deals()
 
     except FileNotFoundError:
         print(f"\n{PrintColors.FAIL}!!! Error: No URLs exist... !!!{PrintColors.ENDC}")
