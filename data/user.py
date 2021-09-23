@@ -6,10 +6,10 @@ from web.get_property_info import get_address, get_price, get_year, get_descript
     get_num_units, get_rent_per_unit, get_sqft, get_price_per_sqft, get_lot_size, get_parking
 
 
-# Values to reset to if no input necessary. A few variables always require input.
+# DEFAULT VALUES USED FOR ANALYSIS. CHANGE THESE VALUES ACCORDING TO YOUR HEURISTICS.
 DOWN_PAYMENT_PERCENT = 0.20
-YEARS = 30
-LOAN_TYPE = 'Conventional'
+YEARS = 30  # 'FHA' and 'VA' requires YEARS = 30. 'Conventional' has options for YEARS = 30, 20, 15, 10.
+LOAN_TYPE = 'Conventional'  # Options are 'Conventional', 'FHA', 'VA'. !!! NOTE: 'FHA' and 'VA' requires YEARS = 30.
 PROPERTY_TAXES = 4000
 FIX_UP_COST = 10000
 NUM_UNITS = 3
