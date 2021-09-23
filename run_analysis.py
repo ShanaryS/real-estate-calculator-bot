@@ -39,7 +39,7 @@ def analyze_property(url) -> None:
         property_analyses.append(property_analysis)
     else:
         print(f" {PrintColors.FAIL}!!! ERROR ANALYZING THIS PROPERTY. "
-              f"CHECK errors.log FOR DETAILS. !!!{PrintColors.ENDC}")
+              f"CHECK \\output\\errors.log FOR DETAILS. !!!{PrintColors.ENDC}")
 
     time.sleep(TIME_BETWEEN_REQUESTS)
 

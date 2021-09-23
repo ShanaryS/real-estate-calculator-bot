@@ -117,7 +117,8 @@ def print_captions(mode=None, e=False, verifying_url=False, valid=True,
     elif verifying_url:
         print(f"\n{OK}... Verifying URL ...{END}")
     elif not valid:
-        print(f"\n{BAD}!!! Invalid URL... (Correct URL for Search/Property? Auction? [Not allowed]) !!!{END}")
+        print(f"\n{BAD}!!! Invalid URL... Correct URL for Search/Property? - For Searches try setting a price range. "
+              f"For property analysis auctions are not allowed.   !!!{END}")
     elif received:
         print(f"\n{GREAT}!!! URL received! !!!{END}")
     elif execute_s:
