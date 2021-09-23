@@ -100,7 +100,7 @@ def _solve_captcha() -> None:
     action = webdriver.ActionChains(chrome)
     action.click_and_hold(on_element=target)
     action.perform()
-    time.sleep(HOLD_LENGTH)  # Holds button for 5 seconds. Should cover all the variable lengths
+    time.sleep(HOLD_LENGTH)  # Holds button for HOLD_LENGTH seconds. Should cover all the variable lengths
 
     action.release(on_element=target)
     action.perform()
@@ -241,10 +241,11 @@ def get_all_urls_and_prices(url) -> list:
     url = url_search
 
     open_chrome(url)
-    set_page_search()
 
     if 'captcha' in chrome.current_url.lower():
         _solve_captcha()
+
+    set_page_search()
 
     num_pages, num_listings = _get_num_pages_and_listings(url)
     num_pages = num_pages if num_pages < 30 else 30
