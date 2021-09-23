@@ -4,7 +4,7 @@ These are specific to the user and are thus created at runtime as necessary.
 
 urls.json stores URLs, analysis.json stores property analyses, and errors.log logs errors.
 
-Initially this directory is empty aside from this file ("Hello world :)").
+Initially this directory is empty aside from this file (Hello world :smile:).
 
 However, the files will be added here once there is data to save.
 
