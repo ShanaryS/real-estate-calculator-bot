@@ -55,15 +55,17 @@ def analyze_properties() -> None:
     num_urls = num_search_urls + num_property_urls
     TIME_CONST = GET_REQUEST_EXPECTED_TIME + TIME_BETWEEN_REQUESTS
     expected_time = int(num_urls * TIME_CONST)
+    index = 0
     print(f"{PrintColors.WARNING}--- Analyzing properties... Expected duration: {PrintColors.OKCYAN}"
           f"{expected_time}s{PrintColors.ENDC}\n")
 
     # Gets analysis and writes to file for the individually added properties
-    for index, url in enumerate(urls_json.setdefault('Property', dict())):
+    for url in urls_json.setdefault('Property', dict()):
         print(f"{PrintColors.WARNING}TIME REMAINING: "
               f"{PrintColors.OKCYAN}{-int(-(expected_time - index * TIME_CONST))}s{PrintColors.ENDC}",
               "---", url, end="")
         analyze_property(url)
+        index += 1
     write_property_analyses(keys, property_analyses)
 
     # If above changed the file, save that fact to print closing text.
@@ -75,11 +77,12 @@ def analyze_properties() -> None:
     # Could just call write_property_analyses() once after loops, but want to separate these to act like a save point.
     keys.clear(), property_analyses.clear()
     for search_url in urls_json.setdefault('Search', dict()):
-        for index, url in enumerate(urls_json['Search'][search_url]):
+        for url in urls_json['Search'][search_url]:
             print(f"{PrintColors.WARNING}TIME REMAINING: "
                   f"{PrintColors.OKCYAN}{-int(-(expected_time - index * TIME_CONST))}s{PrintColors.ENDC}",
                   "---", url, end="")
             analyze_property(url)
+            index += 1
     write_property_analyses(keys, property_analyses)
 
     if updated:
