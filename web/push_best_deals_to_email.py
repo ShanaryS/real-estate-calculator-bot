@@ -49,7 +49,6 @@ def _find_best_deals(analysis_json) -> tuple:
     """Finds the best deal out of the analysis"""
 
     best_deals = []
-    best_deal = ''
 
     # TODO Make this more complicated taking in max offer/price, all analysis other analysis. Multiple if statements
     # _get_deal_value() returns a tuple of all the meta analyses? Use for different if statements?
@@ -57,13 +56,8 @@ def _find_best_deals(analysis_json) -> tuple:
         if _get_deal_value(analysis_json, deal) > 12:
             best_deals.append(deal)
 
-    if best_deals:
-        best_deal = best_deals[0]
-        curr_best = _get_deal_value(analysis_json, best_deal)
-
-        for deal in best_deals:
-            if _get_deal_value(analysis_json, deal) > curr_best:
-                best_deal = deal
+    best_deals.sort(key=lambda x: _get_deal_value(analysis_json, x), reverse=True)
+    best_deal = best_deals[0]
 
     return best_deal, best_deals
 
@@ -79,17 +73,20 @@ def _construct_message(analysis_json, best_deal, best_deals) -> str:
         est += '*'
 
     subject_line = f"Subject: Real Estate Bot - " \
-                   f"{_get_deal_value(analysis_json, best_deal)}%{est} ConC Return!" \
-                   f" @ ${best_property['Property Info']['Price ($)']}"
+                   f"{_get_deal_value(analysis_json, best_deal)}%{est} ConC Return" \
+                   f" @ ${best_property['Property Info']['Price ($)']}!"
 
     # Body of message filled according to find_best_deals()
     deals = ""
     for deal in best_deals:
 
+        info = analysis_json[deal]['Property Info']
+
         # 'https://' Doesn't get sent in email for some reason so slicing to zillow.
         deals += f"Property: {analysis_json[deal]['Property URL'][12:]}\n"
 
-        deals += f"    Analysis: {json.dumps(analysis_json[deal]['Analysis'], indent=4)}\n" \
+        deals += f"    Price: ${info['Price ($)']} - Units: {info['Units']} - Rent: ${info['Rent Per Unit ($)']}\n" \
+                 f"    Analysis: {json.dumps(analysis_json[deal]['Analysis'], indent=4)}\n" \
                  f"    Estimations: {json.dumps(analysis_json[deal]['Estimations'], indent=4)}\n"
 
     # Entire message with subject line and body to send
