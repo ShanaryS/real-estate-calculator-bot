@@ -17,7 +17,7 @@ TAX_BRACKET = 0.24
 IS_FIRST_RENTAL = True
 
 
-'''ORIGINAL VALUES TO RESET TO...'''
+'''ORIGINAL VALUES TO RESET TO'''
 # DOWN_PAYMENT_PERCENT = 0.20
 # YEARS = 30  # 'FHA' and 'VA' requires YEARS = 30. 'Conventional' has options for YEARS = 30, 20, 15, 10.
 # LOAN_TYPE = 'Conventional'  # Options are 'Conventional', 'FHA', 'VA'. !!! NOTE: 'FHA' and 'VA' requires YEARS = 30.
