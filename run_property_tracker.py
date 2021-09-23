@@ -20,7 +20,7 @@ append, overwrite, delete, cancel, exe = 'a', 'o', 'd', 'c', 'e'
 
 # Used for delaying terminating program so user can read final text
 SLEEP_TIMER = 2
-DELAY_TO_GET_URLS = 7
+DELAY_TO_GET_URLS = 5
 
 
 def quit_program() -> None:
