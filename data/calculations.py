@@ -292,7 +292,7 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
             with open(os.path.join('output', 'urls.json')) as json_file:
                 urls_json = json.load(json_file)
 
-            # Deletes anaylsis for soon to be deleted urls
+            # Deletes analysis for soon to be deleted urls
             try:
                 with open(os.path.join('output', 'analysis.json')) as json_file:
                     analysis_json = json.load(json_file)
