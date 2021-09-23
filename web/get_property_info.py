@@ -235,6 +235,7 @@ def get_property_taxes() -> tuple:
 
     temp = page.rfind('-->$')
 
+    # Properties with HOA fees or price range in additional details causes finding the wrong values. These handle it.
     if temp > -1:
         try:
             property_taxes = int(page[temp+4:temp+11].split('<')[0].replace(',', ''))
