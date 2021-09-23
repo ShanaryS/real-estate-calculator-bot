@@ -264,8 +264,11 @@ def _get_urls_from_search() -> None:
         with open(os.path.join('output', 'urls.json')) as json_file:
             urls_json = json.load(json_file)
 
+        # Get property URLs for each Search URL and place them under their respective Search URL.
+        # Coverts result list -> set -> list to remove any potential duplicates. Should be none but don't want any
+        # chance of making redundant get request for the analysis.
         for search_url in urls_json.setdefault('Search', dict()):
-            urls_json['Search'][search_url] = get_all_urls_and_prices(search_url)
+            urls_json['Search'][search_url] = list(set(get_all_urls_and_prices(search_url)))
 
         with open(os.path.join('output', 'urls.json'), 'w') as json_file:
             json.dump(urls_json, json_file, indent=4)
