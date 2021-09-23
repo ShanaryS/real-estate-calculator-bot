@@ -81,13 +81,13 @@ def use_default_rent_per_unit() -> int:
     found_rent_per_unit = False
 
     if num_units == 1:
-        return 1000
+        return RENT_PER_UNIT_SINGLE
     elif num_units == 2:
-        return 800
+        return RENT_PER_UNIT_DUPLEX
     elif num_units == 3:
-        return 650
+        return RENT_PER_UNIT_TRIPLEX
     elif num_units >= 4:
-        return 600
+        return RENT_PER_UNIT_DUPLEX
 
 
 # (INPUT REQUIRED) Default values used for calculator. Variables will be updated when performing real world calculations
