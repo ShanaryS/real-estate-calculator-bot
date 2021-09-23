@@ -139,10 +139,15 @@ def print_captions(mode=None, e=False, verifying_url=False, valid=True,
               f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!{END}\n")
 
 
-def add_link(mode) -> None:
+def add_link(mode=None, refresh_no_input=False) -> None:
     """Logic for adding URLs"""
 
     global is_search
+
+    if refresh_no_input:
+        is_search = True
+        commit_updates_to_file()
+        return
 
     print_captions(mode=mode)
     search_property_update = input()
@@ -289,4 +294,4 @@ def _get_urls_from_search() -> None:
 
 
 if __name__ == '__main__':
-    add_link(s_p_r)
+    add_link(mode=s_p_r)
