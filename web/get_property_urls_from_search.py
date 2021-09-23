@@ -54,11 +54,6 @@ def is_url_valid(url) -> bool:
     return all([valid, valid_2])
 
 
-def get_url() -> str:
-    """Returns URL for property"""
-    return url_search
-
-
 def open_chrome(url) -> None:
     """Opens chromedriver using selenium"""
 
@@ -224,6 +219,7 @@ def _get_property_url_from_search(li: bs4.element.Tag) -> str:
     return property_url
 
 
+# Currently not used. No reason to delete however.
 def _get_price_from_search(li: bs4.element.Tag) -> int:
     """Gets price for property from search url"""
 
