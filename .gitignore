@@ -3,3 +3,4 @@ analysis.json
 urls.json
 errors.log
 test.py
+.env
