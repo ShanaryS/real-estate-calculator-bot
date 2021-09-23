@@ -55,7 +55,7 @@ def set_found() -> None:
 
     found['Property Taxes'] = (found_property_taxes, f"{property_taxes:,}")
     found['Units'] = (found_num_units, f"{num_units}")
-    found['Rent per unit'] = (found_rent_per_unit, f"{rent_per_unit:,}")
+    found['Rent Per Unit ($)'] = (found_rent_per_unit, f"{rent_per_unit:,}")
 
 
 # These functions handle not finding certain values that are web scraped
