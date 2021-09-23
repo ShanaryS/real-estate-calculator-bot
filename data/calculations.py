@@ -463,6 +463,7 @@ def is_new_analyses() -> list:
 def print_amortization_table() -> None:
     """Prints amortization table to terminal"""
 
+    print("--------------------------------------------------------------------------------")
     print("Amortization Table:")
     print()
     d = {'Period': [], 'Monthly Payment': [],
