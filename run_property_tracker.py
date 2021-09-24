@@ -15,6 +15,7 @@ from web.get_property_urls_from_search import is_url_valid, get_all_urls
 EXIT_TIMER = 1
 DELAY_TO_GET_URLS = 5
 
+# Use for navigating through menus
 S_P_R, SEARCH, PROPERTY, REFRESH, A_O_D = 's_p_r', 's', 'p', 'r', 'a_o_d'
 APPEND, OVERWRITE, DELETE, CANCEL, EXECUTE = 'a', 'o', 'd', 'c', 'e'
 
@@ -26,21 +27,21 @@ class State:
     urls = set()
 
 
-def quit_program() -> None:
+def _quit_program() -> None:
     """Quits programing without saving an data"""
 
-    print_captions(mode=CANCEL)
+    _print_captions(mode=CANCEL)
     time.sleep(EXIT_TIMER)
 
 
-def url_is_valid(url_test) -> bool:
+def _url_is_valid(url_test) -> bool:
     """Checks if URL is valid"""
 
     # If user is deleting URL, no need to verify
     if State.to_delete:
         return True
 
-    print_captions(verifying_url=True)
+    _print_captions(verifying_url=True)
 
     # If not zillow URL, return false
     if url_test[:23] != 'https://www.zillow.com/' or len(url_test) <= 29:
@@ -65,23 +66,23 @@ def url_is_valid(url_test) -> bool:
     return True
 
 
-def commit_updates_to_file() -> None:
+def _commit_updates_to_file() -> None:
     """Commits changes to file"""
 
     if State.urls:
         save_urls(State.urls, overwrite=State.to_overwrite, search=State.is_search, delete=State.to_delete)
 
     if State.is_search and not State.to_delete:
-        print_captions(execute_s=True)
+        _print_captions(execute_s=True)
         time.sleep(DELAY_TO_GET_URLS)
         _get_urls_from_search()
 
-    print_captions(execute=True)
+    _print_captions(execute=True)
     time.sleep(EXIT_TIMER)
 
 
-def print_captions(mode=None, e=False, verifying_url=False, valid=True,
-                   received=False, execute_s=False, execute=False, search_limitations=False) -> None:
+def _print_captions(mode=None, e=False, verifying_url=False, valid=True,
+                    received=False, execute_s=False, execute=False, search_limitations=False) -> None:
     """Prints text that tells the user what the programing is doing"""
 
     BAD, OK, GOOD, GREAT = PrintColors.FAIL, PrintColors.WARNING, PrintColors.OKCYAN, PrintColors.OKGREEN
@@ -147,19 +148,19 @@ def add_link(mode=None, refresh_no_input=False) -> None:
 
     if refresh_no_input:
         State.is_search = True
-        commit_updates_to_file()
+        _commit_updates_to_file()
         return
 
-    print_captions(mode=mode)
+    _print_captions(mode=mode)
     search_property_update = input()
     while search_property_update != SEARCH and search_property_update != PROPERTY \
             and search_property_update != REFRESH and search_property_update != CANCEL:
-        print_captions(mode=mode)
+        _print_captions(mode=mode)
         search_property_update = input()
 
     if search_property_update != CANCEL:
         if search_property_update == SEARCH:
-            print_captions(search_limitations=True)
+            _print_captions(search_limitations=True)
             State.is_search = True
             _choose_options(A_O_D)
         elif search_property_update == PROPERTY:
@@ -167,20 +168,20 @@ def add_link(mode=None, refresh_no_input=False) -> None:
             _choose_options(A_O_D)
         elif search_property_update == REFRESH:
             State.is_search = True
-            commit_updates_to_file()
+            _commit_updates_to_file()
     elif search_property_update == CANCEL:
-        quit_program()
+        _quit_program()
         return
 
 
 def _choose_options(mode) -> None:
     """Handles the user choosing different options for URLs"""
 
-    print_captions(mode=mode)
+    _print_captions(mode=mode)
     append_overwrite_delete = input()
     while append_overwrite_delete != APPEND and append_overwrite_delete != OVERWRITE \
             and append_overwrite_delete != DELETE and append_overwrite_delete != CANCEL:
-        print_captions(mode=mode)
+        _print_captions(mode=mode)
         append_overwrite_delete = input()
 
     if append_overwrite_delete != CANCEL:
@@ -193,71 +194,71 @@ def _choose_options(mode) -> None:
             State.to_delete = True
             _get_urls_from_input(DELETE)
     elif append_overwrite_delete == CANCEL:
-        quit_program()
+        _quit_program()
         return
 
 
 def _get_urls_from_input(mode) -> None:
     """Gets URLs from user. Calls functions that adds them to file"""
 
-    print_captions(mode=mode)
+    _print_captions(mode=mode)
     new_url = get_url_from_input()
 
     if new_url != CANCEL:
-        valid = url_is_valid(new_url)
+        valid = _url_is_valid(new_url)
         while not valid:
-            print_captions(valid=False)
+            _print_captions(valid=False)
 
-            print_captions(mode=mode)
+            _print_captions(mode=mode)
             new_url = get_url_from_input()
 
             if new_url == CANCEL:
-                quit_program()
+                _quit_program()
                 return
 
-            valid = url_is_valid(new_url)
+            valid = _url_is_valid(new_url)
 
         State.urls.add(new_url)
-        print_captions(received=True)
+        _print_captions(received=True)
 
-        print_captions(mode=mode, e=True)
+        _print_captions(mode=mode, e=True)
         new_url = get_url_from_input()
         while new_url != CANCEL:
 
             if new_url == EXECUTE:
-                commit_updates_to_file()
+                _commit_updates_to_file()
                 return
 
             else:
-                valid = url_is_valid(new_url)
+                valid = _url_is_valid(new_url)
                 while not valid:
-                    print_captions(valid=False)
+                    _print_captions(valid=False)
 
-                    print_captions(mode=mode, e=True)
+                    _print_captions(mode=mode, e=True)
                     new_url = get_url_from_input()
 
                     if new_url == EXECUTE:
-                        commit_updates_to_file()
+                        _commit_updates_to_file()
                         return
 
                     if new_url == CANCEL:
-                        quit_program()
+                        _quit_program()
                         return
 
-                    valid = url_is_valid(new_url)
+                    valid = _url_is_valid(new_url)
 
                 State.urls.add(new_url)
-                print_captions(received=True)
+                _print_captions(received=True)
 
-            print_captions(mode=mode, e=True)
+            _print_captions(mode=mode, e=True)
             new_url = get_url_from_input()
 
         if new_url == CANCEL:
-            quit_program()
+            _quit_program()
             return
 
     elif new_url == CANCEL:
-        quit_program()
+        _quit_program()
         return
 
 
