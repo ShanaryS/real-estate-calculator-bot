@@ -4,21 +4,24 @@
 from bs4 import BeautifulSoup
 import requests
 import time
+from dataclasses import dataclass
 
 
 TIME_BETWEEN_REQUESTS = 0  # Used by get_property_taxes(), get_address() and run_analysis.py
 NUM_TIMES_TO_RETRY_REQUESTS = 5
-url_property: str
-url_property_taxes: str
-zillow: BeautifulSoup
-county_office: BeautifulSoup
-page: requests.Session()
+
+
+@dataclass
+class PropertyPage:
+    url_property: str
+    url_property_taxes: str
+    zillow: BeautifulSoup
+    county_office: BeautifulSoup
+    page: requests.models.Response()
 
 
 def set_page_property_info(url=None) -> None:
     """Gets html page to parse"""
-
-    global url_property, url_property_taxes, zillow, county_office, page
 
     # Zillow has bot detection. This handles it.
     req_headers = {
@@ -30,14 +33,13 @@ def set_page_property_info(url=None) -> None:
                       ' (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
     }
     with requests.Session() as s:
-        url_property = _set_url_property(url)
-        url_property_taxes = 'https://www.countyoffice.org/property-records-search/?q='  # Completed by get_address()
-        zillow_page = s.get(url_property, headers=req_headers).text
-        page = zillow_page  # Hoping this reduces unnecessary calls to zillow for certain functions
+        PropertyPage.url_property = _set_url_property(url)
+        zillow_page = s.get(PropertyPage.url_property, headers=req_headers).text
+        PropertyPage.page = zillow_page  # Hoping this reduces unnecessary calls to zillow for certain functions
 
     # Creates beautiful soup object
-    zillow = BeautifulSoup(zillow_page, 'html.parser')
-    county_office = BeautifulSoup('', 'html.parser')
+    PropertyPage.zillow = BeautifulSoup(zillow_page, 'html.parser')
+    PropertyPage.county_office = BeautifulSoup('', 'html.parser')
 
 
 def _set_url_property(url=None) -> str:
@@ -58,23 +60,21 @@ def _set_url_property(url=None) -> str:
 def _set_url_property_taxes(house_number, street_name, city, state) -> None:
     """Set the county office URL based on the address from zillow"""
 
-    global url_property_taxes, county_office
-
-    url_property_taxes = 'https://www.countyoffice.org/property-records-search/?q='  # Resetting variable each func call
-    url_property_taxes += f"{house_number}+{street_name}%2C+{city}%2C+{state}%2C+USA"
-    county_office_page = requests.get(url_property_taxes).text
-    county_office = BeautifulSoup(county_office_page, 'html.parser')
+    PropertyPage.url_property_taxes = 'https://www.countyoffice.org/property-records-search/?q='
+    PropertyPage.url_property_taxes += f"{house_number}+{street_name}%2C+{city}%2C+{state}%2C+USA"
+    county_office_page = requests.get(PropertyPage.url_property_taxes).text
+    PropertyPage.county_office = BeautifulSoup(county_office_page, 'html.parser')
 
 
 def get_url(property_url=False, taxes_url=False) -> str:
     """Returns URL for either property or property taxes on countyoffice.org/tax-records/"""
 
     if property_url:
-        return url_property
+        return PropertyPage.url_property
     elif taxes_url:
-        return url_property_taxes
+        return PropertyPage.url_property_taxes
     else:
-        return url_property
+        return PropertyPage.url_property
 
 
 def get_address() -> str:
@@ -82,7 +82,7 @@ def get_address() -> str:
 
     raw_address = ""
     city_state_zip = ""
-    base = zillow.find('div', class_="ds-home-details-chip").contents[1]
+    base = PropertyPage.zillow.find('div', class_="ds-home-details-chip").contents[1]
 
     try:
         raw_address = str(base.span.string).rstrip(',').split()
@@ -146,7 +146,7 @@ def get_address() -> str:
 def get_price() -> int:
     """Get the price of the listing"""
 
-    price = zillow.find(class_="ds-summary-row").span.span.span
+    price = PropertyPage.zillow.find(class_="ds-summary-row").span.span.span
     price = int(str(price.string).lstrip('$').replace(',', ''))
 
     return price
@@ -155,7 +155,7 @@ def get_price() -> int:
 def get_year() -> int:
     """Get the year of the listing"""
 
-    house_year = int(zillow.find(class_="ds-home-fact-list-item").next_sibling.contents[-1].string)
+    house_year = int(PropertyPage.zillow.find(class_="ds-home-fact-list-item").next_sibling.contents[-1].string)
 
     return house_year
 
@@ -164,7 +164,7 @@ def get_sqft() -> int:
     """Get the sqft of the listing"""
 
     # Assuming values can be acres so taking the float then converting it to sqft if necessary.
-    sqft = float(zillow.find_all(class_="ds-bed-bath-living-area-container")[-1]
+    sqft = float(PropertyPage.zillow.find_all(class_="ds-bed-bath-living-area-container")[-1]
                  .contents[-1].span.string.replace(',', ''))
 
     # House size may be given in acres like lot size for really big houses. Just covering my bases here.
@@ -178,7 +178,7 @@ def get_sqft() -> int:
 def get_price_per_sqft() -> int:
     """Get the price per sqft of the listing"""
 
-    price_sqft = int(list(zillow.find(class_="ds-home-fact-list-item")
+    price_sqft = int(list(PropertyPage.zillow.find(class_="ds-home-fact-list-item")
                           .next_siblings)[-1].contents[-1].string.lstrip('$'))
 
     return price_sqft
@@ -192,7 +192,7 @@ def get_lot_size() -> int:
 
     for i in terms_to_try:
         try:
-            lot_size = float(str(zillow.find_all(class_=i)[1].contents[2].span)
+            lot_size = float(str(PropertyPage.zillow.find_all(class_=i)[1].contents[2].span)
                              .split('>')[-2].split('s')[0].replace('Acre', '').strip().replace(',', ''))
         except (IndexError, ValueError):
             pass
@@ -209,7 +209,7 @@ def get_lot_size() -> int:
 def get_parking() -> str:
     """Get parking of the listing"""
 
-    parking = list(zillow.find(class_="ds-home-fact-list-item").next_siblings)[3].contents[-1].string
+    parking = list(PropertyPage.zillow.find(class_="ds-home-fact-list-item").next_siblings)[3].contents[-1].string
 
     return parking
 
@@ -218,7 +218,7 @@ def get_description() -> tuple:
     """Get the description of listing"""
 
     try:
-        description = zillow.find(class_="ds-overview-section").contents[0].contents[0].string
+        description = PropertyPage.zillow.find(class_="ds-overview-section").contents[0].contents[0].string
         found_description = True
     except AttributeError:
         description = ""
@@ -234,22 +234,23 @@ def get_property_taxes() -> tuple:
     found_property_taxes = True
     check_tax_records = False
 
-    temp = page.rfind('-->$')
+    temp = PropertyPage.page.rfind('-->$')
 
     # Properties with HOA fees or price range in additional details causes finding the wrong values. These handle it.
     if temp > -1:
         try:
-            property_taxes = int(page[temp+4:temp+11].split('<')[0].replace(',', ''))
+            property_taxes = int(PropertyPage.page[temp+4:temp+11].split('<')[0].replace(',', ''))
         except ValueError:
-            temp = page.find('-->$')
+            temp = PropertyPage.page.find('-->$')
             try:
-                property_taxes = int(page[temp + 4:temp + 11].split('<')[0].replace(',', ''))
+                property_taxes = int(PropertyPage.page[temp + 4:temp + 11].split('<')[0].replace(',', ''))
             except ValueError:
                 check_tax_records = True
 
     if check_tax_records:
         try:
-            property_taxes = str(county_office.find_all('tbody')[2]).split('<td>$')[1].split('<')[0].replace(',', '')
+            property_taxes = str(PropertyPage.county_office.find_all('tbody')[2]
+                                 ).split('<td>$')[1].split('<')[0].replace(',', '')
             property_taxes = int(property_taxes)
         except TypeError:
             found_property_taxes = False
@@ -260,7 +261,7 @@ def get_property_taxes() -> tuple:
                 time.sleep(TIME_BETWEEN_REQUESTS)
                 get_address()
                 try:
-                    property_taxes = str(county_office.find_all('tbody')[2])\
+                    property_taxes = str(PropertyPage.county_office.find_all('tbody')[2])\
                         .split('<td>$')[1].split('<')[0].replace(',', '')
                     property_taxes = int(property_taxes)
                     break
@@ -278,7 +279,7 @@ def get_num_units() -> tuple:
 
     # alternative in case other breaks
     # house_type = zillow.find(class_="Text-c11n-8-48-0__sc-aiai24-0 sc-pJipy fgqdLj").string
-    house_type = zillow.find(class_="ds-home-fact-list-item").contents[-1].string
+    house_type = PropertyPage.zillow.find(class_="ds-home-fact-list-item").contents[-1].string
     found_num_units = True
 
     if 'single' in house_type.lower():
@@ -291,10 +292,10 @@ def get_num_units() -> tuple:
         num_units = 4
     else:
         found_num_units = False
-        temp = page.find('Full bathrooms:')
+        temp = PropertyPage.page.find('Full bathrooms:')
 
         if temp > -1:
-            num_units = int(page[temp+24:temp+25])
+            num_units = int(PropertyPage.page[temp+24:temp+25])
             num_units = num_units if num_units < 5 else 4
         else:
             num_units = 0
@@ -305,11 +306,11 @@ def get_num_units() -> tuple:
 def get_rent_per_unit() -> tuple:
     """Get rent per unit from zillow. If it does not exist, returns 0."""
 
-    temp = page.find('"pricePerSquareFoot\\":null')-7
+    temp = PropertyPage.page.find('"pricePerSquareFoot\\":null')-7
     found_rent_per_unit = True
 
     if temp > -1:
-        rent_per_unit = int(page[temp:temp+7].lstrip('"').lstrip(':').rstrip('\\').rstrip(','))
+        rent_per_unit = int(PropertyPage.page[temp:temp+7].lstrip('"').lstrip(':').rstrip('\\').rstrip(','))
     else:
         found_rent_per_unit = False
         rent_per_unit = 0
