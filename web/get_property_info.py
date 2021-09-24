@@ -13,6 +13,7 @@ NUM_TIMES_TO_RETRY_REQUESTS = 5
 
 @dataclass
 class PropertyPage:
+    """Stores info about the property's page"""
     url_property: str
     url_property_taxes: str
     zillow: BeautifulSoup

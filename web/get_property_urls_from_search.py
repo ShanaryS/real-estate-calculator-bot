@@ -28,6 +28,54 @@ class SearchPage:
     extra: int  # Sometimes urls have an extra '/' at the end. This accounts for it
 
 
+def get_all_urls(url) -> list:
+    """Main function to call. Gets urls and prices for all properties on a zillow search page"""
+
+    _url_has_extra_slash(url)
+    current_page_num = _get_current_page(url)
+    SearchPage.url_search = _set_url_to_first_page(url, current_page_num)
+    url = SearchPage.url_search
+
+    _open_chrome(url)
+
+    if 'captcha' in SearchPage.chrome.current_url.lower():
+        _solve_captcha()
+
+    _set_page_search()
+
+    num_pages, num_listings = _get_num_pages_and_listings(url)
+    num_pages = num_pages if num_pages < 30 else 30
+
+    property_urls = []
+    for page in range(1, num_pages+1):
+
+        if 'captcha' in SearchPage.chrome.current_url.lower():
+            _solve_captcha()
+
+        _scroll_to_page_bottom()
+
+        _set_page_search()
+        base = SearchPage.zillow.find('div', id="grid-search-results").find('ul')
+
+        for li in base.contents:
+            if li.find('div', id="nav-ad-container"):
+                continue
+            if _is_auction(li):
+                continue
+            property_urls.append(_get_property_url_from_search(li))
+
+        if page < num_pages:
+            url = _get_url_for_next_page(url, page)
+            SearchPage.chrome.get(url)
+            curr_url = SearchPage.chrome.current_url
+            if curr_url != url and 'captcha' not in curr_url.lower():  # If no more pages to go through
+                break
+
+    SearchPage.chrome.close()
+
+    return property_urls
+
+
 def is_url_valid(url) -> bool:
     """Checks if URL was incorrectly inputted by looking for an error page. For both individual properties and search"""
 
@@ -57,14 +105,14 @@ def is_url_valid(url) -> bool:
     return all([valid, valid_2])
 
 
-def open_chrome(url) -> None:
+def _open_chrome(url) -> None:
     """Opens chromedriver using selenium"""
 
     SearchPage.chrome = webdriver.Chrome()
     SearchPage.chrome.get(url)
 
 
-def set_page_search() -> None:
+def _set_page_search() -> None:
     """Opens chromedriver using selenium"""
 
     # Creates beautiful soup object
@@ -224,51 +272,3 @@ def _get_price_from_search(li: bs4.element.Tag) -> int:
     price = int(li.find('div', class_="list-card-price").string.lstrip('$').replace(',', ''))
 
     return price
-
-
-def get_all_urls(url) -> list:
-    """Main function to call. Gets urls and prices for all properties on a zillow search page"""
-
-    _url_has_extra_slash(url)
-    current_page_num = _get_current_page(url)
-    SearchPage.url_search = _set_url_to_first_page(url, current_page_num)
-    url = SearchPage.url_search
-
-    open_chrome(url)
-
-    if 'captcha' in SearchPage.chrome.current_url.lower():
-        _solve_captcha()
-
-    set_page_search()
-
-    num_pages, num_listings = _get_num_pages_and_listings(url)
-    num_pages = num_pages if num_pages < 30 else 30
-
-    property_urls = []
-    for page in range(1, num_pages+1):
-
-        if 'captcha' in SearchPage.chrome.current_url.lower():
-            _solve_captcha()
-
-        _scroll_to_page_bottom()
-
-        set_page_search()
-        base = SearchPage.zillow.find('div', id="grid-search-results").find('ul')
-
-        for li in base.contents:
-            if li.find('div', id="nav-ad-container"):
-                continue
-            if _is_auction(li):
-                continue
-            property_urls.append(_get_property_url_from_search(li))
-
-        if page < num_pages:
-            url = _get_url_for_next_page(url, page)
-            SearchPage.chrome.get(url)
-            curr_url = SearchPage.chrome.current_url
-            if curr_url != url and 'captcha' not in curr_url.lower():  # If no more pages to go through
-                break
-
-    SearchPage.chrome.close()
-
-    return property_urls
