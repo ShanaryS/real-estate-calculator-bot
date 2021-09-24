@@ -5,7 +5,7 @@
 /web/push_best_deals_to_email.py with the functions _get_deal_value() and _find_best_deals().
 Currently it just emails any property with a Cash On Cash Return greater than 12%. That is universally considered
 a 'good deal'. You may increase or decrease the percentage by changing MINIMUM_ConC_PERCENT from 12. Different areas
-may have too many deals above 12 or too little.
+may have too many deals above 12% or too little.
 '''
 
 # Default values assumed if not found. Backup below.
