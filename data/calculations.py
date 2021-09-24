@@ -50,7 +50,7 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
 
         extra = ""
         if exception_name == 'AttributeError':
-            extra = "(House off-market???)"
+            extra = " (House off-market???)"
 
         # When printing analysis of a single property, url=None. This allows that URL to be saved as well.
         if not url:
@@ -68,7 +68,7 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
                 f"{tb_title}\n" \
                 f"{tb_string}" \
                 f"{exception_name}: {exception}\n" \
-                f"] {extra}\n\n"
+                f"]{extra}\n\n"
 
         with open(os.path.join('output', 'errors.log'), 'a') as file:
             file.write(error)
