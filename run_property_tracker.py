@@ -5,7 +5,7 @@ import os.path
 import json
 import time
 from dataclasses import dataclass
-from data.calculations import save_urls, save_urls_ignore
+from data.calculations import write_urls, write_urls_ignore
 from data.user import get_url_from_input
 from data.colors_for_print import BAD, OK, GOOD, GREAT, END
 from web.get_property_urls_from_search import is_url_valid, get_all_urls
@@ -71,9 +71,9 @@ def _commit_updates_to_file() -> None:
 
     if State.urls:
         if State.to_ignore:
-            save_urls_ignore(State.urls)
+            write_urls_ignore(State.urls)
         else:
-            save_urls(State.urls, overwrite=State.to_overwrite, search=State.is_search, delete=State.to_delete)
+            write_urls(State.urls, overwrite=State.to_overwrite, search=State.is_search, delete=State.to_delete)
 
     if State.is_search and not State.to_delete:
         _print_captions(execute_s=True)

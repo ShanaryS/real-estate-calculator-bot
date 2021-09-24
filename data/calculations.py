@@ -261,7 +261,7 @@ def returns_analysis() -> dict:
     return final_returns
 
 
-def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
+def write_urls(urls, overwrite=False, search=False, delete=False) -> None:
     """Saves user inputted search URL. Does not preserve order."""
 
     # Remove ignored urls from urls before saving them. Does not apply if deleting
@@ -373,7 +373,7 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
             json.dump(link, json_file, indent=4)
 
 
-def save_urls_ignore(urls) -> None:
+def write_urls_ignore(urls) -> None:
     """Saves urls to ignored_urls.txt"""
 
     urls_list = [url + "\n" for url in urls]
