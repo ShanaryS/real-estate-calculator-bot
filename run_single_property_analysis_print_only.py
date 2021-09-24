@@ -4,7 +4,7 @@
 from data.calculations import update_values, print_amortization_table, print_property_info, print_analysis
 
 
-update_values(save_to_file=False)  # Initializes everything
+update_values(save_to_file=False)
 print_amortization_table()
 print_property_info()
 print_analysis()
