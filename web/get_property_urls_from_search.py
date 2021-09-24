@@ -22,6 +22,7 @@ PROPERTIES_PER_PAGE = 40  # Number of properties zillow displays per search page
 
 @dataclass
 class SearchPage:
+    """Stores info retrieved from the search page"""
     url_search: str
     chrome: webdriver.Chrome
     zillow: BeautifulSoup
