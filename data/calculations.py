@@ -7,6 +7,7 @@ from dataclasses import dataclass
 import numpy_financial as npf
 import json
 from data import user
+from data.user import WebScraper, UserValues
 from web.get_property_info import set_page_property_info, get_url
 from data.colors_for_print import PrintColors
 
@@ -76,28 +77,28 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
     PropertyInfo.amortization_table = mortgage_amortization()
     PropertyInfo.analysis = returns_analysis()
     PropertyInfo.property_info = {
-        "Address": user.address,
-        "Price ($)": user.price,
-        "Year Built": user.year,
-        "Description": user.description,
-        "House Size (sqft)": user.sqft,
-        "Price/sqft ($)": user.price_per_sqft,
-        "Lot Size (sqft)": user.lot_size,
-        "Parking": user.parking,
-        "Down Payment (Fraction)": float(f"{user.down_payment_percent:.2f}"),
-        "Fix Up Cost ($)": user.fix_up_cost,
+        "Address": WebScraper.address,
+        "Price ($)": WebScraper.price,
+        "Year Built": WebScraper.year,
+        "Description": WebScraper.description,
+        "House Size (sqft)": WebScraper.sqft,
+        "Price/sqft ($)": WebScraper.price_per_sqft,
+        "Lot Size (sqft)": WebScraper.lot_size,
+        "Parking": WebScraper.parking,
+        "Down Payment (Fraction)": float(f"{UserValues.down_payment_percent:.2f}"),
+        "Fix Up Cost ($)": UserValues.fix_up_cost,
         "Loan ($)": int(PropertyInfo.loan),
-        "Interest Rate (Fraction)": float(f"{user.interest_rate:.4f}"),
-        "Loan Length (Years)": user.years,
+        "Interest Rate (Fraction)": float(f"{WebScraper.interest_rate:.4f}"),
+        "Loan Length (Years)": UserValues.years,
         "Mortgage Payment [Monthly] ($)": float(f"{-PropertyInfo.amortization_table['Monthly Payment'][0]:.2f}"),
         "Property Taxes [Monthly] ($)": float(f"{PropertyInfo.property_taxes_monthly:.2f}"),
         "Insurance [Monthly] ($)": float(f"{-PropertyInfo.insurance_cost / 12:.2f}"),
-        "Units": user.num_units,
-        "Rent Per Unit ($)": user.rent_per_unit,
-        "Vacancy (Fraction)": float(f"{user.vacancy_percent:.2f}")
+        "Units": WebScraper.num_units,
+        "Rent Per Unit ($)": WebScraper.rent_per_unit,
+        "Vacancy (Fraction)": float(f"{UserValues.vacancy_percent:.2f}")
     }
-    PropertyInfo.estimations = {item: user.found[item][1] for item, value in user.found.items() if value[0] is False
-                                if not all([values[0] for values in user.found.values()])}
+    PropertyInfo.estimations = {item: WebScraper.found[item][1] for item, value in WebScraper.found.items() if value[0]
+                                is False if not all([values[0] for values in WebScraper.found.values()])}
 
     if save_to_file:
         save_analysis()
@@ -108,11 +109,11 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
 def basic_calculations() -> None:
     """Basic calculations necessary module wide"""
 
-    PropertyInfo.down_payment = user.price * user.down_payment_percent
-    PropertyInfo.loan = user.price - PropertyInfo.down_payment
-    PropertyInfo.interest_rate_monthly = user.interest_rate / 12
-    PropertyInfo.months = user.years * 12
-    PropertyInfo.property_taxes_monthly = user.property_taxes / 12
+    PropertyInfo.down_payment = WebScraper.price * UserValues.down_payment_percent
+    PropertyInfo.loan = WebScraper.price - PropertyInfo.down_payment
+    PropertyInfo.interest_rate_monthly = WebScraper.interest_rate / 12
+    PropertyInfo.months = UserValues.years * 12
+    PropertyInfo.property_taxes_monthly = WebScraper.property_taxes / 12
 
 
 def get_property_key() -> str:
@@ -155,17 +156,17 @@ def mortgage_amortization() -> dict:
 def purchase_analysis() -> float:
     """Amount required to purchase the property"""
 
-    closing_cost = PropertyInfo.loan * user.closing_percent
+    closing_cost = PropertyInfo.loan * UserValues.closing_percent
 
-    return PropertyInfo.down_payment + user.fix_up_cost + closing_cost
+    return PropertyInfo.down_payment + UserValues.fix_up_cost + closing_cost
 
 
 def income_analysis() -> float:
     """Effective gross income of the property"""
 
-    rent = user.rent_per_unit * user.num_units
+    rent = WebScraper.rent_per_unit * WebScraper.num_units
     gross_potential_income = rent * 12
-    vacancy_cost = -(gross_potential_income * user.vacancy_percent)
+    vacancy_cost = -(gross_potential_income * UserValues.vacancy_percent)
     effective_gross_income = gross_potential_income + vacancy_cost
 
     return effective_gross_income
@@ -176,10 +177,10 @@ def expenses_analysis() -> float:
 
     effective_gross_income = income_analysis()
 
-    maintenance_cost = -(effective_gross_income * user.maintenance_percent)
-    management_cost = -(effective_gross_income * user.management_percent)
-    property_taxes_cost = -user.property_taxes
-    PropertyInfo.insurance_cost = -(user.price * 0.00425)
+    maintenance_cost = -(effective_gross_income * UserValues.maintenance_percent)
+    management_cost = -(effective_gross_income * UserValues.management_percent)
+    property_taxes_cost = -WebScraper.property_taxes
+    PropertyInfo.insurance_cost = -(WebScraper.price * 0.00425)
     total_cost = maintenance_cost + management_cost + property_taxes_cost + PropertyInfo.insurance_cost
 
     return total_cost
@@ -203,13 +204,13 @@ def profit_analysis() -> tuple:
 def depreciation_analysis() -> float:
     """Taxes saved by depreciation of the property"""
 
-    depreciation_short_total = (user.price + user.fix_up_cost) * user.depreciation_short_percent
+    depreciation_short_total = (WebScraper.price + UserValues.fix_up_cost) * UserValues.depreciation_short_percent
     depreciation_short_yearly = depreciation_short_total / 5
 
-    depreciation_long_total = (user.price + user.fix_up_cost) * user.depreciation_long_percent
+    depreciation_long_total = (WebScraper.price + UserValues.fix_up_cost) * UserValues.depreciation_long_percent
     depreciation_long_yearly = depreciation_long_total / 27.5
 
-    tax_exposure_decrease = (depreciation_short_yearly + depreciation_long_yearly) * user.tax_bracket
+    tax_exposure_decrease = (depreciation_short_yearly + depreciation_long_yearly) * UserValues.tax_bracket
 
     return tax_exposure_decrease
 
@@ -226,11 +227,11 @@ def returns_analysis() -> dict:
 
     return_on_investment_percent = round(total_return / capital_required * 100, 2)
     c_on_c_return_percent = round(cashflow / capital_required * 100, 2)
-    caprate_percent = round(net_operating_income / user.price * 100, 2)
+    caprate_percent = round(net_operating_income / WebScraper.price * 100, 2)
     cashflow_per_month = cashflow / 12
-    max_offer = ((effective_gross_income * 0.75 + -user.property_taxes - 600) * (0.37 / 0.12)) \
-        / (user.closing_percent + user.down_payment_percent) - user.fix_up_cost
-    emergency_fund = -yearly_cost / 2 if user.is_first_rental else -yearly_cost / 4
+    max_offer = ((effective_gross_income * 0.75 + -WebScraper.property_taxes - 600) * (0.37 / 0.12)) \
+        / (UserValues.closing_percent + UserValues.down_payment_percent) - UserValues.fix_up_cost
+    emergency_fund = -yearly_cost / 2 if UserValues.is_first_rental else -yearly_cost / 4
 
     return_on_investment_string = f"{return_on_investment_percent}%"
     c_on_c_return_string = f"{c_on_c_return_percent}%"
@@ -462,8 +463,8 @@ def print_property_info() -> None:
     print("Info used for calculations:")
     print()
     print("Property Description -", end=' ')
-    if user.description:
-        description = user.description
+    if WebScraper.description:
+        description = WebScraper.description
         max_size = 120
         length = len(description)
         slices = int(length / max_size)
@@ -478,25 +479,25 @@ def print_property_info() -> None:
             print(f"{description[slices * max_size:]}")
     else:
         print("None")
-    print(f"\nParking - {user.parking}")
+    print(f"\nParking - {WebScraper.parking}")
     print()
-    print(f"Address: {user.address}")
-    print(f"Price: ${user.price:,}")
-    print(f"Year Built: {user.year}")
-    print(f"House Size: {user.sqft} sqft")
-    print(f"Price/sqft: ${user.price_per_sqft}")
-    print(f"Lot Size: {user.lot_size} sqft")
-    print(f"Down Payment: {user.down_payment_percent * 100:.0f}%")
-    print(f"Fix Up Cost: ${user.fix_up_cost:,}")
+    print(f"Address: {WebScraper.address}")
+    print(f"Price: ${WebScraper.price:,}")
+    print(f"Year Built: {WebScraper.year}")
+    print(f"House Size: {WebScraper.sqft} sqft")
+    print(f"Price/sqft: ${WebScraper.price_per_sqft}")
+    print(f"Lot Size: {WebScraper.lot_size} sqft")
+    print(f"Down Payment: {UserValues.down_payment_percent * 100:.0f}%")
+    print(f"Fix Up Cost: ${UserValues.fix_up_cost:,}")
     print(f"Loan: ${int(PropertyInfo.loan):,}")
-    print(f"Interest Rate: {user.interest_rate * 100:.2f}%")
-    print(f"Loan Length (Years): {user.years}")
+    print(f"Interest Rate: {WebScraper.interest_rate * 100:.2f}%")
+    print(f"Loan Length (Years): {UserValues.years}")
     print(f"Mortgage Payment (Monthly): ${-PropertyInfo.amortization_table['Monthly Payment'][0]:,.2f}")
     print(f"Property Taxes (Monthly): ${PropertyInfo.property_taxes_monthly:,.2f}")
     print(f"Insurance (Monthly): ${-PropertyInfo.insurance_cost / 12:,.2f}")
-    print(f"Units: {user.num_units}")
-    print(f"Rent Per Unit: ${user.rent_per_unit:,}")
-    print(f"Vacancy: {user.vacancy_percent * 100:.0f}%")
+    print(f"Units: {WebScraper.num_units}")
+    print(f"Rent Per Unit: ${WebScraper.rent_per_unit:,}")
+    print(f"Vacancy: {UserValues.vacancy_percent * 100:.0f}%")
     print()
     print("--------------------------------------------------------------------------------")
     print()
@@ -574,13 +575,13 @@ def print_analysis(dump=False) -> any:
         elif item == 'Max Offer (Approximately)':
             stripped_val = float(value.lstrip('$'))
 
-            if stripped_val < user.price * 0.95:
+            if stripped_val < WebScraper.price * 0.95:
                 color = BAD
-            elif user.price * 0.95 <= stripped_val < user.price * 1.05:
+            elif WebScraper.price * 0.95 <= stripped_val < WebScraper.price * 1.05:
                 color = OK
-            elif user.price * 1.05 <= stripped_val < user.price * 1.1:
+            elif WebScraper.price * 1.05 <= stripped_val < WebScraper.price * 1.1:
                 color = GOOD
-            elif stripped_val >= user.price * 1.1:
+            elif stripped_val >= WebScraper.price * 1.1:
                 color = GREAT
         else:
             stripped_val = float(value.lstrip('$'))
@@ -599,11 +600,11 @@ def print_analysis(dump=False) -> any:
     if dump:
         return temp
 
-    if not all([values[0] for values in user.found.values()]):
+    if not all([values[0] for values in WebScraper.found.values()]):
         print()
         print(f"{BAD}WARNING: THESE ITEMS COULD NOT BE FOUND THUS DEFAULTED TO AN ESTIMATE VALUE. "
               f"THEY MAY BE WRONG.{END}")
-        for item, value in user.found.items():
+        for item, value in WebScraper.found.items():
             if value[0] is False:
                 print(f"{OK}{item}: ??? --> {value[1]}{END}")
     print()

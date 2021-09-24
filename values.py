@@ -6,6 +6,7 @@ YEARS = 30  # 'FHA' and 'VA' requires YEARS = 30. 'Conventional' has options for
 LOAN_TYPE = 'Conventional'  # Options are 'Conventional', 'FHA', 'VA'. !!! NOTE: 'FHA' and 'VA' requires YEARS = 30.
 PROPERTY_TAXES = 4000
 FIX_UP_COST = 10000
+CLOSING_PERCENT = 0.03
 NUM_UNITS = 3
 RENT_PER_UNIT_SINGLE = 1000
 RENT_PER_UNIT_DUPLEX = 800
@@ -26,6 +27,7 @@ IS_FIRST_RENTAL = True  # If 'False', halves emergency fund recommendation.
 # LOAN_TYPE = 'Conventional'  # Options are 'Conventional', 'FHA', 'VA'. !!! NOTE: 'FHA' and 'VA' requires YEARS = 30.
 # PROPERTY_TAXES = 4000
 # FIX_UP_COST = 10000
+# CLOSING_PERCENT = 0.03
 # NUM_UNITS = 3
 # RENT_PER_UNIT_SINGLE = 1000
 # RENT_PER_UNIT_DUPLEX = 800

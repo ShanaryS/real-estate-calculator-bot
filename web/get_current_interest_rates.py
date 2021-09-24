@@ -3,9 +3,13 @@
 
 from bs4 import BeautifulSoup
 import requests
+from dataclasses import dataclass
 
 
-interest_rates = {}
+@dataclass
+class InterestRates:
+    """Stores current interest rates scraped from the web"""
+    interest_rates = {}
 
 
 def set_page_interest_rates() -> None:
@@ -20,4 +24,4 @@ def set_page_interest_rates() -> None:
     for tr in table.find_all('tr'):
         loan_type = tr.find('th').string
         rate = float(str(tr.find('td').string).split('%')[0]) / 100
-        interest_rates[loan_type] = rate
+        InterestRates.interest_rates[loan_type] = rate
