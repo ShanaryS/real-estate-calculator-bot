@@ -49,9 +49,6 @@ class WebScraper:
 def set_info() -> None:
     """Sets the values from html pages"""
 
-    # Resetting these values to True each time a new property is analyzed.
-    WebScraper.found_property_taxes = WebScraper.found_num_units = WebScraper.found_rent_per_unit = True
-
     tdesc, ttaxes, tnum, trent = get_description(), get_property_taxes(), get_num_units(), get_rent_per_unit()
 
     WebScraper.address = get_address()
