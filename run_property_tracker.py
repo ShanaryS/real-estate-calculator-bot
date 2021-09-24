@@ -5,7 +5,7 @@ import os.path
 import json
 import time
 from dataclasses import dataclass
-from data.calculations import save_urls
+from data.calculations import save_urls, save_urls_ignore
 from data.user import get_url_from_input
 from data.colors_for_print import BAD, OK, GOOD, GREAT, END
 from web.get_property_urls_from_search import is_url_valid, get_all_urls
@@ -16,14 +16,14 @@ EXIT_TIMER = 1
 DELAY_TO_GET_URLS = 5
 
 # Use for navigating through menus
-S_P_R, SEARCH, PROPERTY, REFRESH, A_O_D = 's_p_r', 's', 'p', 'r', 'a_o_d'
-APPEND, OVERWRITE, DELETE, CANCEL, EXECUTE = 'a', 'o', 'd', 'c', 'e'
+S_P_R_I, SEARCH, PROPERTY, REFRESH, IGNORE = 's_p_r_i', 's', 'p', 'r', 'i'
+A_O_D, APPEND, OVERWRITE, DELETE, CANCEL, EXECUTE = 'a_o_d', 'a', 'o', 'd', 'c', 'e'
 
 
 @dataclass
 class State:
     """Saves the state of the user choices"""
-    is_search = to_overwrite = to_delete = False
+    is_search = to_overwrite = to_delete = to_ignore = False
     urls = set()
 
 
@@ -70,7 +70,10 @@ def _commit_updates_to_file() -> None:
     """Commits changes to file"""
 
     if State.urls:
-        save_urls(State.urls, overwrite=State.to_overwrite, search=State.is_search, delete=State.to_delete)
+        if State.to_ignore:
+            save_urls_ignore(State.urls)
+        else:
+            save_urls(State.urls, overwrite=State.to_overwrite, search=State.is_search, delete=State.to_delete)
 
     if State.is_search and not State.to_delete:
         _print_captions(execute_s=True)
@@ -85,34 +88,42 @@ def _print_captions(mode=None, e=False, verifying_url=False, valid=True,
                     received=False, execute_s=False, execute=False, search_limitations=False) -> None:
     """Prints text that tells the user what the programing is doing"""
 
-    if mode == 's_p_r':
-        print(f"{GOOD}Do you want to update Search URLs '{GREAT}s{GOOD}', update Property URLs '{GREAT}p{GOOD}', "
-              f"or refresh Search URLs '{GREAT}r{GOOD}'? ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
-    elif mode == 'a_o_d':
+    if mode == S_P_R_I:
+        print(f"{GOOD}Do you want to update Search URLs '{GREAT}s{GOOD}', update Property URLs '{GREAT}p{GOOD}',\n"
+              f"        refresh Search URLs '{GREAT}r{GOOD}' or ignore URLs '{GREAT}i{GOOD}'? "
+              f"('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
+    elif mode == A_O_D:
         print(f"{GOOD}Do you want to append '{GREAT}a{GOOD}', overwrite '{GREAT}o{GOOD}', or delete '{GREAT}d{GOOD}'? "
               f"('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
-    elif mode == 'a':
+    elif mode == APPEND:
         print(f"\n{OK}--- APPEND MODE... URLs in this session will be appended to file! ---{END}")
         if e:
             print(f"{GOOD}Enter another URL to append ('{GREAT}e{GOOD}' to execute changes, "
                   f"'{GREAT}c{GOOD}' to cancel):{END}", end=" ")
         else:
             print(f"{GOOD}- Enter URL to append ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
-    elif mode == 'o':
+    elif mode == OVERWRITE:
         print(f"\n{OK}--- OVERWRITE MODE... URLs before this session will be lost! ---{END}")
         if e:
             print(f"{GOOD}Enter another URL to write ('{GREAT}e{GOOD}' to execute changes, "
                   f"'{GREAT}c{GOOD}' to cancel):{END}", end=" ")
         else:
             print(f"{GOOD}Enter URL to write ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
-    elif mode == 'd':
+    elif mode == DELETE:
         print(f"\n{OK}--- DELETE MODE... URLs in session will be removed! ---{END}")
         if e:
             print(f"{GOOD}Enter another URL to delete ('{GREAT}e{GOOD}' to execute changes, "
                   f"'{GREAT}c{GOOD}' to cancel):{END}", end=" ")
         else:
             print(f"{GOOD}Enter URL to delete ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
-    elif mode == 'c':
+    elif mode == IGNORE:
+        print(f"\n{OK}--- IGNORE MODE... URLs in session will be ignored from analysis! ---{END}")
+        if e:
+            print(f"{GOOD}Enter another URL to ignore ('{GREAT}e{GOOD}' to execute changes, "
+                  f"'{GREAT}c{GOOD}' to cancel):{END}", end=" ")
+        else:
+            print(f"{GOOD}Enter URL to ignore ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
+    elif mode == CANCEL:
         print(f"\n{BAD}!!! No changes were made! Ending program... !!!{END}")
 
     elif verifying_url:
@@ -143,30 +154,37 @@ def _print_captions(mode=None, e=False, verifying_url=False, valid=True,
 def add_link(mode=None, refresh_no_input=False) -> None:
     """Logic for adding URLs"""
 
+    # If refreshing urls from run_refresh_listings_from_search.py. Skips input.
     if refresh_no_input:
         State.is_search = True
         _commit_updates_to_file()
         return
 
     _print_captions(mode=mode)
-    search_property_update = input()
-    while search_property_update != SEARCH and search_property_update != PROPERTY \
-            and search_property_update != REFRESH and search_property_update != CANCEL:
+    search_property_refresh_ignore = input()
+    print()
+    while search_property_refresh_ignore != SEARCH and search_property_refresh_ignore != PROPERTY \
+            and search_property_refresh_ignore != REFRESH and search_property_refresh_ignore != IGNORE \
+            and search_property_refresh_ignore != CANCEL:
         _print_captions(mode=mode)
-        search_property_update = input()
+        search_property_refresh_ignore = input()
+        print()
 
-    if search_property_update != CANCEL:
-        if search_property_update == SEARCH:
+    if search_property_refresh_ignore != CANCEL:
+        if search_property_refresh_ignore == SEARCH:
             _print_captions(search_limitations=True)
             State.is_search = True
             _choose_options(A_O_D)
-        elif search_property_update == PROPERTY:
+        elif search_property_refresh_ignore == PROPERTY:
             State.is_search = False
             _choose_options(A_O_D)
-        elif search_property_update == REFRESH:
+        elif search_property_refresh_ignore == REFRESH:
             State.is_search = True
             _commit_updates_to_file()
-    elif search_property_update == CANCEL:
+        elif search_property_refresh_ignore == IGNORE:
+            State.to_ignore = True
+            _get_urls_from_input(IGNORE)
+    elif search_property_refresh_ignore == CANCEL:
         _quit_program()
         return
 
@@ -176,10 +194,12 @@ def _choose_options(mode) -> None:
 
     _print_captions(mode=mode)
     append_overwrite_delete = input()
+    print()
     while append_overwrite_delete != APPEND and append_overwrite_delete != OVERWRITE \
             and append_overwrite_delete != DELETE and append_overwrite_delete != CANCEL:
         _print_captions(mode=mode)
         append_overwrite_delete = input()
+        print()
 
     if append_overwrite_delete != CANCEL:
         if append_overwrite_delete == APPEND:
@@ -200,6 +220,7 @@ def _get_urls_from_input(mode) -> None:
 
     _print_captions(mode=mode)
     new_url = get_url_from_input()
+    print()
 
     if new_url != CANCEL:
         valid = _url_is_valid(new_url)
@@ -208,6 +229,7 @@ def _get_urls_from_input(mode) -> None:
 
             _print_captions(mode=mode)
             new_url = get_url_from_input()
+            print()
 
             if new_url == CANCEL:
                 _quit_program()
@@ -220,6 +242,7 @@ def _get_urls_from_input(mode) -> None:
 
         _print_captions(mode=mode, e=True)
         new_url = get_url_from_input()
+        print()
         while new_url != CANCEL:
 
             if new_url == EXECUTE:
@@ -233,6 +256,7 @@ def _get_urls_from_input(mode) -> None:
 
                     _print_captions(mode=mode, e=True)
                     new_url = get_url_from_input()
+                    print()
 
                     if new_url == EXECUTE:
                         _commit_updates_to_file()
@@ -249,6 +273,7 @@ def _get_urls_from_input(mode) -> None:
 
             _print_captions(mode=mode, e=True)
             new_url = get_url_from_input()
+            print()
 
         if new_url == CANCEL:
             _quit_program()
@@ -290,4 +315,4 @@ def _get_urls_from_search() -> None:
 
 
 if __name__ == '__main__':
-    add_link(mode=S_P_R)
+    add_link(mode=S_P_R_I)

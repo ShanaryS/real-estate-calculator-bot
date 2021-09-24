@@ -362,6 +362,15 @@ def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
             json.dump(link, json_file, indent=4)
 
 
+def save_urls_ignore(urls) -> None:
+    """Saves urls to ignored_urls.txt"""
+
+    urls_list = [url + "\n" for url in urls]
+
+    with open(os.path.join('output', 'ignored_urls.txt'), 'a') as txt_file:
+        txt_file.writelines(urls_list)
+
+
 def save_analysis() -> None:
     """Saves analysis of property to analyzedProperties.json"""
 
