@@ -16,7 +16,7 @@ from web.get_property_info import TIME_BETWEEN_REQUESTS
 from run_property_tracker import EXIT_TIMER
 
 
-GET_REQUEST_EXPECTED_TIME = 1.25
+GET_REQUEST_EXPECTED_TIME = 1.5
 keys = []
 property_analyses = []
 url_removed = False

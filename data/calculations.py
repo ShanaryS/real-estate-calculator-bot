@@ -50,7 +50,9 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
 
         extra = ""
         if exception_name == 'AttributeError':
-            extra = " (House off-market???)"
+            extra = " ---(IS THE PROPERTY OFF MARKET? IF SO YOU CAN DELETE THE URL IF IT WAS INDIVIDUALLY ADDED " \
+                    "TO PROPERTY URLs. IF IT WAS ADDED BY A SEARCH URL, IGNORE THIS PROPERTY INSTEAD. FOR EITHER " \
+                    "OPTION, RUN run_property_tracker.py.)---"
 
         # When printing analysis of a single property, url=None. This allows that URL to be saved as well.
         if not url:
@@ -261,6 +263,15 @@ def returns_analysis() -> dict:
 
 def save_urls(urls, overwrite=False, search=False, delete=False) -> None:
     """Saves user inputted search URL. Does not preserve order."""
+
+    # Remove ignored urls from urls before saving them. Does not apply if deleting
+    if not delete:
+        try:
+            with open(os.path.join('output', 'ignored_urls.txt')) as txt_file:
+                urls_txt = {url.strip() for url in txt_file.readlines()}
+            urls.difference_update(urls_txt)  # Subtracts ignored urls from urls to be saved.
+        except FileNotFoundError:
+            pass
 
     if search:
         key = 'Search'
