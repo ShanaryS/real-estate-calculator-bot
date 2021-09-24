@@ -46,6 +46,11 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
     # This logs the error to ..\output\errors.log, what ever it is.
     # Complete with the problematic property url, traceback, and type of exception.
     except Exception as exception:
+        exception_name = exception.__class__.__qualname__
+
+        extra = ""
+        if exception_name == 'AttributeError':
+            extra = "(House off-market???)"
 
         # When printing analysis of a single property, url=None. This allows that URL to be saved as well.
         if not url:
@@ -57,14 +62,13 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
         tb_string = ""
         for tb in traceback:
             tb_string += tb
-        exception_name = exception.__class__.__qualname__
 
         # "###" can be used to navigate between errors in log file.
         error = f"### {url}: [\n" \
                 f"{tb_title}\n" \
                 f"{tb_string}" \
                 f"{exception_name}: {exception}\n" \
-                "]\n\n"
+                f"] {extra}\n\n"
 
         with open(os.path.join('output', 'errors.log'), 'a') as file:
             file.write(error)
