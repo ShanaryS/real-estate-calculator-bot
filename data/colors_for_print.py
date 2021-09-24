@@ -1,7 +1,11 @@
 """Add colors to print output where necessary"""
 
 
-class PrintColors:
+from dataclasses import dataclass
+
+
+@dataclass
+class Colors:
     """Used for adding color to print output"""
 
     HEADER = '\033[95m'
@@ -13,3 +17,6 @@ class PrintColors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+
+PrintColors = Colors()
