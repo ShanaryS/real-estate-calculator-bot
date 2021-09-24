@@ -3,6 +3,7 @@
 
 import os.path
 from traceback import format_tb
+from dataclasses import dataclass
 import numpy_financial as npf
 import json
 from data import user
@@ -10,21 +11,20 @@ from web.get_property_info import set_page_property_info, get_url
 from data.colors_for_print import PrintColors
 
 
-# Basic calculations necessary module wide. Defining here for visibility.
-down_payment: float
-loan: float
-interest_rate_monthly: float
-months: int
-property_taxes_monthly: float
-insurance_cost: float
-
-amortization_table: dict
-analysis: dict
-property_info: dict
-estimations: dict
-
-# Used to check if any url or analysis was updated:
-new_analysis_list = []
+@dataclass
+class PropertyInfo:
+    """Contains information about the property"""
+    down_payment: float
+    loan: float
+    interest_rate_monthly: float
+    months: int
+    property_taxes_monthly: float
+    insurance_cost: float
+    amortization_table: dict
+    analysis: dict
+    property_info: dict
+    estimations: dict
+    new_analysis_list = []
 
 
 def update_values(url=None, save_to_file=True, update_interest_rate=True) -> bool:
@@ -73,11 +73,9 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
 
     basic_calculations()
 
-    global amortization_table, property_info, analysis, estimations
-
-    amortization_table = mortgage_amortization()
-    analysis = returns_analysis()
-    property_info = {
+    PropertyInfo.amortization_table = mortgage_amortization()
+    PropertyInfo.analysis = returns_analysis()
+    PropertyInfo.property_info = {
         "Address": user.address,
         "Price ($)": user.price,
         "Year Built": user.year,
@@ -88,18 +86,18 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
         "Parking": user.parking,
         "Down Payment (Fraction)": float(f"{user.down_payment_percent:.2f}"),
         "Fix Up Cost ($)": user.fix_up_cost,
-        "Loan ($)": int(loan),
+        "Loan ($)": int(PropertyInfo.loan),
         "Interest Rate (Fraction)": float(f"{user.interest_rate:.4f}"),
         "Loan Length (Years)": user.years,
-        "Mortgage Payment [Monthly] ($)": float(f"{-amortization_table['Monthly Payment'][0]:.2f}"),
-        "Property Taxes [Monthly] ($)": float(f"{property_taxes_monthly:.2f}"),
-        "Insurance [Monthly] ($)": float(f"{-insurance_cost / 12:.2f}"),
+        "Mortgage Payment [Monthly] ($)": float(f"{-PropertyInfo.amortization_table['Monthly Payment'][0]:.2f}"),
+        "Property Taxes [Monthly] ($)": float(f"{PropertyInfo.property_taxes_monthly:.2f}"),
+        "Insurance [Monthly] ($)": float(f"{-PropertyInfo.insurance_cost / 12:.2f}"),
         "Units": user.num_units,
         "Rent Per Unit ($)": user.rent_per_unit,
         "Vacancy (Fraction)": float(f"{user.vacancy_percent:.2f}")
     }
-    estimations = {item: user.found[item][1] for item, value in user.found.items() if value[0] is False
-                   if not all([values[0] for values in user.found.values()])}
+    PropertyInfo.estimations = {item: user.found[item][1] for item, value in user.found.items() if value[0] is False
+                                if not all([values[0] for values in user.found.values()])}
 
     if save_to_file:
         save_analysis()
@@ -110,13 +108,11 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
 def basic_calculations() -> None:
     """Basic calculations necessary module wide"""
 
-    global down_payment, loan, interest_rate_monthly, months, property_taxes_monthly
-
-    down_payment = user.price * user.down_payment_percent
-    loan = user.price - down_payment
-    interest_rate_monthly = user.interest_rate / 12
-    months = user.years * 12
-    property_taxes_monthly = user.property_taxes / 12
+    PropertyInfo.down_payment = user.price * user.down_payment_percent
+    PropertyInfo.loan = user.price - PropertyInfo.down_payment
+    PropertyInfo.interest_rate_monthly = user.interest_rate / 12
+    PropertyInfo.months = user.years * 12
+    PropertyInfo.property_taxes_monthly = user.property_taxes / 12
 
 
 def get_property_key() -> str:
@@ -132,20 +128,20 @@ def mortgage_amortization() -> dict:
     """
 
     period = 1
-    monthly_payment = npf.pmt(interest_rate_monthly, months, loan)
-    monthly_principal = npf.ppmt(interest_rate_monthly, period, months, loan)
-    monthly_interest = npf.ipmt(interest_rate_monthly, period, months, loan)
-    loan_balance = npf.fv(interest_rate_monthly, period, monthly_payment, loan)
+    monthly_payment = npf.pmt(PropertyInfo.interest_rate_monthly, PropertyInfo.months, PropertyInfo.loan)
+    monthly_principal = npf.ppmt(PropertyInfo.interest_rate_monthly, period, PropertyInfo.months, PropertyInfo.loan)
+    monthly_interest = npf.ipmt(PropertyInfo.interest_rate_monthly, period, PropertyInfo.months, PropertyInfo.loan)
+    loan_balance = npf.fv(PropertyInfo.interest_rate_monthly, period, monthly_payment, PropertyInfo.loan)
 
     amortization = {'Period': [period], 'Monthly Payment': [monthly_payment],
                     'Principal Payment': [monthly_principal], 'Interest Payment': [monthly_interest],
                     'Loan Balance': [loan_balance]}
 
-    for i in range(2, months + 1):
+    for i in range(2, PropertyInfo.months + 1):
         period = i
-        monthly_principal = npf.ppmt(interest_rate_monthly, period, months, loan)
-        monthly_interest = npf.ipmt(interest_rate_monthly, period, months, loan)
-        loan_balance = npf.fv(interest_rate_monthly, period, monthly_payment, loan)
+        monthly_principal = npf.ppmt(PropertyInfo.interest_rate_monthly, period, PropertyInfo.months, PropertyInfo.loan)
+        monthly_interest = npf.ipmt(PropertyInfo.interest_rate_monthly, period, PropertyInfo.months, PropertyInfo.loan)
+        loan_balance = npf.fv(PropertyInfo.interest_rate_monthly, period, monthly_payment, PropertyInfo.loan)
 
         amortization['Period'].append(period)
         amortization['Monthly Payment'].append(monthly_payment)
@@ -159,9 +155,9 @@ def mortgage_amortization() -> dict:
 def purchase_analysis() -> float:
     """Amount required to purchase the property"""
 
-    closing_cost = loan * user.closing_percent
+    closing_cost = PropertyInfo.loan * user.closing_percent
 
-    return down_payment + user.fix_up_cost + closing_cost
+    return PropertyInfo.down_payment + user.fix_up_cost + closing_cost
 
 
 def income_analysis() -> float:
@@ -178,15 +174,13 @@ def income_analysis() -> float:
 def expenses_analysis() -> float:
     """Cost of owning of the property"""
 
-    global insurance_cost
-
     effective_gross_income = income_analysis()
 
     maintenance_cost = -(effective_gross_income * user.maintenance_percent)
     management_cost = -(effective_gross_income * user.management_percent)
     property_taxes_cost = -user.property_taxes
-    insurance_cost = -(user.price * 0.00425)
-    total_cost = maintenance_cost + management_cost + property_taxes_cost + insurance_cost
+    PropertyInfo.insurance_cost = -(user.price * 0.00425)
+    total_cost = maintenance_cost + management_cost + property_taxes_cost + PropertyInfo.insurance_cost
 
     return total_cost
 
@@ -198,7 +192,7 @@ def profit_analysis() -> tuple:
     total_cost = expenses_analysis()
     net_operating_income = effective_gross_income + total_cost
 
-    debt_service = amortization_table['Monthly Payment'][0] * 12
+    debt_service = PropertyInfo.amortization_table['Monthly Payment'][0] * 12
     cashflow = net_operating_income + debt_service
 
     yearly_cost = total_cost + debt_service
@@ -227,7 +221,7 @@ def returns_analysis() -> dict:
     cashflow, net_operating_income, yearly_cost = profit_analysis()
     effective_gross_income = income_analysis()
     tax_exposure_decrease = depreciation_analysis()
-    principal_paydown = -sum(amortization_table['Principal Payment'][0:12])
+    principal_paydown = -sum(PropertyInfo.amortization_table['Principal Payment'][0:12])
     total_return = cashflow + tax_exposure_decrease + principal_paydown
 
     return_on_investment_percent = round(total_return / capital_required * 100, 2)
@@ -372,9 +366,9 @@ def get_property_analysis() -> tuple:
     property_analysis = {key: {
         "Property URL": get_url(property_url=True),
         "Property Taxes URL": get_url(taxes_url=True),
-        "Property Info": property_info,
+        "Property Info": PropertyInfo.property_info,
         "Analysis": print_analysis(dump=True),
-        "Estimations": estimations
+        "Estimations": PropertyInfo.estimations
     }
     }
 
@@ -401,7 +395,7 @@ def write_property_analysis(key, property_analysis) -> None:
 def write_property_analyses(keys, property_analyses) -> None:
     """Writes multiple property analyses to analysis.json"""
 
-    new_analysis_list.clear()
+    PropertyInfo.new_analysis_list.clear()
 
     try:
         with open(os.path.join('output', 'analysis.json')) as json_file:
@@ -412,7 +406,7 @@ def write_property_analyses(keys, property_analyses) -> None:
             if property_analysis[key]["Property Info"]["Price ($)"] \
                     != analysis_json.get(key, dict()).get("Property Info", dict()).get("Price ($)", 0):
                 analysis_json.update(property_analysis)
-                new_analysis_list.append(True)  # Used to tell if file has been modified. Used by run_analysis.py
+                PropertyInfo.new_analysis_list.append(True)  # Used to tell if file has been modified.
 
         if any(is_new_analyses()):
             with open(os.path.join('output', 'analysis.json'), 'w') as json_file:
@@ -420,7 +414,7 @@ def write_property_analyses(keys, property_analyses) -> None:
 
     except (FileNotFoundError, json.JSONDecodeError, TypeError):  # Explained in save_urls() above
 
-        new_analysis_list.append(True)  # Used to tell if file has been modified. Used by run_analysis.py
+        PropertyInfo.new_analysis_list.append(True)  # Used to tell if file has been modified. Used by run_analysis.py
 
         # Creating a dict to store the multiple analyses. Allows writing to file once.
         analysis_json = {}
@@ -433,7 +427,7 @@ def write_property_analyses(keys, property_analyses) -> None:
 
 def is_new_analyses() -> list:
     """Used to check if any analysis was updated"""
-    return new_analysis_list
+    return PropertyInfo.new_analysis_list
 
 
 def print_amortization_table() -> None:
@@ -446,7 +440,7 @@ def print_amortization_table() -> None:
          'Principal Payment': [], 'Interest Payment': [],
          'Loan Balance': []}
 
-    for key, value in amortization_table.items():
+    for key, value in PropertyInfo.amortization_table.items():
         for num in value:
             if key == 'Period':
                 num = f"{num}".center(len(key))
@@ -494,12 +488,12 @@ def print_property_info() -> None:
     print(f"Lot Size: {user.lot_size} sqft")
     print(f"Down Payment: {user.down_payment_percent * 100:.0f}%")
     print(f"Fix Up Cost: ${user.fix_up_cost:,}")
-    print(f"Loan: ${int(loan):,}")
+    print(f"Loan: ${int(PropertyInfo.loan):,}")
     print(f"Interest Rate: {user.interest_rate * 100:.2f}%")
     print(f"Loan Length (Years): {user.years}")
-    print(f"Mortgage Payment (Monthly): ${-amortization_table['Monthly Payment'][0]:,.2f}")
-    print(f"Property Taxes (Monthly): ${property_taxes_monthly:,.2f}")
-    print(f"Insurance (Monthly): ${-insurance_cost / 12:,.2f}")
+    print(f"Mortgage Payment (Monthly): ${-PropertyInfo.amortization_table['Monthly Payment'][0]:,.2f}")
+    print(f"Property Taxes (Monthly): ${PropertyInfo.property_taxes_monthly:,.2f}")
+    print(f"Insurance (Monthly): ${-PropertyInfo.insurance_cost / 12:,.2f}")
     print(f"Units: {user.num_units}")
     print(f"Rent Per Unit: ${user.rent_per_unit:,}")
     print(f"Vacancy: {user.vacancy_percent * 100:.0f}%")
@@ -521,8 +515,8 @@ def print_analysis(dump=False) -> any:
         print()
 
     # Handles printing analysis with color coded results based on how good of a deal it is
-    for item in analysis:
-        value = analysis[item]
+    for item in PropertyInfo.analysis:
+        value = PropertyInfo.analysis[item]
         is_dollar_sign = True
         color = ""
 
