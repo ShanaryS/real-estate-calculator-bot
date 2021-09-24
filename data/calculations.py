@@ -24,7 +24,7 @@ class PropertyInfo:
     amortization_table: dict
     analysis: dict
     property_info: dict
-    estimations: dict
+    estimations = {}
     new_analysis_list = []
 
 
@@ -97,8 +97,11 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
         "Rent Per Unit ($)": WebScraper.rent_per_unit,
         "Vacancy (Fraction)": float(f"{UserValues.vacancy_percent:.2f}")
     }
-    PropertyInfo.estimations = {item: WebScraper.found[item][1] for item, value in WebScraper.found.items() if value[0]
-                                is False if not all([values[0] for values in WebScraper.found.values()])}
+
+    for key in WebScraper.found:
+        found, value = WebScraper.found[key][0], WebScraper.found[key][1]
+        if not found:
+            PropertyInfo.estimations[key] = value
 
     if save_to_file:
         save_analysis()
