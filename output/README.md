@@ -2,7 +2,7 @@ This folder contains all files relating to the output of the program.
 
 These are specific to the user and are thus created at runtime as necessary.
 
-urls.json stores URLs, analysis.json stores property analyses, and errors.log logs errors.
+urls.json stores URLs, analysis.json stores property analyses, ignored_urls.txt saves ignored URLs, and errors.log logs errors.
 
 Initially this directory is empty aside from this file (Hello world :smile:).
 

@@ -3,4 +3,5 @@
 analysis.json
 urls.json
 errors.log
+ignored_urls.txt
 test.py
