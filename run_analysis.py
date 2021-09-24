@@ -22,14 +22,14 @@ property_analyses = []
 url_removed = False
 
 
-def get_interest_rate() -> None:
+def _get_interest_rate() -> None:
     """Gets current interest rate to use for analyses in current session"""
 
     print(f"{PrintColors.WARNING}--- Getting current interest rates...{PrintColors.ENDC}\n")
     set_interest_rate()
 
 
-def analyze_property(url) -> None:
+def _analyze_property(url) -> None:
     """Analyze a single property"""
 
     # If statement ignores property if there was an error getting the data.
@@ -45,7 +45,7 @@ def analyze_property(url) -> None:
     time.sleep(TIME_BETWEEN_REQUESTS)
 
 
-def analyze_properties() -> None:
+def _analyze_properties() -> None:
     """Gets info for all properties and saves them to analysis.json"""
 
     # Tell user how long analysis is expected to take
@@ -65,7 +65,7 @@ def analyze_properties() -> None:
         print(f"{PrintColors.WARNING}TIME REMAINING: "
               f"{PrintColors.OKCYAN}{-int(-(expected_time - index * TIME_CONST))}s{PrintColors.ENDC}",
               "---", url, end="")
-        analyze_property(url)
+        _analyze_property(url)
         index += 1
     write_property_analyses(keys, property_analyses)
 
@@ -82,15 +82,15 @@ def analyze_properties() -> None:
             print(f"{PrintColors.WARNING}TIME REMAINING: "
                   f"{PrintColors.OKCYAN}{-int(-(expected_time - index * TIME_CONST))}s{PrintColors.ENDC}",
                   "---", url, end="")
-            analyze_property(url)
+            _analyze_property(url)
             index += 1
     write_property_analyses(keys, property_analyses)
 
     if updated:
-        check_if_analysis_json_updated(check=True)
+        _check_if_analysis_json_updated(check=True)
 
 
-def check_if_analysis_json_updated(check=False) -> None:
+def _check_if_analysis_json_updated(check=False) -> None:
     """Checks if the analysis performed yielded any new results"""
 
     if any(is_new_analyses()) or url_removed or check:
@@ -107,8 +107,8 @@ if __name__ == '__main__':
         with open(os.path.join('output', 'urls.json')) as json_file:
             urls_json = json.load(json_file)
 
-        get_interest_rate()
-        analyze_properties()
+        _get_interest_rate()
+        _analyze_properties()
         email_best_deals()
 
     except FileNotFoundError:
