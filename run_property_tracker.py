@@ -20,7 +20,7 @@ APPEND, OVERWRITE, DELETE, CANCEL, EXECUTE = 'a', 'o', 'd', 'c', 'e'
 
 
 @dataclass
-class S:
+class LogicState:
     """Saves the state of the user choices"""
     is_search = to_overwrite = to_delete = False
     urls = set()
@@ -292,5 +292,5 @@ def _get_urls_from_search() -> None:
 
 
 if __name__ == '__main__':
-    State = S()
+    State = LogicState()
     add_link(mode=S_P_R)
