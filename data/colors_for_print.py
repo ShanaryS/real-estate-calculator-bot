@@ -7,7 +7,6 @@ from dataclasses import dataclass
 @dataclass
 class Colors:
     """Used for adding color to print output"""
-
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKCYAN = '\033[96m'
