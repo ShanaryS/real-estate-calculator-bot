@@ -7,22 +7,25 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import requests
 import time
+from dataclasses import dataclass
 
 
 # Delay between actions for selenium driver
 SCROLL_DELAY = 0.05
 PAGE_LOAD_WAIT = 1
 CAPTCHA_LOAD_WAIT = 1
-HOLD_LENGTH = 10
+HOLD_LENGTH = 11
 REDIRECT_WAIT = 10
 
 PROPERTIES_PER_PAGE = 40  # Number of properties zillow displays per search page
 
-# Global variables all functions use
-url_search: str
-chrome: webdriver.Chrome
-zillow: BeautifulSoup
-extra: int  # Sometimes urls have an extra '/' at the end. This accounts for it
+
+@dataclass
+class SearchPage:
+    url_search: str
+    chrome: webdriver.Chrome
+    zillow: BeautifulSoup
+    extra: int  # Sometimes urls have an extra '/' at the end. This accounts for it
 
 
 def is_url_valid(url) -> bool:
@@ -57,20 +60,16 @@ def is_url_valid(url) -> bool:
 def open_chrome(url) -> None:
     """Opens chromedriver using selenium"""
 
-    global chrome
-
-    chrome = webdriver.Chrome()
-    chrome.get(url)
+    SearchPage.chrome = webdriver.Chrome()
+    SearchPage.chrome.get(url)
 
 
 def set_page_search() -> None:
     """Opens chromedriver using selenium"""
 
-    global zillow
-
     # Creates beautiful soup object
-    zillow_page = chrome.page_source
-    zillow = BeautifulSoup(zillow_page, 'html.parser')
+    zillow_page = SearchPage.chrome.page_source
+    SearchPage.zillow = BeautifulSoup(zillow_page, 'html.parser')
 
 
 def _scroll_to_page_bottom() -> None:
@@ -79,7 +78,7 @@ def _scroll_to_page_bottom() -> None:
     time.sleep(PAGE_LOAD_WAIT)  # Give time for the page to fully load. Though it should without, being cautious.
 
     # Presses page down multiple times to scroll to bottom of page.
-    target = chrome.find_element_by_tag_name("body")
+    target = SearchPage.chrome.find_element_by_tag_name("body")
     for i in range(10):
         target.send_keys(Keys.PAGE_DOWN)
         time.sleep(SCROLL_DELAY)
@@ -93,8 +92,8 @@ def _solve_captcha() -> None:
 
     time.sleep(CAPTCHA_LOAD_WAIT)
 
-    target = chrome.find_element_by_id('px-captcha')
-    action = webdriver.ActionChains(chrome)
+    target = SearchPage.chrome.find_element_by_id('px-captcha')
+    action = webdriver.ActionChains(SearchPage.chrome)
     action.click_and_hold(on_element=target)
     action.perform()
     time.sleep(HOLD_LENGTH)  # Holds button for HOLD_LENGTH seconds. Should cover all the variable lengths
@@ -109,12 +108,13 @@ def _set_url_to_first_page(url, current_page_num) -> str:
 
     temp = url.split('/')
     if current_page_num > 1:
-        temp.pop(-2 - extra)
+        temp.pop(-2 - SearchPage.extra)
     if _currentpage_is_last(url):
-        temp[-1 - extra] = _rreplace(
-            temp[-1 - extra], f"%2C%22pagination%22%3A%7B%22currentPage%22%3A{current_page_num}%7D%7D", '%7D', 1)
+        temp[-1 - SearchPage.extra] = _rreplace(
+            temp[-1 - SearchPage.extra],
+            f"%2C%22pagination%22%3A%7B%22currentPage%22%3A{current_page_num}%7D%7D", '%7D', 1)
     else:
-        temp[-1 - extra] = temp[-1 - extra].replace(
+        temp[-1 - SearchPage.extra] = temp[-1 - SearchPage.extra].replace(
             f'%22pagination%22%3A%7B%22currentPage%22%3A{current_page_num}%7D%2C', '')
     first_page_url = '/'.join(temp)
 
@@ -127,7 +127,7 @@ def _get_current_page(url) -> int:
     if 'currentpage' not in url.lower():
         current_page_num = 1
     else:
-        current_page_num = int(url.split('/')[-2 - extra].split('_')[0])
+        current_page_num = int(url.split('/')[-2 - SearchPage.extra].split('_')[0])
 
     return current_page_num
 
@@ -143,12 +143,10 @@ def _currentpage_is_last(url) -> bool:
 def _url_has_extra_slash(url) -> None:
     """Checks if URL has extra / which other functions need to compensate for"""
 
-    global extra
-
     if url.endswith('/'):
-        extra = 1
+        SearchPage.extra = 1
     else:
-        extra = 0
+        SearchPage.extra = 0
 
 
 def _get_num_pages_and_listings(url) -> tuple:
@@ -156,10 +154,10 @@ def _get_num_pages_and_listings(url) -> tuple:
 
     # Checks if looking at Agent listings or Other listings. Other listings will always have 'cat2' in url.
     if 'cat2' not in url:
-        num_listings = int(zillow.find_all(class_="total-text")[0].string.replace(',', ''))
+        num_listings = int(SearchPage.zillow.find_all(class_="total-text")[0].string.replace(',', ''))
         num_pages = -(-num_listings // PROPERTIES_PER_PAGE)  # Ceiling division
     else:
-        num_listings = int(zillow.find_all(class_="total-text")[1].string.replace(',', ''))
+        num_listings = int(SearchPage.zillow.find_all(class_="total-text")[1].string.replace(',', ''))
         num_pages = -(-num_listings // PROPERTIES_PER_PAGE)  # Ceiling division
 
     return num_pages, num_listings
@@ -177,22 +175,22 @@ def _get_url_for_next_page(url, current_page_num) -> str:
 
     if current_page_num == 1:
         temp = url.split('/')
-        temp.insert(-1 - extra, '2_p')
+        temp.insert(-1 - SearchPage.extra, '2_p')
         if _currentpage_is_last(url):
-            temp[-1 - extra] = _rreplace(
-                temp[-1 - extra], '%7D', '%2C%22pagination%22%3A%7B%22currentPage%22%3A2%7D%7D', 1)
+            temp[-1 - SearchPage.extra] = _rreplace(
+                temp[-1 - SearchPage.extra], '%7D', '%2C%22pagination%22%3A%7B%22currentPage%22%3A2%7D%7D', 1)
         else:
-            temp[-1 - extra] = temp[-1 - extra].replace(
+            temp[-1 - SearchPage.extra] = temp[-1 - SearchPage.extra].replace(
                 '%7B', '%7B%22pagination%22%3A%7B%22currentPage%22%3A2%7D%2C', 1)
     else:
         temp = url.split('/')
-        temp[-2 - extra] = f'{current_page_num + 1}_p'
+        temp[-2 - SearchPage.extra] = f'{current_page_num + 1}_p'
         if _currentpage_is_last(url):
-            temp[-1 - extra] = _rreplace(
-                temp[-1 - extra],
+            temp[-1 - SearchPage.extra] = _rreplace(
+                temp[-1 - SearchPage.extra],
                 f"currentPage%22%3A{current_page_num}%7D%7D", f"currentPage%22%3A{current_page_num + 1}%7D%7D", 1)
         else:
-            temp[-1 - extra] = temp[-1 - extra].replace(
+            temp[-1 - SearchPage.extra] = temp[-1 - SearchPage.extra].replace(
                 f"currentPage%22%3A{current_page_num}%7D%2C", f"currentPage%22%3A{current_page_num + 1}%7D%2C")
 
     next_page_url = '/'.join(temp)
@@ -231,16 +229,14 @@ def _get_price_from_search(li: bs4.element.Tag) -> int:
 def get_all_urls(url) -> list:
     """Main function to call. Gets urls and prices for all properties on a zillow search page"""
 
-    global zillow, url_search
-
     _url_has_extra_slash(url)
     current_page_num = _get_current_page(url)
-    url_search = _set_url_to_first_page(url, current_page_num)
-    url = url_search
+    SearchPage.url_search = _set_url_to_first_page(url, current_page_num)
+    url = SearchPage.url_search
 
     open_chrome(url)
 
-    if 'captcha' in chrome.current_url.lower():
+    if 'captcha' in SearchPage.chrome.current_url.lower():
         _solve_captcha()
 
     set_page_search()
@@ -251,13 +247,13 @@ def get_all_urls(url) -> list:
     property_urls = []
     for page in range(1, num_pages+1):
 
-        if 'captcha' in chrome.current_url.lower():
+        if 'captcha' in SearchPage.chrome.current_url.lower():
             _solve_captcha()
 
         _scroll_to_page_bottom()
 
         set_page_search()
-        base = zillow.find('div', id="grid-search-results").find('ul')
+        base = SearchPage.zillow.find('div', id="grid-search-results").find('ul')
 
         for li in base.contents:
             if li.find('div', id="nav-ad-container"):
@@ -268,11 +264,11 @@ def get_all_urls(url) -> list:
 
         if page < num_pages:
             url = _get_url_for_next_page(url, page)
-            chrome.get(url)
-            curr_url = chrome.current_url
+            SearchPage.chrome.get(url)
+            curr_url = SearchPage.chrome.current_url
             if curr_url != url and 'captcha' not in curr_url.lower():  # If no more pages to go through
                 break
 
-    chrome.close()
+    SearchPage.chrome.close()
 
     return property_urls
