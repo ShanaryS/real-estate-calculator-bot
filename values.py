@@ -1,13 +1,14 @@
 """DEFAULT VALUES USED FOR ANALYSIS. CHANGE THESE VALUES ACCORDING TO YOUR HEURISTICS. TOUCH NOTHING ELSE."""
 
 
+# Default values assumed if not found. Feel free to change these values according to your heuristics. Backup below.
 DOWN_PAYMENT_PERCENT = 0.20
 YEARS = 30  # 'FHA' and 'VA' requires YEARS = 30. 'Conventional' has options for YEARS = 30, 20, 15, 10.
 LOAN_TYPE = 'Conventional'  # Options are 'Conventional', 'FHA', 'VA'. !!! NOTE: 'FHA' and 'VA' requires YEARS = 30.
 PROPERTY_TAXES = 4000
 FIX_UP_COST = 10000
 CLOSING_PERCENT = 0.03
-NUM_UNITS = 3
+NUM_UNITS = 2
 RENT_PER_UNIT_SINGLE = 1000
 RENT_PER_UNIT_DUPLEX = 800
 RENT_PER_UNIT_TRIPLEX = 650
