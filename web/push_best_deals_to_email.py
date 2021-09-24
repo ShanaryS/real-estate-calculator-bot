@@ -48,12 +48,13 @@ def _get_deal_value(analysis_json, deal) -> float:
 def _find_best_deals(analysis_json) -> tuple:
     """Finds the best deal out of the analysis"""
 
+    MINIMUM_ConC_PERCENT = 12
     best_deals = []
 
     # TODO Make this more complicated taking in max offer/price, all analysis other analysis. Multiple if statements
     # _get_deal_value() returns a tuple of all the meta analyses? Use for different if statements?
     for deal in analysis_json:
-        if _get_deal_value(analysis_json, deal) > 12:
+        if _get_deal_value(analysis_json, deal) > MINIMUM_ConC_PERCENT:
             best_deals.append(deal)
 
     best_deals.sort(key=lambda x: _get_deal_value(analysis_json, x), reverse=True)

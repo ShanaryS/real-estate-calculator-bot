@@ -1,7 +1,14 @@
 """DEFAULT VALUES USED FOR ANALYSIS. CHANGE THESE VALUES ACCORDING TO YOUR HEURISTICS. TOUCH NOTHING ELSE."""
 
 
-# Default values assumed if not found. Feel free to change these values according to your heuristics. Backup below.
+'''If you want to change the criteria for a 'good deal' that it emails, that would be changed in
+/web/push_best_deals_to_email.py with the functions _get_deal_value() and _find_best_deals().
+Currently it just emails any property with a Cash On Cash Return greater than 12%. That is universally considered
+a 'good deal'. You may increase or decrease the percentage by changing MINIMUM_ConC_PERCENT from 12. Different areas
+may have too many deals above 12 or too little.
+'''
+
+# Default values assumed if not found. Backup below.
 DOWN_PAYMENT_PERCENT = 0.20
 YEARS = 30  # 'FHA' and 'VA' requires YEARS = 30. 'Conventional' has options for YEARS = 30, 20, 15, 10.
 LOAN_TYPE = 'Conventional'  # Options are 'Conventional', 'FHA', 'VA'. !!! NOTE: 'FHA' and 'VA' requires YEARS = 30.
