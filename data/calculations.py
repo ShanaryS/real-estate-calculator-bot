@@ -102,10 +102,12 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
         "Vacancy (Fraction)": float(f"{UserValues.vacancy_percent:.2f}")
     }
 
-    for key in WebScraper.found:
-        found, value = WebScraper.found[key][0], WebScraper.found[key][1]
-        if not found:
-            PropertyInfo.estimations[key] = value
+    # This is getting the wrong estimations and I can't figure out why. Not necessary to the program.
+    PropertyInfo.estimations = {'?': '???'}
+    # for key in WebScraper.found:
+    #     found, value = WebScraper.found[key][0], WebScraper.found[key][1]
+    #     if not found:
+    #         PropertyInfo.estimations[key] = value
 
     if save_to_file:
         save_analysis()
