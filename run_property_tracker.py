@@ -7,7 +7,7 @@ import time
 from dataclasses import dataclass
 from data.calculations import save_urls
 from data.user import get_url_from_input
-from data.colors_for_print import PrintColors
+from data.colors_for_print import BAD, OK, GOOD, GREAT, END
 from web.get_property_urls_from_search import is_url_valid, get_all_urls
 
 
@@ -84,9 +84,6 @@ def _commit_updates_to_file() -> None:
 def _print_captions(mode=None, e=False, verifying_url=False, valid=True,
                     received=False, execute_s=False, execute=False, search_limitations=False) -> None:
     """Prints text that tells the user what the programing is doing"""
-
-    BAD, OK, GOOD, GREAT = PrintColors.FAIL, PrintColors.WARNING, PrintColors.OKCYAN, PrintColors.OKGREEN
-    END = PrintColors.ENDC
 
     if mode == 's_p_r':
         print(f"{GOOD}Do you want to update Search URLs '{GREAT}s{GOOD}', update Property URLs '{GREAT}p{GOOD}', "

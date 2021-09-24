@@ -9,7 +9,7 @@ import json
 from data import user
 from data.user import WebScraper, UserValues
 from web.get_property_info import set_page_property_info, get_url
-from data.colors_for_print import PrintColors
+from data.colors_for_print import BAD, OK, GOOD, GREAT, END
 
 
 @dataclass
@@ -505,9 +505,6 @@ def print_property_info() -> None:
 
 def print_analysis(dump=False) -> any:
     """Prints analysis results to terminal"""
-
-    BAD, OK, GOOD, GREAT = PrintColors.FAIL, PrintColors.WARNING, PrintColors.OKCYAN, PrintColors.OKGREEN
-    END = PrintColors.ENDC
 
     temp = {}
 

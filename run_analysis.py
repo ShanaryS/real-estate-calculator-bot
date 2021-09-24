@@ -11,7 +11,7 @@ import time
 from data.calculations import update_values, get_property_analysis, write_property_analyses, is_new_analyses
 from web.push_best_deals_to_email import email_best_deals
 from data.user import set_interest_rate
-from data.colors_for_print import PrintColors
+from data.colors_for_print import BAD, OK, GOOD, GREAT, END
 from web.get_property_info import TIME_BETWEEN_REQUESTS
 from run_property_tracker import EXIT_TIMER
 
@@ -25,7 +25,7 @@ url_removed = False
 def _get_interest_rate() -> None:
     """Gets current interest rate to use for analyses in current session"""
 
-    print(f"{PrintColors.WARNING}--- Getting current interest rates...{PrintColors.ENDC}\n")
+    print(f"{OK}--- Getting current interest rates...{END}\n")
     set_interest_rate()
 
 
@@ -39,8 +39,8 @@ def _analyze_property(url) -> None:
         keys.append(key)
         property_analyses.append(property_analysis)
     else:
-        print(f" {PrintColors.FAIL}!!! ERROR ANALYZING THIS PROPERTY. "
-              f"CHECK \\output\\errors.log FOR DETAILS. !!!{PrintColors.ENDC}")
+        print(f" {BAD}!!! ERROR ANALYZING THIS PROPERTY. "
+              f"CHECK \\output\\errors.log FOR DETAILS. !!!{END}")
 
     time.sleep(TIME_BETWEEN_REQUESTS)
 
@@ -57,13 +57,13 @@ def _analyze_properties() -> None:
     TIME_CONST = GET_REQUEST_EXPECTED_TIME + TIME_BETWEEN_REQUESTS
     expected_time = int(num_urls * TIME_CONST)
     index = 0
-    print(f"{PrintColors.WARNING}--- Analyzing properties... Expected duration: {PrintColors.OKCYAN}"
-          f"{expected_time}s{PrintColors.ENDC}\n")
+    print(f"{OK}--- Analyzing properties... Expected duration: {GOOD}"
+          f"{expected_time}s{END}\n")
 
     # Gets analysis and writes to file for the individually added properties
     for url in urls_json.setdefault('Property', dict()):
-        print(f"{PrintColors.WARNING}TIME REMAINING: "
-              f"{PrintColors.OKCYAN}{-int(-(expected_time - index * TIME_CONST))}s{PrintColors.ENDC}",
+        print(f"{OK}TIME REMAINING: "
+              f"{GOOD}{-int(-(expected_time - index * TIME_CONST))}s{END}",
               "---", url, end="")
         _analyze_property(url)
         index += 1
@@ -79,8 +79,8 @@ def _analyze_properties() -> None:
     keys.clear(), property_analyses.clear()
     for search_url in urls_json.setdefault('Search', dict()):
         for url in urls_json['Search'][search_url]:
-            print(f"{PrintColors.WARNING}TIME REMAINING: "
-                  f"{PrintColors.OKCYAN}{-int(-(expected_time - index * TIME_CONST))}s{PrintColors.ENDC}",
+            print(f"{OK}TIME REMAINING: "
+                  f"{GOOD}{-int(-(expected_time - index * TIME_CONST))}s{END}",
                   "---", url, end="")
             _analyze_property(url)
             index += 1
@@ -94,10 +94,10 @@ def _check_if_analysis_json_updated(check=False) -> None:
     """Checks if the analysis performed yielded any new results"""
 
     if any(is_new_analyses()) or url_removed or check:
-        print(f"\n{PrintColors.OKGREEN}"
-              f"!!! Analyses were successfully added/updated! !!!{PrintColors.ENDC}")
+        print(f"\n{GREAT}"
+              f"!!! Analyses were successfully added/updated! !!!{END}")
     else:
-        print(f"\n{PrintColors.FAIL}!!! No new analysis to add/update! !!!{PrintColors.ENDC}")
+        print(f"\n{BAD}!!! No new analysis to add/update! !!!{END}")
     time.sleep(EXIT_TIMER)  # Delays closing the program so user can read final text
 
 
@@ -112,6 +112,6 @@ if __name__ == '__main__':
         email_best_deals()
 
     except FileNotFoundError:
-        print(f"\n{PrintColors.FAIL}!!! Error: No URLs exist... !!!{PrintColors.ENDC}")
-        print(f"{PrintColors.OKGREEN}Run run_property_tracker.py first.{PrintColors.ENDC}")
+        print(f"\n{BAD}!!! Error: No URLs exist... !!!{END}")
+        print(f"{GREAT}Run run_property_tracker.py first.{END}")
         time.sleep(3)

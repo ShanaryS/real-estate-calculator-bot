@@ -6,7 +6,7 @@ import smtplib
 import ssl
 from dotenv import load_dotenv
 import json
-from data.colors_for_print import PrintColors
+from data.colors_for_print import BAD, OK, GOOD, GREAT, END
 
 
 def email_best_deals() -> None:
@@ -16,10 +16,10 @@ def email_best_deals() -> None:
 
     # If analysis_json is empty, there is no analyses
     if not analysis_json:
-        print(f"{PrintColors.FAIL}\n!!!   No email sent. Ending program...   !!!{PrintColors.ENDC}")
+        print(f"{BAD}\n!!!   No email sent. Ending program...   !!!{END}")
         return
 
-    print(f"{PrintColors.OKCYAN}\n!!!   Emailing best deals!   !!!{PrintColors.ENDC}")
+    print(f"{GOOD}\n!!!   Emailing best deals!   !!!{END}")
 
     best_deal, best_deals = _find_best_deals(analysis_json)
     message = _construct_message(analysis_json, best_deal, best_deals)
@@ -112,9 +112,9 @@ def _send_email(message) -> None:
 
     # Handles if .env file is missing
     if not sender or not password:
-        print(f"\n{PrintColors.FAIL}!!!   Error: No email or password found.  !!!{PrintColors.ENDC}")
-        print(f"{PrintColors.WARNING}This is likely due to missing .env file. "
-              f"Follow instructions for emailing on github.{PrintColors.ENDC}")
+        print(f"\n{BAD}!!!   Error: No email or password found.  !!!{END}")
+        print(f"{OK}This is likely due to missing .env file. "
+              f"Follow instructions for emailing on github.{END}")
         return
 
     # Send email
@@ -124,4 +124,4 @@ def _send_email(message) -> None:
         server.login(sender, password)
         server.sendmail(sender, receiver, message)
 
-    print(f"\n{PrintColors.OKGREEN}!!!   Email successfully sent! Ending program...   !!!{PrintColors.ENDC}")
+    print(f"\n{GREAT}!!!   Email successfully sent! Ending program...   !!!{END}")

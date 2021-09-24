@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Colors:
+class PrintColors:
     """Used for adding color to print output"""
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -18,4 +18,8 @@ class Colors:
     UNDERLINE = '\033[4m'
 
 
-PrintColors = Colors()
+BAD = PrintColors.FAIL
+OK = PrintColors.WARNING
+GOOD = PrintColors.OKCYAN
+GREAT = PrintColors.OKGREEN
+END = PrintColors.ENDC
