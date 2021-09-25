@@ -61,7 +61,5 @@ python run_refresh_listings_from_search
 python run_single_property_analysis_print_only
 ```
 
-* To edit default values according to your area and hueristics, edit value.py. A text editor works fine.
-
 ## License
 [MIT](https://github.com/ShanaryS/algorithm-visualizer/blob/main/LICENSE)
