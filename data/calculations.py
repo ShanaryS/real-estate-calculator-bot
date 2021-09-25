@@ -50,7 +50,7 @@ def update_values(url=None, save_to_file=True, update_interest_rate=True) -> boo
 
         extra = ""
         if exception_name == 'AttributeError':
-            extra = " ---(IS THE PROPERTY OFF MARKET? IF SO YOU CAN DELETE THE URL IF IT WAS INDIVIDUALLY ADDED " \
+            extra = " --- (IS THE PROPERTY OFF MARKET? IF SO YOU CAN DELETE THE URL IF IT WAS INDIVIDUALLY ADDED " \
                     "TO PROPERTY URLs. IF IT WAS ADDED BY A SEARCH URL, IGNORE THIS PROPERTY INSTEAD. FOR EITHER " \
                     "OPTION, RUN run_property_tracker.py.)---"
 
