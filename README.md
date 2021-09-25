@@ -8,7 +8,7 @@
 * Get property URLs from a search a zillow search page to automatically analyze all properties of a criteria (Solves captcha if it appears).
 * Easy adding, deleting, ignoring, and overwriting saved URLs with a decision tree.
 * Uses real time mortgage interest rates.
-* Errors are gracefully handled and saved in a log file which includes exception type and traceback with potential solutions to the issue. It does not interrupt the program, that specific property is simply skipped in the analysis.
+* Errors are gracefully handled and saved in a log file which includes exception type, traceback, and offers potential solutions to the issue. It does not interrupt the program, that specific property is simply skipped in the analysis.
 * Inputs are checked to prevent errors as well as URLs are verified to be valid.
 
 ## Examples
