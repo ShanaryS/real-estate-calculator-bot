@@ -43,7 +43,7 @@ def _analyze_property(url) -> None:
     time.sleep(TIME_BETWEEN_REQUESTS)
 
 
-def _analyze_properties() -> None:
+def _analyze_properties(urls_json) -> None:
     """Gets info for all properties and saves them to analysis.json"""
 
     # Tell user how long analysis is expected to take
@@ -99,17 +99,22 @@ def _check_if_analysis_json_updated(check=False) -> None:
     time.sleep(EXIT_TIMER)  # Delays closing the program so user can read final text
 
 
-# Calls all the above functions to perform the analysis
-if __name__ == '__main__':
+def main() -> None:
+    """Main function"""
+
     try:
         with open(os.path.join('output', 'urls.json')) as json_file:
             urls_json = json.load(json_file)
 
         _get_interest_rate()
-        _analyze_properties()
+        _analyze_properties(urls_json)
         email_best_deals()
 
     except FileNotFoundError:
         print(f"\n{BAD}!!! Error: No URLs exist... !!!{END}")
         print(f"{GREAT}Run run_property_tracker.py first.{END}")
         time.sleep(3)
+
+
+if __name__ == '__main__':
+    main()

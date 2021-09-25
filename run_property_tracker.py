@@ -320,5 +320,11 @@ def _get_urls_from_search() -> None:
             json.dump({'Search': {}, 'Property': {}}, json_file, indent=4)
 
 
-if __name__ == '__main__':
+def main() -> None:
+    """Main function"""
+
     add_link(mode=S_P_R_I)
+
+
+if __name__ == '__main__':
+    main()
