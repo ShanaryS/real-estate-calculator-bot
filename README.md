@@ -1,6 +1,12 @@
 # Real Estate Calculator Bot
 
-This is a bot for analyzing real estate properties. Able to either analyze a single property and print its analysis or input a search criteria that analyze all the properties that fit. Analysis includes: Return On Investment, Cash on Cash Return, Caprate, Cashflow, Max Offer, and Emergency Fund. For printing a single analysis, it also returns the amortization table of the mortgage.
+This is a bot for analyzing real estate properties. Able to either analyze a single property and print its analysis or input a search criteria that analyze all the properties that fit. Emails best deals from all the properties analyzed. Analysis includes: 
+```
+Return On Investment, Cash on Cash Return, Caprate, Cashflow, Max Offer, Emergency Fund, Amortizaton Table*
+```
+###### * When printing analysis of a single property only.
+
+Data is stored locally in json files in /output/ as well as the logs for errors. The URLs inputted (from run_property_tracker) are saved in urls.json while the final analysis of all those URLs are stored in analysis.json. The [README.md](https://github.com/ShanaryS/algorithm-visualizer/blob/main/LICENSE) in /output/ contains more information on how data and errrors are stored.
 
 Requires either a https://www.zillow.com/homedetails/* URL for individual properties or a search URL. Adding, deleting, and ignoring properties are done through a decesion tree in the terminal. It contains the necessary information on how to use each option.
 
