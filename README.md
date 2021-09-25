@@ -11,6 +11,7 @@
 * Uses real time mortgage interest rates.
 * Errors are gracefully handled and saved in a log file which includes exception type, traceback, and offers potential solutions to the issue. Failures do not interrupt the program, that specific property is simply skipped in the analysis.
 * Inputs are checked to prevent errors as well as URLs are verified to be valid.
+* Uses hash maps and set operations for quick calculations and manipulations of data.
 
 ## Examples
 
