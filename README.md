@@ -6,21 +6,21 @@
 * Analayze a property given a https://www.zillow.com/homedetails/* URL. Print to output or store locally in JSON.
 * Get property URLs from a search a zillow search page to automatically analyze all properties of a criteria (Solves captcha if it appears).
 * Easy adding, deleting, ignoring, and overwriting saved URLs with a decesion tree.
-* Uses real time interest rates
+* Uses real time mortgage interest rates
 
 ## Examples
 
 <p align="center">
-  <strong>Instantly analyze a single property with all the gory details!</strong>
-</p>
-
-<p align="center">
-  Shows popular analytic metries for analyzing a real estate property as well as the amortization table of the loan:
+  <strong>Instantly analyze a single property with all the fundamental real estate metrics!</strong>
 </p>
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/86130442/134757381-ec233d45-3133-41a1-915b-cc3090dde7f4.gif" alt="animated" />
 </p>
+
+Adding new properties to track is easy with the decision tree!             |  Analyze thousands of properties faster than you ever could!
+:-------------------------:|:-------------------------:
+![Demo #2](https://user-images.githubusercontent.com/86130442/134757474-989d118e-c455-4e96-80aa-a2a810fcdf9b.gif)  |  ![Demo #3](https://user-images.githubusercontent.com/86130442/134757517-5fcf1d08-4d63-41d9-9154-16a06bb4d24a.gif)
 
 ## About
 
