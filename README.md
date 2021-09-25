@@ -25,7 +25,7 @@
 </p>
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/86130442/134757381-ec233d45-3133-41a1-915b-cc3090dde7f4.gif" alt="animated" />
+  <img src="https://user-images.githubusercontent.com/86130442/134758286-2eb37477-9c50-4980-9a27-3acd4002fa42.gif" alt="animated" />
 </p>
 
 ***
@@ -74,6 +74,12 @@ Requires either a https://www.zillow.com/homedetails/* URL for individual proper
 Interest rates are retrieved once at start up from https://www.nerdwallet.com/mortgages/mortgage-rates and used for all subsquent analysis in the session. Property taxes are retrieved from the Zillow property page if it exists, else it defaults to https://www.countyoffice.org/tax-records/ which usually has the info. (Note: There is a limit on the number times you can get the property taxes info from the county office, at 5 properties, you will be restricted for the day. Luckily Zillow usually has the property taxes and thus rarely falls back to county office. Though if you wanted to get around that limitation, you would need to use a VPN.
 
 The resutling analyses is currently over fitted to multi-family properties in CT. To fix, edit the CONSTANTS found in values.py to fit your heuristics. CONSTANTS are defined by all caps. In there you can also adjust the critria for a 'good deal' which decides what properties to email.
+
+
+## Notes
+
+* To get the property URLs from a search URL, selenium is required. The properties are dynamically loaded behind a JavaScript script. The only way of accessing those properties is to scroll to the bottom of the page, then parse the html doc.
+* Sends emails over the gmail SMTP server. It is not necessary to the program, but a nice bonus. For using the email feature, I recommend using a separate gmail account to send/receive the mail. Enable 2FA and use an app password for the script. I suggest creating a local ".env" file in the parent directory containing two lines of your email and app password. More details are in push_best_deals_to_email.py.
 
 ## Installation
 
