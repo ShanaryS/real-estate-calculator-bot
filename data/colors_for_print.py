@@ -1,10 +1,9 @@
 """Add colors to print output where necessary"""
 
-from dataclasses import dataclass
+from enum import Enum
 
 
-@dataclass(frozen=True)
-class PrintColors:
+class PrintColors(Enum):
     """Used for adding color to print output"""
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -17,8 +16,8 @@ class PrintColors:
     UNDERLINE = '\033[4m'
 
 
-BAD = PrintColors.FAIL
-OK = PrintColors.WARNING
-GOOD = PrintColors.OKCYAN
-GREAT = PrintColors.OKGREEN
-END = PrintColors.ENDC
+BAD = PrintColors.FAIL.value
+OK = PrintColors.WARNING.value
+GOOD = PrintColors.OKCYAN.value
+GREAT = PrintColors.OKGREEN.value
+END = PrintColors.ENDC.value
