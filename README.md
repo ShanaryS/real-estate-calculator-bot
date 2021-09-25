@@ -130,12 +130,12 @@ python run_property_tracker
 python run_analysis
 ```
 
-* Refresh search properties without input (Useful for automatically refreshing unattended):
+* Refresh search properties without input (Useful for automatically refreshing while unattended):
 ```bash
 python run_refresh_listings_from_search
 ```
 
-* Print analysis of single property without saving, including amortization table (Useful for just analyzing a single property):
+* Print analysis of single property without saving, including amortization table (Useful for analyzing just a single property):
 ```bash
 python run_single_property_analysis_print_only
 ```
