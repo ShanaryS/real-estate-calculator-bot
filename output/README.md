@@ -13,3 +13,5 @@ DO NOT MODIFY ANY OF THE JSONs, INCLUDING DELETING EITHER JSON. It may cause une
 Though the program allows removing URLs individually from urls.json and automatically updates analysis.json so there is really no need to.
 
 Use errors.log for troubleshooting. Usually there will be a unique case not considered by the get_property_info.py web scraper.
+
+URLs in ignored_urls.txt prevents adding a specific property URL from a Search URL. After ignoring a property, refresh search URLs.
