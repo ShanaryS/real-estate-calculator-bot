@@ -1,6 +1,5 @@
 """Handles updating necessary variables per user input"""
 
-
 from dataclasses import dataclass
 from values import *
 from web.get_current_interest_rates import set_page_interest_rates, InterestRates

@@ -1,6 +1,5 @@
 """Hub for all the calculations needed"""
 
-
 import os.path
 from traceback import format_tb
 from dataclasses import dataclass
