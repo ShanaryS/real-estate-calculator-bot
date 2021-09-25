@@ -11,7 +11,7 @@
 ## Examples
 
 <p align="center">
-  <strong>Instantly analyze a single property with all the gory details:</strong>
+  <strong>Instantly analyze a single property with all the gory details!</strong>
 </p>
 
 <p align="center">
