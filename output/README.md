@@ -14,4 +14,4 @@ Though the program allows removing URLs individually from urls.json and automati
 
 Use errors.log for troubleshooting. Usually there will be a unique case not considered by the get_property_info.py web scraper.
 
-URLs in ignored_urls.txt prevents adding a specific property URL from a Search URL. After ignoring a property, refresh search URLs.
+URLs in ignored_urls.txt prevents adding a specific property URL and properties from a Search URL. After ignoring a property, refresh search URLs.

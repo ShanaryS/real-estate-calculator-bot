@@ -269,6 +269,9 @@ def write_urls(urls, overwrite=False, search=False, delete=False) -> None:
         try:
             with open(os.path.join('output', 'ignored_urls.txt')) as txt_file:
                 urls_txt = {url.strip() for url in txt_file.readlines()}
+            if urls.intersection(urls_txt):
+                print(f"{BAD}!!! At least one of the URLs entered is being ignored. "
+                      f"They were not added to urls.json... !!!{END}")
             urls.difference_update(urls_txt)  # Subtracts ignored urls from urls to be saved.
         except FileNotFoundError:
             pass

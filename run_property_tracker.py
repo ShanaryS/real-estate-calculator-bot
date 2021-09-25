@@ -12,7 +12,7 @@ from web.get_property_urls_from_search import is_url_valid, get_all_urls
 
 
 # Used for delaying terminating program so user can read final text
-EXIT_TIMER = 1
+EXIT_TIMER = 2
 DELAY_TO_GET_URLS = 5
 
 # Use for navigating through menus
@@ -291,6 +291,13 @@ def _get_urls_from_search() -> None:
         with open(os.path.join('output', 'urls.json')) as json_file:
             urls_json = json.load(json_file)
 
+        # Loads URLs that the user wants to ignore
+        try:
+            with open(os.path.join('output', 'ignored_urls.txt')) as txt_file:
+                urls_txt = {url.strip() for url in txt_file.readlines()}
+        except FileNotFoundError:
+            urls_txt = set()
+
         # Get property URLs for each Search URL and place them under their respective Search URL.
         # Coverts result list -> set -> list to remove any potential duplicates. Should be none but don't want any
         # chance of making redundant get request for the analysis.
@@ -301,7 +308,8 @@ def _get_urls_from_search() -> None:
             # can be easily deleted as well.
             urls_search = set(get_all_urls(search_url))
             urls_properties = set(urls_json.get('Property', set()))
-            urls_search.difference_update(urls_properties)
+            urls_search.difference_update(urls_properties)  # Subtracts property URLs from search property URLs.
+            urls_search.difference_update(urls_txt)  # Subtracts ignored urls from urls to be saved.
 
             # Converts urls_search back to list to add to json. It does not accept sets.
             urls_json['Search'][search_url] = list(urls_search)
