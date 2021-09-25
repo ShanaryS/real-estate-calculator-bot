@@ -2,12 +2,14 @@
 
 ## Features
 
-* Automatically send an email whenever a great investment oppurtunity arises, according to your heuristics.
+* Parses the HTML doc of a zillow property page or search page using BeautifulSoup, Selenium, and RegEx.
+* Automatically send an email via SMPT whenever a great investment oppurtunity arises, according to your heuristics.
 * Analayze a property given a https://www.zillow.com/homedetails/* URL. Print to output or store locally in JSON.
 * Get property URLs from a search a zillow search page to automatically analyze all properties of a criteria (Solves captcha if it appears).
 * Easy adding, deleting, ignoring, and overwriting saved URLs with a decesion tree.
 * Uses real time mortgage interest rates
-* Errors are saved in a log file which includes exception type and traceback with potential solutons to the issue.
+* Errors are gracefully handled and saved in a log file which includes exception type and traceback with potential solutons to the issue. It does not interrupt the program, that specific property is simply skipped in the analysis.
+* Inputs are checked to prevent errors as well as URLs are verifyed to be valid.
 
 ## Examples
 
@@ -62,7 +64,7 @@
 
 ## About
 
-This is a bot for analyzing real estate properties. Able to either analyze a single property and print its analysis or input a search criteria that analyze all the properties that fit. Emails best deals from all the properties analyzed. Analysis includes: 
+This is a bot for analyzing residential (1-4 units) real estate properties. Able to either analyze a single property and print its analysis or input a search criteria that analyze all the properties that fit. Emails best deals from all the properties analyzed. Analysis includes: 
 ```
 Return On Investment, Cash on Cash Return, Caprate, Cashflow, Max Offer, Emergency Fund, Amortizaton Table*
 ```
