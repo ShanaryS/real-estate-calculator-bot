@@ -1,6 +1,5 @@
 """Use before run_analysis.py to choose urls. Can add property urls or search urls."""
 
-
 import os.path
 import json
 import time
@@ -9,7 +8,6 @@ from data.calculations import write_urls, write_urls_ignore
 from data.user import get_url_from_input
 from data.colors_for_print import BAD, OK, GOOD, GREAT, END
 from web.get_property_urls_from_search import is_url_valid, get_all_urls
-
 
 # Used for delaying terminating program so user can read final text
 EXIT_TIMER = 2

@@ -4,7 +4,6 @@ is the same place where adding a single property would also be stored. Then prog
 the 'Property' object.
 """
 
-
 import os.path
 import json
 import time
@@ -14,7 +13,6 @@ from data.user import set_interest_rate
 from data.colors_for_print import BAD, OK, GOOD, GREAT, END
 from web.get_property_info import TIME_BETWEEN_REQUESTS
 from run_property_tracker import EXIT_TIMER
-
 
 GET_REQUEST_EXPECTED_TIME = 1.5
 keys = []

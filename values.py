@@ -1,6 +1,5 @@
 """DEFAULT VALUES USED FOR ANALYSIS. CHANGE THESE VALUES ACCORDING TO YOUR HEURISTICS. TOUCH NOTHING ELSE."""
 
-
 '''If you want to change the criteria for a 'good deal' that it emails, that would be changed in
 /web/push_best_deals_to_email.py with the functions _get_deal_value() and _find_best_deals().
 Currently it just emails any property with a Cash On Cash Return greater than 12%. That is universally considered
