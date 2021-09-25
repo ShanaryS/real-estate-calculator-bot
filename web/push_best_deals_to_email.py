@@ -75,7 +75,7 @@ def _construct_message(analysis_json, best_deal, best_deals) -> str:
 
     subject_line = f"Subject: Real Estate Bot - " \
                    f"{_get_deal_value(analysis_json, best_deal)}%{est} ConC Return" \
-                   f" @ ${best_property['Property Info']['Price ($)']:,}!"
+                   f" @ ${best_property['Property Info']['Price ($)']:,}! (Total: {len(best_deals)})"
 
     # Body of message filled according to find_best_deals()
     deals = "ORDERED FROM BEST TO WORST - THIS DOES NOT CONTAIN ALL THE PROPERTY ANALYSES, JUST THE BEST ONES:\n\n" \
