@@ -1,10 +1,9 @@
 """Add colors to print output where necessary"""
 
-
 from dataclasses import dataclass
 
 
-@dataclass
+@dataclass(frozen=True)
 class PrintColors:
     """Used for adding color to print output"""
     HEADER = '\033[95m'
