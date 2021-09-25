@@ -1,8 +1,9 @@
 """Add colors to print output where necessary"""
 
-from enum import Enum
+from enum import Enum, unique
 
 
+@unique
 class PrintColors(Enum):
     """Used for adding color to print output"""
     HEADER = '\033[95m'
