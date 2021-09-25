@@ -6,13 +6,21 @@ Return On Investment, Cash on Cash Return, Caprate, Cashflow, Max Offer, Emergen
 ```
 ###### * When printing analysis of a single property only.
 
-Data is stored locally in json files in /output/ as well as the logs for errors. The URLs inputted (from run_property_tracker) are saved in urls.json while the final analysis of all those URLs are stored in analysis.json. The [README.md](https://github.com/ShanaryS/algorithm-visualizer/blob/main/LICENSE) in /output/ contains more information on how data and errrors are stored.
+Data is stored locally in JSON files in /output/ as well as the logs for errors. The URLs inputted (from run_property_tracker) are saved in urls.json while the final analysis of all those URLs are stored in analysis.json. The [README.md](https://github.com/ShanaryS/algorithm-visualizer/blob/main/LICENSE) in /output/ contains more information on how data and errrors are stored.
 
 Requires either a https://www.zillow.com/homedetails/* URL for individual properties or a search URL. Adding, deleting, and ignoring properties are done through a decesion tree in the terminal. It contains the necessary information on how to use each option.
 
 Interest rates are retrieved once at start up from https://www.nerdwallet.com/mortgages/mortgage-rates and used for all subsquent analysis in the session. Property taxes are retrieved from the Zillow property page if it exists, else it defaults to https://www.countyoffice.org/tax-records/ which usually has the info. (Note: There is a limit on the number times you can get the property taxes info from the county office, at 5 properties, you will be restricted for the day. Luckily Zillow usually has the property taxes and thus rarely falls back to county office. Though if you wanted to get around that limitation, you would need to use a VPN.
 
 The resutling analyses is currently over fitted to multi-family properties in CT. To fix, edit the CONSTANTS found in values.py to fit your heuristics. CONSTANTS are defined by all caps. In there you can also adjust the critria for a 'good deal' which decides what properties to email.
+
+## Features
+
+* Automatically send an email whenever a great investment oppurtunity arises, according to your heuristics.
+* Analayze a property given a https://www.zillow.com/homedetails/* URL. Print to output or store locally in JSON.
+* Get property URLs from a search a zillow search page to automatically analyze all properties of a criteria (Solves captcha if it appears).
+* Easy adding, deleting, ignoring, and overwriting saved URLs with a decesion tree.
+* Uses real time interest rates
 
 ## Installation
 
