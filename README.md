@@ -18,9 +18,46 @@
   <img src="https://user-images.githubusercontent.com/86130442/134757381-ec233d45-3133-41a1-915b-cc3090dde7f4.gif" alt="animated" />
 </p>
 
-Adding new properties to track is easy with the decision tree!             |  Analyze thousands of properties faster than you ever could!
-:-------------------------:|:-------------------------:
-![Demo #2](https://user-images.githubusercontent.com/86130442/134757474-989d118e-c455-4e96-80aa-a2a810fcdf9b.gif)  |  ![Demo #3](https://user-images.githubusercontent.com/86130442/134757517-5fcf1d08-4d63-41d9-9154-16a06bb4d24a.gif)
+***
+
+<p align="center">
+  <strong>Automatically get property URLs from a search criteria! (P.S. Also beats captchas!)</strong>
+</p>
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/86130442/134757381-ec233d45-3133-41a1-915b-cc3090dde7f4.gif" alt="animated" />
+</p>
+
+***
+
+<p align="center">
+  <strong>Adding new properties to track is easy with the decision tree!</strong>
+</p>
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/86130442/134757474-989d118e-c455-4e96-80aa-a2a810fcdf9b.gif" alt="animated" />
+</p>
+
+***
+
+<p align="center">
+  <strong>Analyze thousands of properties faster than you ever could!</strong>
+</p>
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/86130442/134757517-5fcf1d08-4d63-41d9-9154-16a06bb4d24a.gif" alt="animated" />
+</p>
+
+***
+
+<p align="center">
+  <strong>Automatically get emailed whenever the best deals are found!</strong>
+</p>
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/86130442/134757809-bf3e8926-ba67-472a-9db8-b34de1509bc0.png" />
+  <img src="https://user-images.githubusercontent.com/86130442/134757813-a916fb12-ea08-4c93-8802-f649863775fd.png" />
+</p>
 
 ## About
 
