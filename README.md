@@ -3,13 +3,13 @@
 ## Features
 
 * Parses the HTML doc of a zillow property page or search page using BeautifulSoup, Selenium, and RegEx.
-* Automatically send an email via SMPT whenever a great investment oppurtunity arises, according to your heuristics.
-* Analayze a property given a https://www.zillow.com/homedetails/* URL. Print to output or store locally in JSON.
+* Automatically send an email via SMPT whenever a great investment opportunity arises, according to your heuristics.
+* Analyze a property given a https://www.zillow.com/homedetails/* URL. Print to output or store locally in JSON.
 * Get property URLs from a search a zillow search page to automatically analyze all properties of a criteria (Solves captcha if it appears).
-* Easy adding, deleting, ignoring, and overwriting saved URLs with a decesion tree.
+* Easy adding, deleting, ignoring, and overwriting saved URLs with a decision tree.
 * Uses real time mortgage interest rates
-* Errors are gracefully handled and saved in a log file which includes exception type and traceback with potential solutons to the issue. It does not interrupt the program, that specific property is simply skipped in the analysis.
-* Inputs are checked to prevent errors as well as URLs are verifyed to be valid.
+* Errors are gracefully handled and saved in a log file which includes exception type and traceback with potential solutions to the issue. It does not interrupt the program, that specific property is simply skipped in the analysis.
+* Inputs are checked to prevent errors as well as URLs are verified to be valid.
 
 ## Examples
 
@@ -70,19 +70,19 @@ Return On Investment, Cash on Cash Return, Caprate, Cashflow, Max Offer, Emergen
 ```
 ###### * When printing analysis of a single property only.
 
-Data is stored locally in JSON files in /output/ as well as the logs for errors. The URLs inputted (from run_property_tracker) are saved in urls.json while the final analysis of all those URLs are stored in analysis.json. The [README.md](https://github.com/ShanaryS/algorithm-visualizer/blob/main/LICENSE) in /output/ contains more information on how data and errrors are stored.
+Data is stored locally in JSON files in /output/ as well as the logs for errors. The URLs inputted (from run_property_tracker) are saved in urls.json while the final analysis of all those URLs are stored in analysis.json. The [README.md](https://github.com/ShanaryS/algorithm-visualizer/blob/main/LICENSE) in /output/ contains more information on how data and errors are stored.
 
-Requires either a https://www.zillow.com/homedetails/* URL for individual properties or a search URL. Adding, deleting, and ignoring properties are done through a decesion tree in the terminal. It contains the necessary information on how to use each option.
+Requires either a https://www.zillow.com/homedetails/* URL for individual properties or a search URL. Adding, deleting, and ignoring properties are done through a decision tree in the terminal. It contains the necessary information on how to use each option.
 
-Interest rates are retrieved once at start up from https://www.nerdwallet.com/mortgages/mortgage-rates and used for all subsquent analysis in the session. Property taxes are retrieved from the Zillow property page if it exists, else it defaults to https://www.countyoffice.org/tax-records/ which usually has the info. (Note: There is a limit on the number times you can get the property taxes info from the county office, at 5 properties, you will be restricted for the day. Luckily Zillow usually has the property taxes and thus rarely falls back to county office. Though if you wanted to get around that limitation, you would need to use a VPN.
+Interest rates are retrieved once at start up from https://www.nerdwallet.com/mortgages/mortgage-rates and used for all subsequent analysis in the session. Property taxes are retrieved from the Zillow property page if it exists, else it defaults to https://www.countyoffice.org/tax-records/ which usually has the info. (Note: There is a limit on the number times you can get the property taxes info from the county office, at 5 properties, you will be restricted for the day. Luckily Zillow usually has the property taxes and thus rarely falls back to county office. Though if you wanted to get around that limitation, you would need to use a VPN.)
 
-The resutling analyses is currently over fitted to multi-family properties in CT. To fix, edit the CONSTANTS found in values.py to fit your heuristics. CONSTANTS are defined by all caps. In there you can also adjust the critria for a 'good deal' which decides what properties to email.
+The resulting analyses is currently over fitted to multi-family properties in CT. To fix, edit the CONSTANTS found in values.py to fit your heuristics. CONSTANTS are defined by all caps. In there you can also adjust the criteria for a 'good deal' which decides what properties to email.
 
 
 ## Notes
 
-* To get the property URLs from a search URL, selenium is required (For direct property analysis, either through print or run_analyis, it is not required). The properties are dynamically loaded behind a JavaScript script. The only way of accessing those properties is to scroll to the bottom of the page, then parse the html doc. I am using the [chromedriver](https://chromedriver.chromium.org/downloads) for selenium. Tutorial for setting up [here](https://sites.google.com/chromium.org/driver/getting-started?authuser=0).
-* Sends emails over the gmail SMTP server. It is not necessary to the program, but a nice bonus. For using the email feature, I recommend using a separate gmail account to send/receive the mail. Enable 2FA and use an app password for the script. I suggest creating a local ".env" file in the parent directory containing two lines of your email and app password. More details are in push_best_deals_to_email.py.
+* To get the property URLs from a search URL, selenium is required (For direct property analysis, either through print or run_analysis, it is not required). The properties are dynamically loaded behind a JavaScript script. The only way of accessing those properties is to scroll to the bottom of the page, then parse the html doc. I am using the [chromedriver](https://chromedriver.chromium.org/downloads) for selenium. Tutorial for setting up [here](https://sites.google.com/chromium.org/driver/getting-started?authuser=0).
+* Emails are sent over the gmail SMTP server. It is not necessary to the program, but a nice bonus. For using the email feature, I recommend using a separate gmail account to send/receive the mail. Enable 2FA and use an app password for the script. I suggest creating a local ".env" file in the parent directory containing two lines of your email and app password. More details are in push_best_deals_to_email.py.
 
 ## Installation
 
@@ -117,7 +117,7 @@ pip install -r requirements.txt
 
 #### All the files that you should interact with to use the program is in the main directory. Either prefixed with run_* or values.py for editing constants.
 
-* Add a property or search critria to track:
+* Add a property or search criteria to track:
 ```bash
 python run_property_tracker
 ```
@@ -132,7 +132,7 @@ python run_analysis
 python run_refresh_listings_from_search
 ```
 
-* Print analysis of single property without saving, including amortizaiton table (Useful for just analyzing a single property):
+* Print analysis of single property without saving, including amortization table (Useful for just analyzing a single property):
 ```bash
 python run_single_property_analysis_print_only
 ```
