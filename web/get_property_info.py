@@ -1,11 +1,9 @@
 """Web scrapes property info from zillow.com and countyoffice.org/tax-records/ for property taxes if necessary."""
 
-
 from bs4 import BeautifulSoup
 import requests
 import time
 from dataclasses import dataclass
-
 
 TIME_BETWEEN_REQUESTS = 0  # Used by get_property_taxes(), get_address() and run_analysis.py
 NUM_TIMES_TO_RETRY_REQUESTS = 5

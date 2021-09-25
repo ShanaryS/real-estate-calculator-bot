@@ -1,6 +1,5 @@
 """Email self whenever program finds a good deal"""
 
-
 import os
 import smtplib
 import ssl

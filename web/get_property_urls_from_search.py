@@ -1,6 +1,5 @@
 """Web scrapes properties from zillow search URL."""
 
-
 import bs4.element
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -8,7 +7,6 @@ from selenium.webdriver.common.keys import Keys
 import requests
 import time
 from dataclasses import dataclass
-
 
 # Delay between actions for selenium driver
 SCROLL_DELAY = 0.05
