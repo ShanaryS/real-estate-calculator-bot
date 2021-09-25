@@ -79,7 +79,7 @@ The resutling analyses is currently over fitted to multi-family properties in CT
 
 ## Notes
 
-* To get the property URLs from a search URL, selenium is required. The properties are dynamically loaded behind a JavaScript script. The only way of accessing those properties is to scroll to the bottom of the page, then parse the html doc.
+* To get the property URLs from a search URL, selenium is required (For direct property analysis, either through print or run_analyis, it is not required). The properties are dynamically loaded behind a JavaScript script. The only way of accessing those properties is to scroll to the bottom of the page, then parse the html doc. I am using the [chromedriver](https://chromedriver.chromium.org/downloads) for selenium. Tutorial for setting up [here](https://sites.google.com/chromium.org/driver/getting-started?authuser=0).
 * Sends emails over the gmail SMTP server. It is not necessary to the program, but a nice bonus. For using the email feature, I recommend using a separate gmail account to send/receive the mail. Enable 2FA and use an app password for the script. I suggest creating a local ".env" file in the parent directory containing two lines of your email and app password. More details are in push_best_deals_to_email.py.
 
 ## Installation
