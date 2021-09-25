@@ -1,5 +1,29 @@
 # Real Estate Calculator Bot
 
+## Features
+
+* Automatically send an email whenever a great investment oppurtunity arises, according to your heuristics.
+* Analayze a property given a https://www.zillow.com/homedetails/* URL. Print to output or store locally in JSON.
+* Get property URLs from a search a zillow search page to automatically analyze all properties of a criteria (Solves captcha if it appears).
+* Easy adding, deleting, ignoring, and overwriting saved URLs with a decesion tree.
+* Uses real time interest rates
+
+## Examples
+
+<p align="center">
+  <strong>Instantly analyze a single property with all the gory details:</strong>
+</p>
+
+<p align="center">
+  Shows popular analytic metries for analyzing a real estate property as well as the amortization table of the loan:
+</p>
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/86130442/134757381-ec233d45-3133-41a1-915b-cc3090dde7f4.gif" alt="animated" />
+</p>
+
+## About
+
 This is a bot for analyzing real estate properties. Able to either analyze a single property and print its analysis or input a search criteria that analyze all the properties that fit. Emails best deals from all the properties analyzed. Analysis includes: 
 ```
 Return On Investment, Cash on Cash Return, Caprate, Cashflow, Max Offer, Emergency Fund, Amortizaton Table*
@@ -13,14 +37,6 @@ Requires either a https://www.zillow.com/homedetails/* URL for individual proper
 Interest rates are retrieved once at start up from https://www.nerdwallet.com/mortgages/mortgage-rates and used for all subsquent analysis in the session. Property taxes are retrieved from the Zillow property page if it exists, else it defaults to https://www.countyoffice.org/tax-records/ which usually has the info. (Note: There is a limit on the number times you can get the property taxes info from the county office, at 5 properties, you will be restricted for the day. Luckily Zillow usually has the property taxes and thus rarely falls back to county office. Though if you wanted to get around that limitation, you would need to use a VPN.
 
 The resutling analyses is currently over fitted to multi-family properties in CT. To fix, edit the CONSTANTS found in values.py to fit your heuristics. CONSTANTS are defined by all caps. In there you can also adjust the critria for a 'good deal' which decides what properties to email.
-
-## Features
-
-* Automatically send an email whenever a great investment oppurtunity arises, according to your heuristics.
-* Analayze a property given a https://www.zillow.com/homedetails/* URL. Print to output or store locally in JSON.
-* Get property URLs from a search a zillow search page to automatically analyze all properties of a criteria (Solves captcha if it appears).
-* Easy adding, deleting, ignoring, and overwriting saved URLs with a decesion tree.
-* Uses real time interest rates
 
 ## Installation
 
