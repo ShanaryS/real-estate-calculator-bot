@@ -5,6 +5,7 @@ import smtplib
 import ssl
 from dotenv import load_dotenv
 import json
+from values import MINIMUM_ConC_PERCENT
 from data.colors_for_print import BAD, OK, GOOD, GREAT, END
 
 
@@ -47,7 +48,6 @@ def _get_deal_value(analysis_json, deal) -> float:
 def _find_best_deals(analysis_json) -> tuple:
     """Finds the best deal out of the analysis"""
 
-    MINIMUM_ConC_PERCENT = 12
     best_deals = []
 
     # TODO Make this more complicated taking in max offer/price, all analysis other analysis. Multiple if statements

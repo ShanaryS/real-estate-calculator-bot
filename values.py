@@ -7,6 +7,10 @@ a 'good deal'. You may increase or decrease the percentage by changing MINIMUM_C
 may have too many deals above 12% or too little.
 '''
 
+# This value is used as the cut off for a good deal. Increasing or lowering it will change the minimum cutoff for
+# a property to be sent within the email. Default value of 12. 12% ConC is universally considered good.
+MINIMUM_ConC_PERCENT = 12
+
 # Default values assumed if not found. Backup below.
 DOWN_PAYMENT_PERCENT = 0.20
 YEARS = 30  # 'FHA' and 'VA' requires YEARS = 30. 'Conventional' has options for YEARS = 30, 20, 15, 10.
