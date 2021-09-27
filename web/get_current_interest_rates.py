@@ -3,6 +3,7 @@
 from bs4 import BeautifulSoup
 import requests
 from dataclasses import dataclass
+from data.colors_for_print import OK, END
 
 
 @dataclass
@@ -13,6 +14,8 @@ class InterestRates:
 
 def set_page_interest_rates() -> None:
     """Get page and stores interest rates. Only ran once the per session."""
+
+    print(f"{OK}--- Getting current interest rates...{END}\n")
 
     url = 'https://www.nerdwallet.com/mortgages/mortgage-rates'
     page = requests.get(url).text

@@ -22,8 +22,6 @@ url_removed = False
 
 def _get_interest_rate() -> None:
     """Gets current interest rate to use for analyses in current session"""
-
-    print(f"{OK}--- Getting current interest rates...{END}\n")
     set_interest_rate()
 
 
