@@ -22,6 +22,8 @@ A_O_D, APPEND, OVERWRITE, DELETE, CANCEL, EXECUTE = 'a_o_d', 'a', 'o', 'd', 'c',
 class State:
     """Saves the state of the user choices"""
     is_search = to_overwrite = to_delete = to_ignore = False
+    search_property_refresh_ignore = {SEARCH, PROPERTY, REFRESH, IGNORE, CANCEL}
+    append_overwrite_delete = {APPEND, OVERWRITE, DELETE, CANCEL}
     urls = set()
 
 
@@ -161,9 +163,7 @@ def add_link(mode=None, refresh_no_input=False) -> None:
     _print_captions(mode=mode)
     search_property_refresh_ignore = input()
     print()
-    while search_property_refresh_ignore != SEARCH and search_property_refresh_ignore != PROPERTY \
-            and search_property_refresh_ignore != REFRESH and search_property_refresh_ignore != IGNORE \
-            and search_property_refresh_ignore != CANCEL:
+    while search_property_refresh_ignore not in State.search_property_refresh_ignore:
         _print_captions(mode=mode)
         search_property_refresh_ignore = input()
         print()
@@ -193,8 +193,7 @@ def _choose_options(mode) -> None:
     _print_captions(mode=mode)
     append_overwrite_delete = input()
     print()
-    while append_overwrite_delete != APPEND and append_overwrite_delete != OVERWRITE \
-            and append_overwrite_delete != DELETE and append_overwrite_delete != CANCEL:
+    while append_overwrite_delete not in State.append_overwrite_delete:
         _print_captions(mode=mode)
         append_overwrite_delete = input()
         print()
