@@ -70,7 +70,7 @@ def get_all_urls(url) -> list:
             if curr_url != url and 'captcha' not in curr_url.lower():  # If no more pages to go through
                 break
 
-    SearchPage.chrome.close()
+    SearchPage.chrome.quit()
 
     return property_urls
 
