@@ -5,7 +5,7 @@ import requests
 import time
 from dataclasses import dataclass
 
-TIME_BETWEEN_REQUESTS = 0  # Used by get_property_taxes(), get_address() and run_analysis.py
+TIME_BETWEEN_REQUESTS = 0  # Used by get_property_taxes(), get_address() and run_analyses.py
 NUM_TIMES_TO_RETRY_REQUESTS = 5
 
 

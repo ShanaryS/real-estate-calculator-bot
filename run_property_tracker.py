@@ -1,4 +1,4 @@
-"""Use before run_analysis.py to choose urls. Can add property urls or search urls."""
+"""Use before run_analyses.py to choose urls. Can add property urls or search urls."""
 
 import os.path
 import json

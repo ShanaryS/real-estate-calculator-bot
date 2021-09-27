@@ -446,7 +446,7 @@ def write_property_analyses(keys, property_analyses) -> None:
 
     except (FileNotFoundError, json.JSONDecodeError, TypeError):  # Explained in save_urls() above
 
-        PropertyInfo.new_analysis_list.append(True)  # Used to tell if file has been modified. Used by run_analysis.py
+        PropertyInfo.new_analysis_list.append(True)  # Used to tell if file has been modified. Used by run_analyses.py
 
         # Creating a dict to store the multiple analyses. Allows writing to file once.
         analysis_json = {}

@@ -1,7 +1,7 @@
 """This allows refreshing the listings from all the search URLs without requiring user input. Useful for automation."""
 
 from run_property_tracker import add_link
-from run_analysis import main
+from run_analyses import main
 
 
 def run() -> None:
