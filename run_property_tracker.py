@@ -154,7 +154,7 @@ def _print_captions(mode=None, e=False, verifying_url=False, valid=True,
 def add_link(mode=None, refresh_no_input=False) -> None:
     """Logic for adding URLs"""
 
-    # If refreshing urls from run_refresh_listings_from_search.py. Skips input.
+    # If refreshing urls from run_refresh_listings_and_analysis.py. Skips input.
     if refresh_no_input:
         State.is_search = True
         _commit_updates_to_file()
