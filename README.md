@@ -6,7 +6,7 @@
 * Automatically send an email via SMPT with SSL whenever a great investment opportunity arises, according to your heuristics.
 * Email credentials can be saved in a .env file for a temporary creation of an environmental variable.
 * Analyze a property given a https://www.zillow.com/homedetails/* URL. Print analysis or store locally in JSON.
-* Get property URLs from a search a zillow search page to automatically analyze all properties of a criteria (Solves captcha if it appears).
+* Get property URLs from a zillow search page to automatically analyze all properties of a criteria (Solves captcha if it appears).
 * Easy adding, deleting, ignoring, and overwriting saved URLs with a decision tree.
 * Uses real time mortgage interest rates.
 * Errors are gracefully handled and saved in a log file which includes exception type, traceback, and offers potential solutions to the issue. Failures do not interrupt the program, that specific property is simply skipped in the analysis.
