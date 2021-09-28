@@ -21,10 +21,13 @@ A_O_D, APPEND, OVERWRITE, DELETE, CANCEL, EXECUTE = 'a_o_d', 'a', 'o', 'd', 'c',
 @dataclass
 class State:
     """Saves the state of the user choices"""
-    is_search = to_overwrite = to_delete = to_ignore = False
-    search_property_refresh_ignore = {SEARCH, PROPERTY, REFRESH, IGNORE, CANCEL}
-    append_overwrite_delete = {APPEND, OVERWRITE, DELETE, CANCEL}
-    urls = set()
+    is_search: bool
+    to_overwrite: bool
+    to_delete: bool
+    to_ignore: bool
+    search_property_refresh_ignore: set
+    append_overwrite_delete: set
+    urls: set
 
 
 def _quit_program() -> None:
@@ -34,11 +37,11 @@ def _quit_program() -> None:
     time.sleep(EXIT_TIMER)
 
 
-def _url_is_valid(url_test) -> bool:
+def _url_is_valid(state, url_test) -> bool:
     """Checks if URL is valid"""
 
     # If user is deleting URL, no need to verify
-    if State.to_delete:
+    if state.to_delete:
         return True
 
     _print_captions(verifying_url=True)
@@ -49,14 +52,14 @@ def _url_is_valid(url_test) -> bool:
 
     # Handles special case of search url
     if url_test[:28] == 'https://www.zillow.com/homes':
-        if not State.is_search:
+        if not state.is_search:
             return False
 
     # Search page filters are only stored in URLs when they are 100+ characters.
     # This prevents URLs with less from being added.
     # Any search URL that has less than 800 listings (a hard requirement),
     # will have enough characters to never be affected by this.
-    if len(url_test) < 100 and State.is_search:
+    if len(url_test) < 100 and state.is_search:
         return False
 
     # Sends a get request to see if page returns an error. As well as check if property is an auction.
@@ -66,16 +69,16 @@ def _url_is_valid(url_test) -> bool:
     return True
 
 
-def _commit_updates_to_file() -> None:
+def _commit_updates_to_file(state) -> None:
     """Commits changes to file"""
 
-    if State.urls:
-        if State.to_ignore:
-            write_urls_ignore(State.urls)
+    if state.urls:
+        if state.to_ignore:
+            write_urls_ignore(state.urls)
         else:
-            write_urls(State.urls, overwrite=State.to_overwrite, search=State.is_search, delete=State.to_delete)
+            write_urls(state.urls, overwrite=state.to_overwrite, search=state.is_search, delete=state.to_delete)
 
-    if State.is_search and not State.to_delete:
+    if state.is_search and not state.to_delete:
         _print_captions(execute_s=True)
         time.sleep(DELAY_TO_GET_URLS)
         _get_urls_from_search()
@@ -151,19 +154,19 @@ def _print_captions(mode=None, e=False, verifying_url=False, valid=True,
               f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!{END}\n")
 
 
-def add_link(mode=None, refresh_no_input=False) -> None:
+def add_link(state, mode=None, refresh_no_input=False) -> None:
     """Logic for adding URLs"""
 
     # If refreshing urls from run_refresh_listings_and_analyses.py. Skips input.
     if refresh_no_input:
-        State.is_search = True
-        _commit_updates_to_file()
+        state.is_search = True
+        _commit_updates_to_file(state)
         return
 
     _print_captions(mode=mode)
     search_property_refresh_ignore = input()
     print()
-    while search_property_refresh_ignore not in State.search_property_refresh_ignore:
+    while search_property_refresh_ignore not in state.search_property_refresh_ignore:
         _print_captions(mode=mode)
         search_property_refresh_ignore = input()
         print()
@@ -171,48 +174,48 @@ def add_link(mode=None, refresh_no_input=False) -> None:
     if search_property_refresh_ignore != CANCEL:
         if search_property_refresh_ignore == SEARCH:
             _print_captions(search_limitations=True)
-            State.is_search = True
-            _choose_options(A_O_D)
+            state.is_search = True
+            _choose_options(state, A_O_D)
         elif search_property_refresh_ignore == PROPERTY:
-            State.is_search = False
-            _choose_options(A_O_D)
+            state.is_search = False
+            _choose_options(state, A_O_D)
         elif search_property_refresh_ignore == REFRESH:
-            State.is_search = True
-            _commit_updates_to_file()
+            state.is_search = True
+            _commit_updates_to_file(state)
         elif search_property_refresh_ignore == IGNORE:
-            State.to_ignore = True
-            _get_urls_from_input(IGNORE)
+            state.to_ignore = True
+            _get_urls_from_input(state, IGNORE)
     elif search_property_refresh_ignore == CANCEL:
         _quit_program()
         return
 
 
-def _choose_options(mode) -> None:
+def _choose_options(state, mode) -> None:
     """Handles the user choosing different options for URLs"""
 
     _print_captions(mode=mode)
     append_overwrite_delete = input()
     print()
-    while append_overwrite_delete not in State.append_overwrite_delete:
+    while append_overwrite_delete not in state.append_overwrite_delete:
         _print_captions(mode=mode)
         append_overwrite_delete = input()
         print()
 
     if append_overwrite_delete != CANCEL:
         if append_overwrite_delete == APPEND:
-            _get_urls_from_input(APPEND)
+            _get_urls_from_input(state, APPEND)
         elif append_overwrite_delete == OVERWRITE:
-            State.to_overwrite = True
-            _get_urls_from_input(OVERWRITE)
+            state.to_overwrite = True
+            _get_urls_from_input(state, OVERWRITE)
         elif append_overwrite_delete == DELETE:
-            State.to_delete = True
-            _get_urls_from_input(DELETE)
+            state.to_delete = True
+            _get_urls_from_input(state, DELETE)
     elif append_overwrite_delete == CANCEL:
         _quit_program()
         return
 
 
-def _get_urls_from_input(mode) -> None:
+def _get_urls_from_input(state, mode) -> None:
     """Gets URLs from user. Calls functions that adds them to file"""
 
     _print_captions(mode=mode)
@@ -220,7 +223,7 @@ def _get_urls_from_input(mode) -> None:
     print()
 
     if new_url != CANCEL:
-        valid = _url_is_valid(new_url)
+        valid = _url_is_valid(state, new_url)
         while not valid:
             _print_captions(valid=False)
 
@@ -232,9 +235,9 @@ def _get_urls_from_input(mode) -> None:
                 _quit_program()
                 return
 
-            valid = _url_is_valid(new_url)
+            valid = _url_is_valid(state, new_url)
 
-        State.urls.add(new_url)
+        state.urls.add(new_url)
         _print_captions(received=True)
 
         _print_captions(mode=mode, e=True)
@@ -243,11 +246,11 @@ def _get_urls_from_input(mode) -> None:
         while new_url != CANCEL:
 
             if new_url == EXECUTE:
-                _commit_updates_to_file()
+                _commit_updates_to_file(state)
                 return
 
             else:
-                valid = _url_is_valid(new_url)
+                valid = _url_is_valid(state, new_url)
                 while not valid:
                     _print_captions(valid=False)
 
@@ -256,16 +259,16 @@ def _get_urls_from_input(mode) -> None:
                     print()
 
                     if new_url == EXECUTE:
-                        _commit_updates_to_file()
+                        _commit_updates_to_file(state)
                         return
 
                     if new_url == CANCEL:
                         _quit_program()
                         return
 
-                    valid = _url_is_valid(new_url)
+                    valid = _url_is_valid(state, new_url)
 
-                State.urls.add(new_url)
+                state.urls.add(new_url)
                 _print_captions(received=True)
 
             _print_captions(mode=mode, e=True)
@@ -322,7 +325,17 @@ def _get_urls_from_search() -> None:
 def main() -> None:
     """Main function"""
 
-    add_link(mode=S_P_R_I)
+    state = State(
+        is_search=False,
+        to_overwrite=False,
+        to_delete=False,
+        to_ignore=False,
+        search_property_refresh_ignore={SEARCH, PROPERTY, REFRESH, IGNORE, CANCEL},
+        append_overwrite_delete={APPEND, OVERWRITE, DELETE, CANCEL},
+        urls=set()
+    )
+
+    add_link(state, mode=S_P_R_I)
 
 
 if __name__ == '__main__':
