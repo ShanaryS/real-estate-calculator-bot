@@ -5,6 +5,7 @@ the 'Property' object.
 """
 
 import os.path
+from dataclasses import dataclass
 import json
 import time
 from data.calculations import update_values, get_property_analysis, write_property_analyses, is_new_analyses
@@ -15,9 +16,15 @@ from web.get_property_info import TIME_BETWEEN_REQUESTS
 from run_property_tracker import EXIT_TIMER
 
 GET_REQUEST_EXPECTED_TIME = 1.5
-keys = []
-property_analyses = []
-url_removed = False
+
+
+@dataclass
+class State:
+    """Stores the state of the analysis"""
+
+    keys: list
+    property_analyses: list
+    url_removed: bool
 
 
 def _get_interest_rate() -> None:
@@ -25,15 +32,15 @@ def _get_interest_rate() -> None:
     set_interest_rate()
 
 
-def _analyze_property(url) -> None:
+def _analyze_property(state, url) -> None:
     """Analyze a single property"""
 
     # If statement ignores property if there was an error getting the data.
     if update_values(url=url, save_to_file=False, update_interest_rate=False):
         print()  # Moves to next line as previous print statement ended with end=""
         key, property_analysis = get_property_analysis()
-        keys.append(key)
-        property_analyses.append(property_analysis)
+        state.keys.append(key)
+        state.property_analyses.append(property_analysis)
     else:
         print(f" {BAD}!!! ERROR ANALYZING THIS PROPERTY. "
               f"CHECK \\output\\errors.log FOR DETAILS. !!!{END}")
@@ -41,7 +48,7 @@ def _analyze_property(url) -> None:
     time.sleep(TIME_BETWEEN_REQUESTS)
 
 
-def _analyze_properties(urls_json) -> None:
+def _analyze_properties(state, urls_json) -> None:
     """Gets info for all properties and saves them to analysis.json"""
 
     # Tell user how long analysis is expected to take
@@ -61,35 +68,35 @@ def _analyze_properties(urls_json) -> None:
         print(f"{OK}TIME REMAINING: "
               f"{GOOD}{-int(-(expected_time - index * TIME_CONST))}s{END}",
               "---", url, end="")
-        _analyze_property(url)
+        _analyze_property(state, url)
         index += 1
-    write_property_analyses(keys, property_analyses)
+    write_property_analyses(state.keys, state.property_analyses)
 
     # If above changed the file, save that fact to print closing text.
-    if any(is_new_analyses()) or url_removed:
+    if any(is_new_analyses()) or state.url_removed:
         updated = True
     else:
         updated = False
 
     # Could just call write_property_analyses() once after loops, but want to separate these to act like a save point.
-    keys.clear(), property_analyses.clear()
+    state.keys.clear(), state.property_analyses.clear()
     for search_url in urls_json.setdefault('Search', dict()):
         for url in urls_json['Search'][search_url]:
             print(f"{OK}TIME REMAINING: "
                   f"{GOOD}{-int(-(expected_time - index * TIME_CONST))}s{END}",
                   "---", url, end="")
-            _analyze_property(url)
+            _analyze_property(state, url)
             index += 1
-    write_property_analyses(keys, property_analyses)
+    write_property_analyses(state.keys, state.property_analyses)
 
     if updated:
-        _check_if_analysis_json_updated(check=True)
+        _check_if_analysis_json_updated(state, check=True)
 
 
-def _check_if_analysis_json_updated(check=False) -> None:
+def _check_if_analysis_json_updated(state, check=False) -> None:
     """Checks if the analysis performed yielded any new results"""
 
-    if any(is_new_analyses()) or url_removed or check:
+    if any(is_new_analyses()) or state.url_removed or check:
         print(f"\n{GREAT}"
               f"!!! Analyses were successfully added/updated! !!!{END}")
     else:
@@ -100,12 +107,18 @@ def _check_if_analysis_json_updated(check=False) -> None:
 def main() -> None:
     """Main function"""
 
+    state = State(
+        keys=[],
+        property_analyses=[],
+        url_removed=False
+    )
+
     try:
         with open(os.path.join('output', 'urls.json')) as json_file:
             urls_json = json.load(json_file)
 
         _get_interest_rate()
-        _analyze_properties(urls_json)
+        _analyze_properties(state, urls_json)
         email_best_deals()
 
     except FileNotFoundError:
