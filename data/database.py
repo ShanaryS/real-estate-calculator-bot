@@ -64,8 +64,7 @@ def add_amortization_data(con: sqlite3.dbapi2.Connection,
                     )
 
 
-def get_amortization_table(cur: sqlite3.dbapi2.Cursor
-                           ) -> list:
+def get_amortization_table(con: sqlite3.dbapi2.Connection
+                           ) -> pd.DataFrame:
     """Gets the data from the amortization table"""
-    cur.execute("SELECT * FROM [Amortization Table]")
-    return cur.fetchall()
+    return pd.read_sql_query("SELECT * FROM [Amortization Table]", con)
