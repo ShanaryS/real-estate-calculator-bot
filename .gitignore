@@ -1,5 +1,6 @@
 .idea
 .env
+analysis.db
 analysis.json
 urls.json
 errors.log
