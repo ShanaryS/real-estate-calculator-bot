@@ -2,9 +2,12 @@
 
 from dataclasses import dataclass
 from values import *
-from web.get_current_interest_rates import set_page_interest_rates, InterestRates
-from web.get_property_info import get_address, get_price, get_year, get_description, get_property_taxes,\
-    get_num_units, get_rent_per_unit, get_sqft, get_price_per_sqft, get_lot_size, get_parking
+from web.get_current_interest_rates \
+    import set_page_interest_rates, InterestRates
+from web.get_property_info \
+    import get_address, get_price, get_year, get_description, \
+    get_property_taxes, get_num_units, get_rent_per_unit, get_sqft, \
+    get_price_per_sqft, get_lot_size, get_parking
 
 
 @dataclass
@@ -48,7 +51,8 @@ class WebScraper:
 def set_info() -> None:
     """Sets the values from html pages"""
 
-    tdesc, ttaxes, tnum, trent = get_description(), get_property_taxes(), get_num_units(), get_rent_per_unit()
+    tdesc, ttaxes, tnum, trent = get_description(), get_property_taxes(), \
+        get_num_units(), get_rent_per_unit()
 
     WebScraper.address = get_address()
     WebScraper.price = get_price()
@@ -58,9 +62,12 @@ def set_info() -> None:
     WebScraper.price_per_sqft = get_price_per_sqft()
     WebScraper.lot_size = get_lot_size()
     WebScraper.parking = get_parking()
-    WebScraper.property_taxes = ttaxes[0] if ttaxes[1] else use_default_property_taxes()
-    WebScraper.num_units = tnum[0] if tnum[1] else use_default_num_units(tnum[0])
-    WebScraper.rent_per_unit = trent[0] if trent[1] else use_default_rent_per_unit()
+    WebScraper.property_taxes = ttaxes[0] if ttaxes[1] \
+        else use_default_property_taxes()
+    WebScraper.num_units = tnum[0] if tnum[1] \
+        else use_default_num_units(tnum[0])
+    WebScraper.rent_per_unit = trent[0] if trent[1] \
+        else use_default_rent_per_unit()
 
     set_found()
 
@@ -68,20 +75,27 @@ def set_info() -> None:
 def set_found() -> None:
     """Handles if certain values were found or is using default"""
 
-    WebScraper.found['Property Taxes'] = (WebScraper.found_property_taxes, f"{WebScraper.property_taxes:,}")
-    WebScraper.found['Units'] = (WebScraper.found_num_units, f"{WebScraper.num_units}")
-    WebScraper.found['Rent Per Unit ($)'] = (WebScraper.found_rent_per_unit, f"{WebScraper.rent_per_unit:,}")
+    WebScraper.found['Property Taxes'] = (WebScraper.found_property_taxes,
+                                          f"{WebScraper.property_taxes:,}")
+    WebScraper.found['Units'] = (WebScraper.found_num_units,
+                                 f"{WebScraper.num_units}")
+    WebScraper.found['Rent Per Unit ($)'] = (WebScraper.found_rent_per_unit,
+                                             f"{WebScraper.rent_per_unit:,}")
 
 
 # These functions handle not finding certain values that are web scraped
 def use_default_property_taxes() -> int:
-    """Returns default value for property_taxes and adjusts relevant variables. Use if property_taxes not found."""
+    """Returns default value for property_taxes and adjusts relevant variables.
+    Use if property_taxes not found.
+    """
     WebScraper.found_property_taxes = False
     return PROPERTY_TAXES
 
 
 def use_default_num_units(_num_units) -> int:
-    """Returns default value for num_units and adjusts relevant variables. Use if num_units not found."""
+    """Returns default value for num_units and adjusts relevant variables.
+    Use if num_units not found.
+    """
     WebScraper.found_num_units = False
     if _num_units > 0:
         return _num_units
@@ -89,7 +103,9 @@ def use_default_num_units(_num_units) -> int:
 
 
 def use_default_rent_per_unit() -> int:
-    """Returns default value for rent_per_unit and adjusts relevant variables. Use if rent_per_unit not found."""
+    """Returns default value for rent_per_unit and adjusts relevant variables.
+    Use if rent_per_unit not found.
+    """
     WebScraper.found_rent_per_unit = False
 
     if WebScraper.num_units == 1:
@@ -109,28 +125,37 @@ def set_interest_rate() -> None:
 
     if UserValues.loan_type == 'Conventional':
         if UserValues.years == 30:
-            WebScraper.interest_rate = InterestRates.interest_rates['30-year fixed-rate']
+            WebScraper.interest_rate = \
+                InterestRates.interest_rates['30-year fixed-rate']
         elif UserValues.years == 20:
-            WebScraper.interest_rate = InterestRates.interest_rates['20-year fixed-rate']
+            WebScraper.interest_rate = \
+                InterestRates.interest_rates['20-year fixed-rate']
         elif UserValues.years == 15:
-            WebScraper.interest_rate = InterestRates.interest_rates['15-year fixed-rate']
+            WebScraper.interest_rate = \
+                InterestRates.interest_rates['15-year fixed-rate']
         elif UserValues.years == 10:
-            WebScraper.interest_rate = InterestRates.interest_rates['10-year fixed-rate']
+            WebScraper.interest_rate = \
+                InterestRates.interest_rates['10-year fixed-rate']
         else:
             raise ValueError(f"Invalid combination of loan type "
-                             f"'{UserValues.loan_type}' and years '{UserValues.years}'.")
+                             f"'{UserValues.loan_type}' and years "
+                             f"'{UserValues.years}'.")
     elif UserValues.loan_type == 'FHA':
         if UserValues.years == 30:
-            WebScraper.interest_rate = InterestRates.interest_rates['30-year fixed-rate FHA']
+            WebScraper.interest_rate = \
+                InterestRates.interest_rates['30-year fixed-rate FHA']
         else:
             raise ValueError(f"Invalid combination of loan type "
-                             f"'{UserValues.loan_type}' and years '{UserValues.years}'.")
+                             f"'{UserValues.loan_type}' and years "
+                             f"'{UserValues.years}'.")
     elif UserValues.loan_type == 'VA':
         if UserValues.years == 30:
-            WebScraper.interest_rate = InterestRates.interest_rates['30-year fixed-rate VA']
+            WebScraper.interest_rate = \
+                InterestRates.interest_rates['30-year fixed-rate VA']
         else:
             raise ValueError(f"Invalid combination of loan type "
-                             f"'{UserValues.loan_type}' and years '{UserValues.years}'.")
+                             f"'{UserValues.loan_type}' and years "
+                             f"'{UserValues.years}'.")
 
 
 def get_url_from_input() -> str:
