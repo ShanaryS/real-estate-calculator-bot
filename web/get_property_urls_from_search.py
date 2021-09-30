@@ -24,11 +24,11 @@ class SearchPage:
     url_search: str
     chrome: webdriver.Chrome
     zillow: BeautifulSoup
-    extra: int  # Sometimes urls have an extra '/' at the end. This accounts for it
+    extra: int  # Sometimes urls have an extra '/' at the end.
 
 
 def get_all_urls(url) -> list:
-    """Main function to call. Gets urls and prices for all properties on a zillow search page"""
+    """Gets urls and prices for all properties on a zillow search page"""
 
     _url_has_extra_slash(url)
     current_page_num = _get_current_page(url)
@@ -54,7 +54,8 @@ def get_all_urls(url) -> list:
         _scroll_to_page_bottom()
 
         _set_page_search()
-        base = SearchPage.zillow.find('div', id="grid-search-results").find('ul')
+        base = SearchPage.zillow.find(
+            'div', id="grid-search-results").find('ul')
 
         for li in base.contents:
             if li.find('div', id="nav-ad-container"):
@@ -67,7 +68,7 @@ def get_all_urls(url) -> list:
             url = _get_url_for_next_page(url, page)
             SearchPage.chrome.get(url)
             curr_url = SearchPage.chrome.current_url
-            if curr_url != url and 'captcha' not in curr_url.lower():  # If no more pages to go through
+            if curr_url != url and 'captcha' not in curr_url.lower():
                 break
 
     SearchPage.chrome.quit()
@@ -76,15 +77,19 @@ def get_all_urls(url) -> list:
 
 
 def is_url_valid(url) -> bool:
-    """Checks if URL was incorrectly inputted by looking for an error page. For both individual properties and search"""
+    """Checks if URL was incorrectly inputted by looking for an error page.
+    For both individual properties and search
+    """
 
     # Zillow has bot detection. This handles it.
     req_headers = {
-        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'accept': 'text/html,application/xhtml+xml,application/'
+                  'xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
         'accept-encoding': 'gzip, deflate, br',
         'accept-language': 'en-US,en;q=0.8',
         'upgrade-insecure-requests': '1',
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                      'AppleWebKit/537.36'
                       ' (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
     }
     with requests.Session() as s:
@@ -97,7 +102,8 @@ def is_url_valid(url) -> bool:
 
     try:
         valid_2 = True if 'auction' not in \
-                           temp.find('div', class_="ds-home-details-chip").contents[2].text.lower() else False
+                           temp.find('div', class_="ds-home-details-chip"
+                                     ).contents[2].text.lower() else False
     except AttributeError:
         valid_2 = True
 
@@ -120,9 +126,9 @@ def _set_page_search() -> None:
 
 
 def _scroll_to_page_bottom() -> None:
-    """Runs chrome browser with selenium and scrolls to bottom of page to load all JS elements"""
+    """Runs chrome browser with selenium to load all JS elements"""
 
-    time.sleep(PAGE_LOAD_WAIT)  # Give time for the page to fully load. Though it should without, being cautious.
+    time.sleep(PAGE_LOAD_WAIT)  # Give time for the page to fully load.
 
     # Presses page down multiple times to scroll to bottom of page.
     target = SearchPage.chrome.find_element_by_tag_name("body")
@@ -134,7 +140,8 @@ def _scroll_to_page_bottom() -> None:
 def _solve_captcha() -> None:
     """Solves the captcha that sometimes appear.
     Use this url to test captcha:chrome.get(
-    'https://www.zillow.com/captchaPerimeterX/?url=%2fhomes%2fCT_rb%2f&uuid=dd265dba-1ac2-11ec-a883-615050666d69&vid=')
+    'https://www.zillow.com/captchaPerimeterX/
+    ?url=%2fhomes%2fCT_rb%2f&uuid=dd265dba-1ac2-11ec-a883-615050666d69&vid=')
     """
 
     time.sleep(CAPTCHA_LOAD_WAIT)
@@ -143,11 +150,11 @@ def _solve_captcha() -> None:
     action = webdriver.ActionChains(SearchPage.chrome)
     action.click_and_hold(on_element=target)
     action.perform()
-    time.sleep(HOLD_LENGTH)  # Holds button for HOLD_LENGTH seconds. Should cover all the variable lengths
+    time.sleep(HOLD_LENGTH)  # Holds button for HOLD_LENGTH seconds.
 
     action.release(on_element=target)
     action.perform()
-    time.sleep(REDIRECT_WAIT)  # Wait for redirect from captcha. Can some times be long.
+    time.sleep(REDIRECT_WAIT)  # Wait for redirect from captcha.
 
 
 def _set_url_to_first_page(url, current_page_num) -> str:
@@ -159,10 +166,12 @@ def _set_url_to_first_page(url, current_page_num) -> str:
     if _currentpage_is_last(url):
         temp[-1 - SearchPage.extra] = _rreplace(
             temp[-1 - SearchPage.extra],
-            f"%2C%22pagination%22%3A%7B%22currentPage%22%3A{current_page_num}%7D%7D", '%7D', 1)
+            f"%2C%22pagination%22%3A%7B%22currentPage%22%3A"
+            f"{current_page_num}%7D%7D", '%7D', 1)
     else:
         temp[-1 - SearchPage.extra] = temp[-1 - SearchPage.extra].replace(
-            f'%22pagination%22%3A%7B%22currentPage%22%3A{current_page_num}%7D%2C', '')
+            f'%22pagination%22%3A%7B%22currentPage%22%3A'
+            f'{current_page_num}%7D%2C', '')
     first_page_url = '/'.join(temp)
 
     return first_page_url
@@ -174,7 +183,8 @@ def _get_current_page(url) -> int:
     if 'currentpage' not in url.lower():
         current_page_num = 1
     else:
-        current_page_num = int(url.split('/')[-2 - SearchPage.extra].split('_')[0])
+        current_page_num = int(
+            url.split('/')[-2 - SearchPage.extra].split('_')[0])
 
     return current_page_num
 
@@ -199,12 +209,14 @@ def _url_has_extra_slash(url) -> None:
 def _get_num_pages_and_listings(url) -> tuple:
     """Returns the number of pages in the search"""
 
-    # Checks if looking at Agent listings or Other listings. Other listings will always have 'cat2' in url.
+    # Other listings will always have 'cat2' in url.
     if 'cat2' not in url:
-        num_listings = int(SearchPage.zillow.find_all(class_="total-text")[0].string.replace(',', ''))
+        num_listings = int(SearchPage.zillow.find_all(
+            class_="total-text")[0].string.replace(',', ''))
         num_pages = -(-num_listings // PROPERTIES_PER_PAGE)  # Ceiling division
     else:
-        num_listings = int(SearchPage.zillow.find_all(class_="total-text")[1].string.replace(',', ''))
+        num_listings = int(SearchPage.zillow.find_all(
+            class_="total-text")[1].string.replace(',', ''))
         num_pages = -(-num_listings // PROPERTIES_PER_PAGE)  # Ceiling division
 
     return num_pages, num_listings
@@ -225,20 +237,24 @@ def _get_url_for_next_page(url, current_page_num) -> str:
         temp.insert(-1 - SearchPage.extra, '2_p')
         if _currentpage_is_last(url):
             temp[-1 - SearchPage.extra] = _rreplace(
-                temp[-1 - SearchPage.extra], '%7D', '%2C%22pagination%22%3A%7B%22currentPage%22%3A2%7D%7D', 1)
+                temp[-1 - SearchPage.extra], '%7D',
+                '%2C%22pagination%22%3A%7B%22currentPage%22%3A2%7D%7D', 1)
         else:
             temp[-1 - SearchPage.extra] = temp[-1 - SearchPage.extra].replace(
-                '%7B', '%7B%22pagination%22%3A%7B%22currentPage%22%3A2%7D%2C', 1)
+                '%7B',
+                '%7B%22pagination%22%3A%7B%22currentPage%22%3A2%7D%2C', 1)
     else:
         temp = url.split('/')
         temp[-2 - SearchPage.extra] = f'{current_page_num + 1}_p'
         if _currentpage_is_last(url):
             temp[-1 - SearchPage.extra] = _rreplace(
                 temp[-1 - SearchPage.extra],
-                f"currentPage%22%3A{current_page_num}%7D%7D", f"currentPage%22%3A{current_page_num + 1}%7D%7D", 1)
+                f"currentPage%22%3A{current_page_num}%7D%7D",
+                f"currentPage%22%3A{current_page_num + 1}%7D%7D", 1)
         else:
             temp[-1 - SearchPage.extra] = temp[-1 - SearchPage.extra].replace(
-                f"currentPage%22%3A{current_page_num}%7D%2C", f"currentPage%22%3A{current_page_num + 1}%7D%2C")
+                f"currentPage%22%3A{current_page_num}%7D%2C",
+                f"currentPage%22%3A{current_page_num + 1}%7D%2C")
 
     next_page_url = '/'.join(temp)
 
@@ -249,7 +265,8 @@ def _is_auction(li: bs4.element.Tag) -> bool:
     """Checks if house is an auction"""
 
     try:
-        is_auction = False if 'auction' not in li.find('li', class_="list-card-statusText").text.lower() else True
+        is_auction = False if 'auction' not in li.find(
+            'li', class_="list-card-statusText").text.lower() else True
     except AttributeError:
         is_auction = False
 
@@ -268,6 +285,7 @@ def _get_property_url_from_search(li: bs4.element.Tag) -> str:
 def _get_price_from_search(li: bs4.element.Tag) -> int:
     """Gets price for property from search url"""
 
-    price = int(li.find('div', class_="list-card-price").string.lstrip('$').replace(',', ''))
+    price = int(li.find(
+        'div', class_="list-card-price").string.lstrip('$').replace(',', ''))
 
     return price
