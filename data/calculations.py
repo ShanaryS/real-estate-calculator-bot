@@ -560,7 +560,7 @@ def print_sql_amortization_table() -> None:
     )
     print("Amortization Table:")
     print()
-    d = {
+    amortization_data = {
         'Period': [], 'Monthly Payment': [],
         'Principal Payment': [], 'Interest Payment': [],
         'Loan Balance': []
@@ -569,19 +569,15 @@ def print_sql_amortization_table() -> None:
     for key, value in PropertyInfo.amortization_table.items():
         for num in value:
             if key == 'Period':
-                num = f"{num}".center(len(key))
-                d[key].append(int(num))
+                amortization_data[key].append(num)
             else:
-                num = f"{num:.2f}".center(len(key))
-                d[key].append(float(num))
+                amortization_data[key].append(f"{num:,.2f}")
 
     with amortization_table() as (con, cur):
         drop_amortization_table(con, cur)
         create_amortization_table(con, cur)
-        for index in range(len(d['Period'])):
-            add_amortization_data(con, cur, d, index, commit=False)
-        con.commit()
-        print(get_amortization_table(cur))
+        add_amortization_data(con, cur, amortization_data)
+        print(get_amortization_table(con))
 
     print()
     print(

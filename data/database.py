@@ -39,32 +39,27 @@ def drop_amortization_table(con: sqlite3.dbapi2.Connection,
 
 def add_amortization_data(con: sqlite3.dbapi2.Connection,
                           cur: sqlite3.dbapi2.Cursor,
-                          amortization_data: dict, index: int,
-                          commit=True) -> None:
+                          amortization_data: dict
+                          ) -> None:
     """Adds data to amortization table"""
 
-    if commit:
-        with con:
+    values = list(amortization_data.values())
+
+    with con:
+        for index in range(len(values[0])):
+            temp = (values[0][index],
+                    values[1][index],
+                    values[2][index],
+                    values[3][index],
+                    values[4][index])
+
             cur.execute("INSERT INTO [Amortization Table] values (?,?,?,?,?)",
-                        (amortization_data['Period'][index],
-                         amortization_data['Monthly Payment'][index],
-                         amortization_data['Principal Payment'][index],
-                         amortization_data['Interest Payment'][index],
-                         amortization_data['Loan Balance'][index]
-                         )
+                        temp
                         )
-    else:
-        cur.execute("INSERT INTO [Amortization Table] values (?,?,?,?,?)",
-                    (amortization_data['Period'][index],
-                     amortization_data['Monthly Payment'][index],
-                     amortization_data['Principal Payment'][index],
-                     amortization_data['Interest Payment'][index],
-                     amortization_data['Loan Balance'][index]
-                     )
-                    )
 
 
 def get_amortization_table(con: sqlite3.dbapi2.Connection
                            ) -> pd.DataFrame:
     """Gets the data from the amortization table"""
-    return pd.read_sql_query("SELECT * FROM [Amortization Table]", con)
+    return pd.read_sql_query("SELECT * FROM [Amortization Table]", con,
+                             index_col='Period')
