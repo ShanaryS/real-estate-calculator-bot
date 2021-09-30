@@ -42,7 +42,9 @@ def _get_analyses_from_json() -> dict:
 def _get_deal_value(analysis_json, deal) -> float:
     """Gets the value of a property"""
 
-    return float(analysis_json[deal]['Analysis']['Cash on Cash Return'].lstrip('$').rstrip('%'))
+    return float(
+        analysis_json[deal]['Analysis']['Cash on Cash Return']
+        .lstrip('$').rstrip('%'))
 
 
 def _find_best_deals(analysis_json) -> tuple:
@@ -50,13 +52,12 @@ def _find_best_deals(analysis_json) -> tuple:
 
     best_deals = []
 
-    # TODO Make this more complicated taking in max offer/price, all analysis other analysis. Multiple if statements
-    # _get_deal_value() returns a tuple of all the meta analyses? Use for different if statements?
     for deal in analysis_json:
         if _get_deal_value(analysis_json, deal) > MINIMUM_ConC_PERCENT:
             best_deals.append(deal)
 
-    best_deals.sort(key=lambda x: _get_deal_value(analysis_json, x), reverse=True)
+    best_deals.sort(key=lambda x: _get_deal_value(analysis_json, x),
+                    reverse=True)
     best_deal = best_deals[0]
 
     return best_deal, best_deals
@@ -73,25 +74,32 @@ def _construct_message(analysis_json, best_deal, best_deals) -> str:
         est += '*'
 
     subject_line = f"Subject: Real Estate Bot - " \
-                   f"{_get_deal_value(analysis_json, best_deal)}%{est} ConC Return" \
-                   f" @ ${best_property['Property Info']['Price ($)']:,}! (Total: {len(best_deals)})"
+                   f"{_get_deal_value(analysis_json, best_deal)}" \
+                   f"%{est} ConC Return" \
+                   f" @ ${best_property['Property Info']['Price ($)']:,}! " \
+                   f"(Total: {len(best_deals)})"
 
     # Body of message filled according to find_best_deals()
-    deals = "ORDERED FROM BEST TO WORST - THIS DOES NOT CONTAIN ALL THE PROPERTY ANALYSES, JUST THE BEST ONES:\n\n" \
+    deals = "ORDERED FROM BEST TO WORST - " \
+            "THIS DOES NOT CONTAIN ALL THE PROPERTY ANALYSES, " \
+            "JUST THE BEST ONES:\n\n" \
             f"{'-'*196}\n"
     for deal in best_deals:
 
         info = analysis_json[deal]['Property Info']
 
-        # 'https://' Doesn't get sent in email for some reason so slicing to zillow.
+        # 'https://' Doesn't get sent in email so slicing to zillow.
         deals += f"Property: {analysis_json[deal]['Property URL'][12:]}\n"
 
         deals += f'    Property Info: {{\n' \
                  f'        "Price": ${info["Price ($)"]:,}\n' \
                  f'        "Units": {info["Units"]:,}\n' \
                  f'        "Rent": ${info["Rent Per Unit ($)"]:,}\n}}\n'\
-                 f'    Analysis: {json.dumps(analysis_json[deal]["Analysis"], indent=8)}\n' \
-                 f'    Estimations: {json.dumps(analysis_json[deal]["Estimations"], indent=8)}\n' \
+                 f'    Analysis: ' \
+                 f'{json.dumps(analysis_json[deal]["Analysis"], indent=8)}\n' \
+                 f'    Estimations: ' \
+                 f'{json.dumps(analysis_json[deal]["Estimations"], indent=8)}' \
+                 f'\n' \
                  f'{"-"*196}\n'
 
     # Entire message with subject line and body to send
@@ -104,7 +112,7 @@ def _construct_message(analysis_json, best_deal, best_deals) -> str:
 def _send_email(message) -> None:
     """Sends the email with relevant analyses."""
 
-    # Load credentials for email login from local environmental variable, .env file in main directory.
+    # Load credentials for email login from local environmental variable .env
     load_dotenv()
     sender = os.getenv('REAL_ESTATE_CALCULATOR_BOT_EMAIL')
     password = os.getenv('REAL_ESTATE_CALCULATOR_BOT_PASSWORD')
@@ -124,4 +132,5 @@ def _send_email(message) -> None:
         server.login(sender, password)
         server.sendmail(sender, receiver, message)
 
-    print(f"\n{GREAT}!!!   Email successfully sent! Ending program...   !!!{END}")
+    print(f"\n{GREAT}"
+          f"!!!   Email successfully sent! Ending program...   !!!{END}")
