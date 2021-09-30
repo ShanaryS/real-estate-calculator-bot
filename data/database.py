@@ -1,26 +1,61 @@
 import os.path
 import sqlite3
+from contextlib import contextmanager
 
 
-def create_database() -> (sqlite3.dbapi2.Connection, sqlite3.dbapi2.Cursor):
-    """Creates the database"""
-
+@contextmanager
+def amortization_table():
+    """Used to close database automatically"""
     con = sqlite3.connect(os.path.join('output', 'analysis.db'))
-    cur = con.cursor()
+    try:
+        cur = con.cursor()
+        yield con, cur
+    finally:
+        con.close()
 
-    return con, cur
 
-
-def write_to_database(cur: sqlite3.dbapi2.Cursor) -> None:
+def create_amortization_table(con: sqlite3.dbapi2.Connection,
+                              cur: sqlite3.dbapi2.Cursor
+                              ) -> None:
     """Writes analysis to database"""
-    cur.execute("create table lang (name, first_appeared)")
+    with con:
+        cur.execute("""CREATE TABLE IF NOT EXISTS [Amortization Table] (
+                        Period integer,
+                        Monthly Payment real,
+                        Principal Payment real,
+                        Interest Payment real,
+                        Loan Balance real
+                    )""")
 
 
-def commit_to_database(con: sqlite3.dbapi2.Connection) -> None:
-    """Commits changes to database"""
-    con.commit()
+def drop_amortization_table(con: sqlite3.dbapi2.Connection,
+                            cur: sqlite3.dbapi2.Cursor
+                            ) -> None:
+    """Deletes amortization table"""
+    with con:
+        cur.execute("DROP TABLE IF EXISTS [Amortization Table]")
 
 
-def close_database(con: sqlite3.dbapi2.Connection) -> None:
-    """Closes the database"""
-    con.close()
+def add_amortization_data(con: sqlite3.dbapi2.Connection,
+                          cur: sqlite3.dbapi2.Cursor,
+                          period, monthly_payment,
+                          principal_payment, interest_payment, loan_balance
+                          ) -> None:
+    """Adds data to amortization table"""
+
+    with con:
+        cur.execute("INSERT INTO [Amortization Table] values (?,?,?,?,?)",
+                    (period,
+                     monthly_payment,
+                     principal_payment,
+                     interest_payment,
+                     loan_balance
+                     )
+                    )
+
+
+def get_amortization_table(cur: sqlite3.dbapi2.Cursor
+                           ) -> list:
+    """Gets the data from the amortization table"""
+    cur.execute("SELECT * FROM [Amortization Table]")
+    return cur.fetchall()
