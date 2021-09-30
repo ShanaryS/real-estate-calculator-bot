@@ -38,18 +38,16 @@ def drop_amortization_table(con: sqlite3.dbapi2.Connection,
 
 def add_amortization_data(con: sqlite3.dbapi2.Connection,
                           cur: sqlite3.dbapi2.Cursor,
-                          period, monthly_payment,
-                          principal_payment, interest_payment, loan_balance
-                          ) -> None:
+                          amortization_data: dict) -> None:
     """Adds data to amortization table"""
 
     with con:
         cur.execute("INSERT INTO [Amortization Table] values (?,?,?,?,?)",
-                    (period,
-                     monthly_payment,
-                     principal_payment,
-                     interest_payment,
-                     loan_balance
+                    (amortization_data['Period'],
+                     amortization_data['Monthly Payment'],
+                     amortization_data['Principal Payment'],
+                     amortization_data['Interest Payment'],
+                     amortization_data['Loan Balance']
                      )
                     )
 
