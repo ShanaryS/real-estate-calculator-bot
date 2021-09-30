@@ -1,4 +1,6 @@
-"""Use before run_analyses.py to choose urls. Can add property urls or search urls."""
+"""Use before run_analyses.py to choose urls.
+Can add property urls or search urls.
+"""
 
 import os.path
 import json
@@ -14,8 +16,10 @@ EXIT_TIMER = 2
 DELAY_TO_GET_URLS = 5
 
 # Use for navigating through menus
-S_P_R_I, SEARCH, PROPERTY, REFRESH, IGNORE = 's_p_r_i', 's', 'p', 'r', 'i'
-A_O_D, APPEND, OVERWRITE, DELETE, CANCEL, EXECUTE = 'a_o_d', 'a', 'o', 'd', 'c', 'e'
+S_P_R_I, SEARCH, PROPERTY, REFRESH, IGNORE = \
+    's_p_r_i', 's', 'p', 'r', 'i'
+A_O_D, APPEND, OVERWRITE, DELETE, CANCEL, EXECUTE = \
+    'a_o_d', 'a', 'o', 'd', 'c', 'e'
 
 
 @dataclass
@@ -62,7 +66,7 @@ def _url_is_valid(state, url_test) -> bool:
     if len(url_test) < 100 and state.is_search:
         return False
 
-    # Sends a get request to see if page returns an error. As well as check if property is an auction.
+    # Sends a get request to see if page returns an error or is auction.
     if not is_url_valid(url_test):
         return False
 
@@ -76,7 +80,8 @@ def _commit_updates_to_file(state) -> None:
         if state.to_ignore:
             write_urls_ignore(state.urls)
         else:
-            write_urls(state.urls, overwrite=state.to_overwrite, search=state.is_search, delete=state.to_delete)
+            write_urls(state.urls, overwrite=state.to_overwrite,
+                       search=state.is_search, delete=state.to_delete)
 
     if state.is_search and not state.to_delete:
         _print_captions(execute_s=True)
@@ -88,7 +93,8 @@ def _commit_updates_to_file(state) -> None:
 
 
 def _print_captions(mode=None, e=False, verifying_url=False, valid=True,
-                    received=False, execute_s=False, execute=False, search_limitations=False) -> None:
+                    received=False, execute_s=False, execute=False,
+                    search_limitations=False) -> None:
     """Prints text that tells the user what the programing is doing"""
 
     if mode == S_P_R_I:
