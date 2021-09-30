@@ -1,14 +1,17 @@
-"""Main script to run. Saves analysis to file based on urls.json. Add to urls.json by running run_property_tracker.py.
-For search urls, the URLs for the houses are found at run time and then added urls.json inside 'Property' object. This
-is the same place where adding a single property would also be stored. Then program gets the info for all houses in
-the 'Property' object.
+"""Main script to run. Saves analysis to file based on urls.json.
+Add to urls.json by running run_property_tracker.py.
+For search urls, the URLs for the houses are found at run time and
+then added urls.json inside 'Property' object. This
+is the same place where adding a single property would also be stored.
+Then program gets the info for all houses in the 'Property' object.
 """
 
 import os.path
 from dataclasses import dataclass
 import json
 import time
-from data.calculations import update_values, get_property_analysis, write_property_analyses, is_new_analyses
+from data.calculations import update_values, get_property_analysis, \
+    write_property_analyses, is_new_analyses
 from web.push_best_deals_to_email import email_best_deals
 from data.user import set_interest_rate
 from data.colors_for_print import BAD, OK, GOOD, GREAT, END
@@ -37,7 +40,7 @@ def _analyze_property(state, url) -> None:
 
     # If statement ignores property if there was an error getting the data.
     if update_values(url=url, save_to_file=False, update_interest_rate=False):
-        print()  # Moves to next line as previous print statement ended with end=""
+        print()  # Moves to next line
         key, property_analysis = get_property_analysis()
         state.keys.append(key)
         state.property_analyses.append(property_analysis)
@@ -78,7 +81,8 @@ def _analyze_properties(state, urls_json) -> None:
     else:
         updated = False
 
-    # Could just call write_property_analyses() once after loops, but want to separate these to act like a save point.
+    # Could just call write_property_analyses() once after loops,
+    # but want to separate these to act like a save point.
     state.keys.clear(), state.property_analyses.clear()
     for search_url in urls_json.setdefault('Search', dict()):
         for url in urls_json['Search'][search_url]:
@@ -101,7 +105,7 @@ def _check_if_analysis_json_updated(state, check=False) -> None:
               f"!!! Analyses were successfully added/updated! !!!{END}")
     else:
         print(f"\n{BAD}!!! No new analysis to add/update! !!!{END}")
-    time.sleep(EXIT_TIMER)  # Delays closing the program so user can read final text
+    time.sleep(EXIT_TIMER)  # Delays closing the program so user can read text
 
 
 def main() -> None:
