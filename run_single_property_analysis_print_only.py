@@ -3,16 +3,18 @@ Useful if only need to check a single property.
 """
 
 from data.calculations import update_values, print_amortization_table, \
-    print_property_info, print_analysis
+    print_property_info, print_analysis, print_sql_amortization_table
 
 
 def main() -> None:
     """Main function"""
 
     update_values(save_to_file=False)
-    print_amortization_table()
-    print_property_info()
-    print_analysis()
+    # print_amortization_table()
+    # print_property_info()
+    # print_analysis()
+    print_sql_amortization_table()
+
 
 
 if __name__ == '__main__':

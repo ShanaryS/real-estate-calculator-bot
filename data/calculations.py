@@ -7,6 +7,8 @@ import numpy_financial as npf
 import json
 from data import user
 from data.user import WebScraper, UserValues
+from data.database import amortization_table, drop_amortization_table, \
+    create_amortization_table, add_amortization_data, get_amortization_table
 from web.get_property_info import set_page_property_info, get_url
 from data.colors_for_print import BAD, OK, GOOD, GREAT, END
 
@@ -547,6 +549,46 @@ def write_property_analyses(keys, property_analyses) -> None:
 def is_new_analyses() -> list:
     """Used to check if any analysis was updated"""
     return PropertyInfo.new_analysis_list
+
+
+def print_sql_amortization_table() -> None:
+    """Prints the amortization table from the analysis.db file"""
+
+    print(
+        "----------------------------------------"
+        "----------------------------------------"
+    )
+    print("Amortization Table:")
+    print()
+    d = {
+        'Period': [], 'Monthly Payment': [],
+        'Principal Payment': [], 'Interest Payment': [],
+        'Loan Balance': []
+    }
+
+    for key, value in PropertyInfo.amortization_table.items():
+        for num in value:
+            if key == 'Period':
+                num = f"{num}".center(len(key))
+                d[key].append(int(num))
+            else:
+                num = f"{num:.2f}".center(len(key))
+                d[key].append(float(num))
+
+    with amortization_table() as (con, cur):
+        drop_amortization_table(con, cur)
+        create_amortization_table(con, cur)
+        for index in range(len(d['Period'])):
+            add_amortization_data(con, cur, d, index, commit=False)
+        con.commit()
+        print(get_amortization_table(cur))
+
+    print()
+    print(
+        "----------------------------------------"
+        "----------------------------------------"
+    )
+    print()
 
 
 def print_amortization_table() -> None:
