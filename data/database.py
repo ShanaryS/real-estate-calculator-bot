@@ -1,5 +1,6 @@
 import os.path
 import sqlite3
+import pandas as pd
 from contextlib import contextmanager
 
 
@@ -39,7 +40,7 @@ def drop_amortization_table(con: sqlite3.dbapi2.Connection,
 def add_amortization_data(con: sqlite3.dbapi2.Connection,
                           cur: sqlite3.dbapi2.Cursor,
                           amortization_data: dict, index: int,
-                          commit=False) -> None:
+                          commit=True) -> None:
     """Adds data to amortization table"""
 
     if commit:
