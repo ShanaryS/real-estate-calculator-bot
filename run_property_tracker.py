@@ -29,7 +29,7 @@ class State:
     to_overwrite: bool
     to_delete: bool
     to_ignore: bool
-    search_property_refresh_ignore: set
+    s_p_r_i: set
     append_overwrite_delete: set
     urls: set
 
@@ -98,66 +98,94 @@ def _print_captions(mode=None, e=False, verifying_url=False, valid=True,
     """Prints text that tells the user what the programing is doing"""
 
     if mode == S_P_R_I:
-        print(f"{GOOD}Do you want to update Search URLs '{GREAT}s{GOOD}', update Property URLs '{GREAT}p{GOOD}',\n"
-              f"        refresh Search URLs '{GREAT}r{GOOD}' or ignore URLs '{GREAT}i{GOOD}'? "
+        print(f"{GOOD}Do you want to update Search URLs '{GREAT}s{GOOD}', "
+              f"update Property URLs '{GREAT}p{GOOD}',\n"
+              f"        refresh Search URLs '{GREAT}r{GOOD}' or ignore URLs "
+              f"'{GREAT}i{GOOD}'? "
               f"('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
     elif mode == A_O_D:
-        print(f"{GOOD}Do you want to append '{GREAT}a{GOOD}', overwrite '{GREAT}o{GOOD}', or delete '{GREAT}d{GOOD}'? "
+        print(f"{GOOD}Do you want to append '{GREAT}a{GOOD}', overwrite "
+              f"'{GREAT}o{GOOD}', or delete '{GREAT}d{GOOD}'? "
               f"('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
     elif mode == APPEND:
-        print(f"\n{OK}--- APPEND MODE... URLs in this session will be appended to file! ---{END}")
+        print(f"\n{OK}--- APPEND MODE... URLs in this session will be appended "
+              f"to file! ---{END}")
         if e:
-            print(f"{GOOD}Enter another URL to append ('{GREAT}e{GOOD}' to execute changes, "
+            print(f"{GOOD}Enter another URL to append ('{GREAT}e{GOOD}' "
+                  f"to execute changes, "
                   f"'{GREAT}c{GOOD}' to cancel):{END}", end=" ")
         else:
-            print(f"{GOOD}- Enter URL to append ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
+            print(f"{GOOD}- Enter URL to append ('{GREAT}c{GOOD}' to cancel):"
+                  f"{END}", end=" ")
     elif mode == OVERWRITE:
-        print(f"\n{OK}--- OVERWRITE MODE... URLs before this session will be lost! ---{END}")
+        print(f"\n{OK}--- OVERWRITE MODE... URLs before this session will be "
+              f"lost! ---{END}")
         if e:
-            print(f"{GOOD}Enter another URL to write ('{GREAT}e{GOOD}' to execute changes, "
+            print(f"{GOOD}Enter another URL to write ('{GREAT}e{GOOD}' "
+                  f"to execute changes, "
                   f"'{GREAT}c{GOOD}' to cancel):{END}", end=" ")
         else:
-            print(f"{GOOD}Enter URL to write ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
+            print(f"{GOOD}Enter URL to write ('{GREAT}c{GOOD}' to cancel):"
+                  f"{END}", end=" ")
     elif mode == DELETE:
-        print(f"\n{OK}--- DELETE MODE... URLs in session will be removed! ---{END}")
+        print(f"\n{OK}--- DELETE MODE... URLs in session will be removed! "
+              f"---{END}")
         if e:
-            print(f"{GOOD}Enter another URL to delete ('{GREAT}e{GOOD}' to execute changes, "
+            print(f"{GOOD}Enter another URL to delete ('{GREAT}e{GOOD}' "
+                  f"to execute changes, "
                   f"'{GREAT}c{GOOD}' to cancel):{END}", end=" ")
         else:
-            print(f"{GOOD}Enter URL to delete ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
+            print(f"{GOOD}Enter URL to delete ('{GREAT}c{GOOD}' to cancel):"
+                  f"{END}", end=" ")
     elif mode == IGNORE:
-        print(f"\n{OK}--- IGNORE MODE... URLs in session will be ignored from analysis! ---{END}")
+        print(f"\n{OK}--- IGNORE MODE... URLs in session will be ignored from "
+              f"analysis! ---{END}")
         if e:
-            print(f"{GOOD}Enter another URL to ignore ('{GREAT}e{GOOD}' to execute changes, "
+            print(f"{GOOD}Enter another URL to ignore ('{GREAT}e{GOOD}' "
+                  f"to execute changes, "
                   f"'{GREAT}c{GOOD}' to cancel):{END}", end=" ")
         else:
-            print(f"{GOOD}Enter URL to ignore ('{GREAT}c{GOOD}' to cancel):{END}", end=" ")
+            print(f"{GOOD}Enter URL to ignore ('{GREAT}c{GOOD}' to cancel):"
+                  f"{END}", end=" ")
     elif mode == CANCEL:
         print(f"\n{BAD}!!! No changes were made! Ending program... !!!{END}")
 
     elif verifying_url:
         print(f"\n{OK}... Verifying URL ...{END}")
     elif not valid:
-        print(f"\n{BAD}!!! Invalid URL... Correct URL for Search/Property? - For Searches try setting a price range. "
+        print(f"\n{BAD}!!! Invalid URL... Correct URL for Search/Property? - "
+              f"For Searches try setting a price range. "
               f"For property analysis auctions are not allowed.   !!!{END}")
     elif received:
         print(f"\n{GREAT}!!! URL received! !!!{END}")
     elif execute_s:
-        print(f"\n{OK}!!! WILL START GETTING PROPERTY URLs FROM SEARCH URLs IN: {GOOD}{DELAY_TO_GET_URLS}s{OK} !!!{END}"
-              f"\n{OK}!!! Expected Duration: {GOOD}10s{OK} PER {GOOD}100{OK} LISTINGS IN SEARCH URLs! !!!{END}"
-              f"\n{BAD}!!! DO NOT TOUCH ANYTHING. IT MAY PAUSE FOR UP TO {GOOD}10s{BAD}. THIS IS NORMAL. !!!{END}")
+        print(f"\n{OK}!!! WILL START GETTING PROPERTY URLs FROM SEARCH URLs IN:"
+              f" {GOOD}{DELAY_TO_GET_URLS}s{OK} !!!{END}"
+              f"\n{OK}!!! Expected Duration: {GOOD}10s{OK} PER {GOOD}100{OK} "
+              f"LISTINGS IN SEARCH URLs! !!!{END}"
+              f"\n{BAD}!!! DO NOT TOUCH ANYTHING. IT MAY PAUSE FOR UP TO {GOOD}"
+              f"10s{BAD}. THIS IS NORMAL. !!!{END}")
     elif execute:
-        print(f"\n{GREAT}!!! Committed changes to file! Ending program... !!!{END}")
+        print(f"\n{GREAT}!!! Committed changes to file! Ending program... "
+              f"!!!{END}")
     elif search_limitations:
-        print(f"\n\n{BAD}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
-              f"Zillow only displays 800 properties per search. If listings is above 800, certain properties\n"
-              f"CANNOT be accessed. Instead, filter number of listings heavily to make sure it does not\n"
-              f"exceed 800. Split the search criteria into multiple separate searches.\n\n"
+        print(f"\n\n{BAD}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+              f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
+              f"Zillow only displays 800 properties per search. If listings is "
+              f"above 800, certain properties\n"
+              f"CANNOT be accessed. Instead, filter number of listings heavily "
+              f"to make sure it does not\n"
+              f"exceed 800. Split the search criteria into multiple separate "
+              f"searches.\n\n"
               
-              f"{OK}For example: Instead of a single URL with a price range of $100k-$1M, use two URLs with price\n"
-              f"ranges of $100k-$500k and $500k-$1M. Assuming each of those searches return less than 800 listings.\n"
-              f"P.S 'Agent' listing URLs doesn't include 'Other' properties. Add both URLs to include all properties.\n"
-              f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!{END}\n")
+              f"{OK}For example: Instead of a single URL with a price range of "
+              f"$100k-$1M, use two URLs with price\n"
+              f"ranges of $100k-$500k and $500k-$1M. Assuming each of those "
+              f"searches return less than 800 listings.\n"
+              f"P.S 'Agent' listing URLs doesn't include 'Other' properties. "
+              f"Add both URLs to include all properties.\n"
+              f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+              f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!{END}\n")
 
 
 def add_link(state, mode=None, refresh_no_input=False) -> None:
@@ -170,28 +198,28 @@ def add_link(state, mode=None, refresh_no_input=False) -> None:
         return
 
     _print_captions(mode=mode)
-    search_property_refresh_ignore = input()
+    s_p_r_i = input()
     print()
-    while search_property_refresh_ignore not in state.search_property_refresh_ignore:
+    while s_p_r_i not in state.s_p_r_i:
         _print_captions(mode=mode)
-        search_property_refresh_ignore = input()
+        s_p_r_i = input()
         print()
 
-    if search_property_refresh_ignore != CANCEL:
-        if search_property_refresh_ignore == SEARCH:
+    if s_p_r_i != CANCEL:
+        if s_p_r_i == SEARCH:
             _print_captions(search_limitations=True)
             state.is_search = True
             _choose_options(state, A_O_D)
-        elif search_property_refresh_ignore == PROPERTY:
+        elif s_p_r_i == PROPERTY:
             state.is_search = False
             _choose_options(state, A_O_D)
-        elif search_property_refresh_ignore == REFRESH:
+        elif s_p_r_i == REFRESH:
             state.is_search = True
             _commit_updates_to_file(state)
-        elif search_property_refresh_ignore == IGNORE:
+        elif s_p_r_i == IGNORE:
             state.to_ignore = True
             _get_urls_from_input(state, IGNORE)
-    elif search_property_refresh_ignore == CANCEL:
+    elif s_p_r_i == CANCEL:
         _quit_program()
         return
 
@@ -304,20 +332,23 @@ def _get_urls_from_search() -> None:
         except FileNotFoundError:
             urls_txt = set()
 
-        # Get property URLs for each Search URL and place them under their respective Search URL.
-        # Coverts result list -> set -> list to remove any potential duplicates. Should be none but don't want any
+        # Get property URLs for each Search URL and place them under their
+        # respective Search URL. Coverts result list -> set -> list to remove
+        # any potential duplicates. Should be none but don't want any
         # chance of making redundant get request for the analysis.
         for search_url in urls_json.setdefault('Search', dict()):
 
-            # Gets all URLs from the search link. Any duplicate properties compared to urls in 'Property' in urls.json
-            # is removed. This way if user deletes a specific property to track, the analysis of that property
-            # can be easily deleted as well.
+            # Gets all URLs from the search link. Any duplicate properties
+            # compared to urls in 'Property' in urls.json is removed. This
+            # way if user deletes a specific property to track,
+            # the analysis of that property can be easily deleted as well.
             urls_search = set(get_all_urls(search_url))
             urls_properties = set(urls_json.get('Property', set()))
-            urls_search.difference_update(urls_properties)  # Subtracts property URLs from search property URLs.
-            urls_search.difference_update(urls_txt)  # Subtracts ignored urls from urls to be saved.
+            urls_search.difference_update(urls_properties)
+            urls_search.difference_update(urls_txt)
 
-            # Converts urls_search back to list to add to json. It does not accept sets.
+            # Converts urls_search back to list to add to json.
+            # It does not accept sets.
             urls_json['Search'][search_url] = list(urls_search)
 
         with open(os.path.join('output', 'urls.json'), 'w') as json_file:
@@ -336,7 +367,7 @@ def main() -> None:
         to_overwrite=False,
         to_delete=False,
         to_ignore=False,
-        search_property_refresh_ignore={SEARCH, PROPERTY, REFRESH, IGNORE, CANCEL},
+        s_p_r_i={SEARCH, PROPERTY, REFRESH, IGNORE, CANCEL},
         append_overwrite_delete={APPEND, OVERWRITE, DELETE, CANCEL},
         urls=set()
     )
