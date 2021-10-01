@@ -5,7 +5,7 @@
 * Parses the HTML doc of a zillow property page or search page using BeautifulSoup, Selenium, and RegEx. Defeating captchas along the way.
 * Automatically send an email via SMPT with SSL whenever a great investment opportunity arises, according to your heuristics.
 * Email credentials can be saved in a .env file for a temporary creation of an environmental variable.
-* Analyze a property given a https://www.zillow.com/homedetails/* URL. Print analysis or store locally in JSON.
+* Analyze a property given a https://www.zillow.com/homedetails/* URL with SQLite. Print analysis with Pandas or store locally in JSON.
 * Get property URLs from a zillow search page to automatically analyze all properties of a criteria (Solves captcha if it appears).
 * Easy adding, deleting, ignoring, and overwriting saved URLs with a decision tree.
 * Uses real time mortgage interest rates.
