@@ -53,7 +53,7 @@ def set_info() -> None:
     """Sets the values from html pages"""
 
     tdesc, ttaxes, tnum, trent = get_description(), get_property_taxes(), \
-                                 get_num_units(), get_rent_per_unit()
+        get_num_units(), get_rent_per_unit()
 
     WebScraper.address = get_address()
     WebScraper.price = get_price()
