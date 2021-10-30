@@ -11,13 +11,13 @@ import os.path
 import time
 from dataclasses import dataclass
 
-from data.calculations import update_values, get_property_analysis, \
+from src.data.calculations import update_values, get_property_analysis, \
     write_property_analyses, is_new_analyses
-from data.colors_for_print import BAD, OK, GOOD, GREAT, END
-from data.user import set_interest_rate
-from property_tracker import EXIT_TIMER
-from web.get_property_info import TIME_BETWEEN_REQUESTS
-from web.push_best_deals_to_email import email_best_deals
+from src.data.colors_for_print import BAD, OK, GOOD, GREAT, END
+from src.data.user import set_interest_rate
+from src.property_tracker import EXIT_TIMER
+from src.web.get_property_info import TIME_BETWEEN_REQUESTS
+from src.web.push_best_deals_to_email import email_best_deals
 
 GET_REQUEST_EXPECTED_TIME = 1.5
 
@@ -124,7 +124,7 @@ def main() -> None:
     )
 
     try:
-        with open(os.path.join('../output', 'urls.json')) as json_file:
+        with open(os.path.join('output', 'urls.json')) as json_file:
             urls_json = json.load(json_file)
 
         _get_interest_rate()

@@ -5,10 +5,10 @@ import os.path
 import time
 from dataclasses import dataclass
 
-from data.calculations import write_urls, write_urls_ignore
-from data.colors_for_print import BAD, OK, GOOD, GREAT, END
-from data.user import get_url_from_input
-from web.get_property_urls_from_search import is_url_valid, get_all_urls
+from src.data.calculations import write_urls, write_urls_ignore
+from src.data.colors_for_print import BAD, OK, GOOD, GREAT, END
+from src.data.user import get_url_from_input
+from src.web.get_property_urls_from_search import is_url_valid, get_all_urls
 
 # Used for delaying terminating program so user can read final text
 EXIT_TIMER = 2
@@ -341,12 +341,12 @@ def _get_urls_from_search() -> None:
     """Get the property urls from the search url"""
 
     try:
-        with open(os.path.join('../output', 'urls.json')) as json_file:
+        with open(os.path.join('output', 'urls.json')) as json_file:
             urls_json = json.load(json_file)
 
         # Loads URLs that the user wants to ignore
         try:
-            with open(os.path.join('../output', 'ignored_urls.txt')
+            with open(os.path.join('output', 'ignored_urls.txt')
                       ) as txt_file:
                 urls_txt = {url.strip() for url in txt_file.readlines()}
         except FileNotFoundError:
@@ -371,11 +371,11 @@ def _get_urls_from_search() -> None:
             # It does not accept sets.
             urls_json['Search'][search_url] = list(urls_search)
 
-        with open(os.path.join('../output', 'urls.json'), 'w') as json_file:
+        with open(os.path.join('output', 'urls.json'), 'w') as json_file:
             json.dump(urls_json, json_file, indent=4)
 
     except (FileNotFoundError, json.JSONDecodeError):
-        with open(os.path.join('../output', 'urls.json'), 'w') as json_file:
+        with open(os.path.join('output', 'urls.json'), 'w') as json_file:
             json.dump({'Search': {}, 'Property': {}}, json_file, indent=4)
 
 

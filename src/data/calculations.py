@@ -7,11 +7,11 @@ from traceback import format_tb
 
 import numpy_financial as npf
 
-import user
-from colors_for_print import BAD, OK, GOOD, GREAT, END
-from database import amortization_table, drop_amortization_table, \
+from src.data import user
+from src.data.colors_for_print import BAD, OK, GOOD, GREAT, END
+from src.data.database import amortization_table, drop_amortization_table, \
     create_amortization_table, add_amortization_data, get_amortization_table
-from user import WebScraper, UserValues
+from src.data.user import WebScraper, UserValues
 from src.web.get_property_info import set_page_property_info, get_url
 
 
@@ -291,7 +291,7 @@ def returns_analysis() -> dict:
     cashflow_per_month = cashflow / 12
     max_offer = (
                         (
-                                    effective_gross_income * 0.75 + -WebScraper.property_taxes - 600) *
+                                effective_gross_income * 0.75 + -WebScraper.property_taxes - 600) *
                         (0.37 / 0.12)) / \
                 (UserValues.closing_percent + UserValues.down_payment_percent) - \
                 UserValues.fix_up_cost
