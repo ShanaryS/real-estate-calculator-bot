@@ -1,16 +1,18 @@
 """Hub for all the calculations needed"""
 
-import os.path
-from traceback import format_tb
-from dataclasses import dataclass
-import numpy_financial as npf
 import json
-from data import user
-from data.user import WebScraper, UserValues
-from data.database import amortization_table, drop_amortization_table, \
+import os.path
+from dataclasses import dataclass
+from traceback import format_tb
+
+import numpy_financial as npf
+
+import user
+from colors_for_print import BAD, OK, GOOD, GREAT, END
+from database import amortization_table, drop_amortization_table, \
     create_amortization_table, add_amortization_data, get_amortization_table
-from web.get_property_info import set_page_property_info, get_url
-from data.colors_for_print import BAD, OK, GOOD, GREAT, END
+from user import WebScraper, UserValues
+from src.web.get_property_info import set_page_property_info, get_url
 
 
 @dataclass
@@ -60,7 +62,7 @@ def update_values(url=None,
                     "THE URL IF IT WAS INDIVIDUALLY ADDED TO PROPERTY URLs. " \
                     "IF IT WAS ADDED BY A SEARCH URL, IGNORE THIS PROPERTY " \
                     "INSTEAD. FOR EITHER OPTION, " \
-                    "RUN run_property_tracker.py.)---"
+                    "RUN property_tracker.py.)---"
 
         # When printing analysis of a single property, url=None.
         # This allows that URL to be saved as well.
@@ -226,12 +228,12 @@ def expenses_analysis() -> float:
     effective_gross_income = income_analysis()
 
     maintenance_cost = -(
-                effective_gross_income * UserValues.maintenance_percent)
+            effective_gross_income * UserValues.maintenance_percent)
     management_cost = -(effective_gross_income * UserValues.management_percent)
     property_taxes_cost = -WebScraper.property_taxes
     PropertyInfo.insurance_cost = -(WebScraper.price * 0.00425)
     total_cost = maintenance_cost + management_cost + \
-        property_taxes_cost + PropertyInfo.insurance_cost
+                 property_taxes_cost + PropertyInfo.insurance_cost
 
     return total_cost
 
@@ -255,11 +257,11 @@ def depreciation_analysis() -> float:
     """Taxes saved by depreciation of the property"""
 
     depreciation_short_total = (WebScraper.price + UserValues.fix_up_cost) * \
-        UserValues.depreciation_short_percent
+                               UserValues.depreciation_short_percent
     depreciation_short_yearly = depreciation_short_total / 5
 
     depreciation_long_total = (WebScraper.price + UserValues.fix_up_cost) * \
-        UserValues.depreciation_long_percent
+                              UserValues.depreciation_long_percent
     depreciation_long_yearly = depreciation_long_total / 27.5
 
     tax_exposure_decrease = \
@@ -278,7 +280,7 @@ def returns_analysis() -> dict:
     tax_exposure_decrease = depreciation_analysis()
     principal_paydown = -sum(
         PropertyInfo.amortization_table['Principal Payment'][0:12]
-        )
+    )
     total_return = cashflow + tax_exposure_decrease + principal_paydown
 
     return_on_investment_percent = round(total_return / capital_required * 100,
@@ -288,10 +290,11 @@ def returns_analysis() -> dict:
     caprate_percent = round(net_operating_income / WebScraper.price * 100, 2)
     cashflow_per_month = cashflow / 12
     max_offer = (
-        (effective_gross_income * 0.75 + -WebScraper.property_taxes - 600) *
-        (0.37 / 0.12)) / \
-        (UserValues.closing_percent + UserValues.down_payment_percent) - \
-        UserValues.fix_up_cost
+                        (
+                                    effective_gross_income * 0.75 + -WebScraper.property_taxes - 600) *
+                        (0.37 / 0.12)) / \
+                (UserValues.closing_percent + UserValues.down_payment_percent) - \
+                UserValues.fix_up_cost
     emergency_fund = -yearly_cost / 2 if UserValues.is_first_rental \
         else -yearly_cost / 4
 
@@ -363,7 +366,9 @@ def write_urls(urls, overwrite=False, search=False, delete=False) -> None:
                             f"{url.split('/')[-2]}/", None
                         )
                 with open(os.path.join(
-                        'output', 'analysis.json'), 'w') as json_file:
+                        'output', 'analysis.json'
+                ), 'w'
+                ) as json_file:
                     json.dump(analysis_json, json_file, indent=4)
             except (FileNotFoundError, json.JSONDecodeError, TypeError):
                 pass
@@ -436,7 +441,9 @@ def write_urls(urls, overwrite=False, search=False, delete=False) -> None:
                             f"{url.split('/')[-2]}/", None
                         )
             with open(os.path.join(
-                    'output', 'analysis.json'), 'w') as json_file:
+                    'output', 'analysis.json'
+            ), 'w'
+            ) as json_file:
                 json.dump(analysis_json, json_file, indent=4)
         except (FileNotFoundError, json.JSONDecodeError, TypeError):
             pass
@@ -521,7 +528,7 @@ def write_property_analyses(keys, property_analyses) -> None:
         # then only writes to file once when everything is done.
         for key, property_analysis in zip(keys, property_analyses):
             if property_analysis[key]["Property Info"]["Price ($)"] \
-                    != analysis_json.get(key, dict())\
+                    != analysis_json.get(key, dict()) \
                     .get("Property Info", dict()).get("Price ($)", 0):
                 analysis_json.update(property_analysis)
                 PropertyInfo.new_analysis_list.append(True)

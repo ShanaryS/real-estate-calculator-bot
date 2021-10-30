@@ -1,13 +1,14 @@
 """Handles updating necessary variables per user input"""
 
 from dataclasses import dataclass
-from values import *
-from web.get_current_interest_rates \
+
+from src.web.get_current_interest_rates \
     import set_page_interest_rates, InterestRates
-from web.get_property_info \
+from src.web.get_property_info \
     import get_address, get_price, get_year, get_description, \
     get_property_taxes, get_num_units, get_rent_per_unit, get_sqft, \
     get_price_per_sqft, get_lot_size, get_parking
+from values import *
 
 
 @dataclass
@@ -52,7 +53,7 @@ def set_info() -> None:
     """Sets the values from html pages"""
 
     tdesc, ttaxes, tnum, trent = get_description(), get_property_taxes(), \
-        get_num_units(), get_rent_per_unit()
+                                 get_num_units(), get_rent_per_unit()
 
     WebScraper.address = get_address()
     WebScraper.price = get_price()
@@ -139,7 +140,8 @@ def set_interest_rate() -> None:
         else:
             raise ValueError(f"Invalid combination of loan type "
                              f"'{UserValues.loan_type}' and years "
-                             f"'{UserValues.years}'.")
+                             f"'{UserValues.years}'."
+                             )
     elif UserValues.loan_type == 'FHA':
         if UserValues.years == 30:
             WebScraper.interest_rate = \
@@ -147,7 +149,8 @@ def set_interest_rate() -> None:
         else:
             raise ValueError(f"Invalid combination of loan type "
                              f"'{UserValues.loan_type}' and years "
-                             f"'{UserValues.years}'.")
+                             f"'{UserValues.years}'."
+                             )
     elif UserValues.loan_type == 'VA':
         if UserValues.years == 30:
             WebScraper.interest_rate = \
@@ -155,7 +158,8 @@ def set_interest_rate() -> None:
         else:
             raise ValueError(f"Invalid combination of loan type "
                              f"'{UserValues.loan_type}' and years "
-                             f"'{UserValues.years}'.")
+                             f"'{UserValues.years}'."
+                             )
 
 
 def get_url_from_input() -> str:

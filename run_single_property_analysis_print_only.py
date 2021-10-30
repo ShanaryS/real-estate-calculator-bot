@@ -2,7 +2,7 @@
 Useful if only need to check a single property.
 """
 
-from data.calculations import update_values, print_property_info, \
+from src.data import update_values, print_property_info, \
     print_analysis, print_sql_amortization_table
 
 

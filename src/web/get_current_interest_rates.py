@@ -2,10 +2,12 @@
 Uses 'https://www.nerdwallet.com/mortgages/mortgage-rates'.
 """
 
-from bs4 import BeautifulSoup
-import requests
 from dataclasses import dataclass
-from data.colors_for_print import OK, END
+
+import requests
+from bs4 import BeautifulSoup
+
+from src.data.colors_for_print import OK, END
 
 
 @dataclass

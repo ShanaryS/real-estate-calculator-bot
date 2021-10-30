@@ -1,12 +1,14 @@
 """Email self whenever program finds a good deal"""
 
+import json
 import os
 import smtplib
 import ssl
+
 from dotenv import load_dotenv
-import json
+
+from src.data.colors_for_print import BAD, OK, GOOD, GREAT, END
 from values import MINIMUM_ConC_PERCENT
-from data.colors_for_print import BAD, OK, GOOD, GREAT, END
 
 
 def email_best_deals() -> None:
@@ -44,7 +46,8 @@ def _get_deal_value(analysis_json, deal) -> float:
 
     return float(
         analysis_json[deal]['Analysis']['Cash on Cash Return']
-        .lstrip('$').rstrip('%'))
+            .lstrip('$').rstrip('%')
+    )
 
 
 def _find_best_deals(analysis_json) -> tuple:
@@ -57,7 +60,8 @@ def _find_best_deals(analysis_json) -> tuple:
             best_deals.append(deal)
 
     best_deals.sort(key=lambda x: _get_deal_value(analysis_json, x),
-                    reverse=True)
+                    reverse=True
+                    )
     best_deal = best_deals[0]
 
     return best_deal, best_deals
@@ -83,7 +87,7 @@ def _construct_message(analysis_json, best_deal, best_deals) -> str:
     deals = "ORDERED FROM BEST TO WORST - " \
             "THIS DOES NOT CONTAIN ALL THE PROPERTY ANALYSES, " \
             "JUST THE BEST ONES:\n\n" \
-            f"{'-'*196}\n"
+            f"{'-' * 196}\n"
     for deal in best_deals:
 
         info = analysis_json[deal]['Property Info']
@@ -94,13 +98,13 @@ def _construct_message(analysis_json, best_deal, best_deals) -> str:
         deals += f'    Property Info: {{\n' \
                  f'        "Price": ${info["Price ($)"]:,}\n' \
                  f'        "Units": {info["Units"]:,}\n' \
-                 f'        "Rent": ${info["Rent Per Unit ($)"]:,}\n}}\n'\
+                 f'        "Rent": ${info["Rent Per Unit ($)"]:,}\n}}\n' \
                  f'    Analysis: ' \
                  f'{json.dumps(analysis_json[deal]["Analysis"], indent=8)}\n' \
                  f'    Estimations: ' \
                  f'{json.dumps(analysis_json[deal]["Estimations"], indent=8)}' \
                  f'\n' \
-                 f'{"-"*196}\n'
+                 f'{"-" * 196}\n'
 
     # Entire message with subject line and body to send
     message = f"{subject_line}\n\n" \
@@ -122,7 +126,8 @@ def _send_email(message) -> None:
     if not sender or not password:
         print(f"\n{BAD}!!!   Error: No email or password found.  !!!{END}")
         print(f"{OK}This is likely due to missing .env file. "
-              f"Follow instructions for emailing on github.{END}")
+              f"Follow instructions for emailing on github.{END}"
+              )
         return
 
     # Send email
@@ -133,4 +138,5 @@ def _send_email(message) -> None:
         server.sendmail(sender, receiver, message)
 
     print(f"\n{GREAT}"
-          f"!!!   Email successfully sent! Ending program...   !!!{END}")
+          f"!!!   Email successfully sent! Ending program...   !!!{END}"
+          )
