@@ -33,4 +33,11 @@ set src="run_single_property_analysis_print_only.py"
 venv\Scripts\pyinstaller.exe -F -n %name% -p "venv\Lib\site-packages" --distpath ./bin %src%
 
 del %name%".spec"
+
+
+echo.
+echo --------------------------------------------------------------
+echo Executable and source files located in "bin" directory.
+echo.
+pause
 rmdir /s /q "__pycache__" "build"
