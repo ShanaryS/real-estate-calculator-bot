@@ -87,7 +87,7 @@ The resulting analyses is currently over fitted to multi-family properties in CT
 * Emails are sent over the gmail SMTP server. It is not necessary to the program, but a nice bonus. For using the email feature, I recommend using a separate gmail account to send/receive the mail. Enable 2FA and use an app password for the script. I suggest creating a local ".env" file in the parent directory containing two lines of your email and app password. More details are in push_best_deals_to_email.py.
 * To automate this program, I recommend using Windows task scheduler or the Mac/Linux equivalent. There was no need to have this program running 24/7.
 
-## Installation
+## Installation (Python 3.9.9)
 
 Clone this repo and cd into it:
 
@@ -100,14 +100,14 @@ Create and activate your virtual environment:
 
 * Windows:
 ```bash
-virtualenv env
-.\env\Scripts\activate
+python -m venv venv
+venv\Scripts\activate
 ```
 
 * MacOS/Linux:
 ```bash
-virtualenv --no-site-packages env
-source env/bin/activate
+virtualenv --no-site-packages venv
+source venv/bin/activate
 ```
 
 Install the required packages:
@@ -119,6 +119,9 @@ pip install -r requirements.txt
 # Usage
 
 #### All the files that you should interact with to use the program is in the main directory. Either prefixed with run_* or values.py for editing constants.
+
+To create portable .exe files, setup the virtual environment as described above along with installing requirements.txt (On windows just run 'create_venv.bat'). Then simply run the 'create_exe.bat' file. After about 2 minutes, all executables will be in the newly created 'bin' folder in the root of the project.
+
 
 * Add a property or search criteria to track:
 ```bash
