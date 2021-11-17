@@ -1,9 +1,10 @@
 .idea
 .env
+venv
+bin
 analysis.db
 analysis.json
 urls.json
 errors.log
 ignored_urls.txt
-*.bat
 *.cmd

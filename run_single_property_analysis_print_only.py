@@ -13,6 +13,7 @@ def main() -> None:
     print_sql_amortization_table()
     print_property_info()
     print_analysis()
+    input('Press Enter to close program...')
 
 
 if __name__ == '__main__':
