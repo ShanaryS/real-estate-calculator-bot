@@ -1,11 +1,6 @@
 """Use before analyses.py to choose urls."""
 
-from src.property_tracker import main as main_
-
-
-def main():
-    """Main function"""
-    main_()
+from src.property_tracker import main
 
 
 if __name__ == '__main__':

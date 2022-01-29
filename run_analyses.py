@@ -1,11 +1,6 @@
 """Main script to run"""
 
-from src.analyses import main as main_
-
-
-def main():
-    """Main function"""
-    main_()
+from src.analyses import main
 
 
 if __name__ == '__main__':
