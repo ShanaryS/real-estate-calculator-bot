@@ -16,6 +16,7 @@ def main() -> None:
               )
         input('Press Enter to close program...')
         return
+        
     print_sql_amortization_table()
     print_property_info()
     print_analysis()
