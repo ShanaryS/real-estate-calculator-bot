@@ -2,6 +2,7 @@
 Uses countyoffice.org/tax-records/ for property taxes if necessary.
 """
 
+from tempfile import TemporaryFile
 from bs4 import BeautifulSoup
 import requests
 import time
@@ -341,3 +342,12 @@ def get_rent_per_unit() -> tuple:
         rent_per_unit = 0
 
     return rent_per_unit, found_rent_per_unit
+
+
+if __name__ == '__main__':
+    set_page_property_info("https://www.zillow.com/homedetails/35-Rackliffe-Dr-New-Britain-CT-06051/57753449_zpid/")
+    WATCH = get_price()
+    # These don't work
+    # price, year, sqft, price_per_sqft, lot size, parking
+    # num_units, rent_per_unit?
+    pass
