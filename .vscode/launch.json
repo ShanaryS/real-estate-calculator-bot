@@ -5,10 +5,31 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
+            "name": "Print Single Property Analysis",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
+            "program": "run_single_property_analysis_print_only.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Property Tracker",
+            "type": "python",
+            "request": "launch",
+            "program": "run_property_tracker.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Run Analyses",
+            "type": "python",
+            "request": "launch",
+            "program": "run_analyses.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Refresh Listings and Anlayses",
+            "type": "python",
+            "request": "launch",
+            "program": "run_refresh_listings_and_analyses.py",
             "console": "integratedTerminal"
         }
     ]
