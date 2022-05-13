@@ -46,7 +46,7 @@ def _get_deal_value(analysis_json, deal) -> float:
 
     return float(
         analysis_json[deal]['Analysis']['Cash on Cash Return']
-            .lstrip('$').rstrip('%')
+            .lstrip('$').rstrip('%').replace(",", "")
     )
 
 
@@ -54,15 +54,17 @@ def _find_best_deals(analysis_json) -> tuple:
     """Finds the best deal out of the analysis"""
 
     best_deals = []
+    best_deal = None
+    best_deal_value = float("-inf")
 
     for deal in analysis_json:
-        if _get_deal_value(analysis_json, deal) > MINIMUM_ConC_PERCENT:
+        deal_value = _get_deal_value(analysis_json, deal)
+        if deal_value > MINIMUM_ConC_PERCENT:
             best_deals.append(deal)
+        if deal_value > best_deal_value:
+            best_deal = deal
 
-    best_deals.sort(key=lambda x: _get_deal_value(analysis_json, x),
-                    reverse=True
-                    )
-    best_deal = best_deals[0]
+    best_deals.sort(key=lambda x: _get_deal_value(analysis_json, x), reverse=True)
 
     return best_deal, best_deals
 
