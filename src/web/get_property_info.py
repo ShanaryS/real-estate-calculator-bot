@@ -19,6 +19,7 @@ class PropertyPage:
     url_property_taxes: str
     zillow: BeautifulSoup
     county_office: BeautifulSoup
+    county_office_saved: bool
     page: requests.models.Response()
 
 
@@ -44,6 +45,7 @@ def set_page_property_info(url=None) -> None:
     # Creates beautiful soup object
     PropertyPage.zillow = BeautifulSoup(zillow_page, 'html.parser')
     PropertyPage.county_office = BeautifulSoup('', 'html.parser')
+    PropertyPage.county_office_saved = False
 
 
 def _set_url_property(url=None) -> str:
@@ -61,16 +63,19 @@ def _set_url_property(url=None) -> str:
     return _url
 
 
-def _set_url_property_taxes(house_number, street_name, city, state) -> None:
+def _set_county_office_url(house_number, street_name, city, state) -> None:
     """Set the county office URL based on the address from zillow"""
 
-    PropertyPage.url_property_taxes = \
-        'https://www.countyoffice.org/property-records-search/?q='
-    PropertyPage.url_property_taxes += \
-        f"{house_number}+{street_name}%2C+{city}%2C+{state}%2C+USA"
-    county_office_page = requests.get(PropertyPage.url_property_taxes).text
-    PropertyPage.county_office = \
-        BeautifulSoup(county_office_page, 'html.parser')
+    PropertyPage.url_property_taxes = 'https://www.countyoffice.org/property-records-search/?q='
+    PropertyPage.url_property_taxes += f"{house_number}+{street_name}%2C+{city}%2C+{state}%2C+USA"
+
+
+def _save_county_office_page() -> None:
+    """Gets the alternate property taxes used as a fallback"""
+    
+    if not PropertyPage.county_office_saved:
+        county_office_page = requests.get(PropertyPage.url_property_taxes).text
+        PropertyPage.county_office = BeautifulSoup(county_office_page, 'html.parser')
 
 
 def get_url(property_url=False, taxes_url=False) -> str:
@@ -96,7 +101,7 @@ def get_address() -> str:
     city = full_address.split(",")[1].strip()
     state = full_address.split(",")[2].split()[0]
     zip_code = full_address.split(",")[2].split()[1]
-    _set_url_property_taxes(house_number, street_name, city, state)
+    _set_county_office_url(house_number, street_name, city, state)
 
     return f"{house_number} {street_name}, {city}, {state} {zip_code}"
 
@@ -214,6 +219,7 @@ def get_property_taxes() -> int:
 
     # Find on county office
     if check_tax_records:
+        _save_county_office_page()
         try:
             property_taxes = \
                 str(PropertyPage.county_office.find_all('tbody')[2]).split(
@@ -246,8 +252,10 @@ def get_num_units() -> tuple:
 
     # Look for explict mention of num units otherwise fall back to hueristics
     # Assuming max num units is 4 as above is considered an apartment
+    num_units = None
     house_type = ""
     found_num_units = True
+    check_tax_records = False
     
     spans = PropertyPage.zillow.find_all("span")
     temp = ""
@@ -257,20 +265,35 @@ def get_num_units() -> tuple:
             break
     if temp:
         house_type = temp.split(":")[-1].strip()
-        
-    if 'single' in house_type.lower() or 'condo' in house_type.lower():
-        num_units = 1
-    elif 'duplex' in house_type.lower():
-        num_units = 2
-    elif 'triplex' in house_type.lower():
-        num_units = 3
-    elif 'quadruplex' in house_type.lower():
-        num_units = 4
-    else:
-        found_num_units = False
-        num_units = 1
-        if 'multi family' in house_type.lower() or 'multifamily' in house_type.lower():
-            num_units = 4  # Assume 4 units to either be accurate or get a false positive
+
+    def parse_house_type():
+        nonlocal num_units, house_type, found_num_units, check_tax_records
+        if 'single' in house_type.lower() or 'condo' in house_type.lower():
+            num_units = 1
+        elif 'duplex' in house_type.lower():
+            num_units = 2
+        elif 'triplex' in house_type.lower():
+            num_units = 3
+        elif 'quad' in house_type.lower():
+            num_units = 4
+        else:
+            found_num_units = False
+            check_tax_records = True
+            num_units = 1
+            if 'multi family' in house_type.lower() or 'multifamily' in house_type.lower():
+                num_units = 4  # Assume 4 units to either be accurate or get a false positive
+
+    parse_house_type()
+
+    if check_tax_records:
+        found_num_units = True
+        _save_county_office_page()
+        spans = PropertyPage.county_office.find_all("span", class_="pd-p")
+        for span in spans:
+            if "residential" in span.previous_sibling.lower():
+                house_type = span.string
+                break
+        parse_house_type()
 
     return num_units, found_num_units
 
@@ -294,15 +317,15 @@ def get_rent_per_unit() -> tuple:
 
 
 if __name__ == '__main__':
-    set_page_property_info("https://www.zillow.com/homedetails/101-Mallard-Dr-101-Farmington-CT-06032/2089940072_zpid/")
-    print(f"Address: {get_address()}")
-    print(f"Price: {get_price()}")
-    print(f"Year: {get_year()}")
-    print(f"Sqft: {get_sqft()}")
-    print(f"Price/Sqft: {get_price_per_sqft()}")
-    print(f"Lot Size: {get_lot_size()}")
-    print(f"Parking: {get_parking()}")
-    print(f"Description: {get_description()}")
-    print(f"Property Taxes: {get_property_taxes()}")
-    print(f"Num Units: {get_num_units()}")
-    print(f"Rent per unit: {get_rent_per_unit()}")
+    set_page_property_info("https://www.zillow.com/homedetails/109-Park-Rd-Waterbury-CT-06708/58015814_zpid/")
+    print(f"---Address: {get_address()}")
+    print(f"---Price: {get_price()}")
+    print(f"---Year: {get_year()}")
+    print(f"---Sqft: {get_sqft()}")
+    print(f"---Price/Sqft: {get_price_per_sqft()}")
+    print(f"---Lot Size: {get_lot_size()}")
+    print(f"---Parking: {get_parking()}")
+    print(f"---Description: {get_description()}")
+    print(f"---Property Taxes: {get_property_taxes()}")
+    print(f"---Num Units: {get_num_units()}")
+    print(f"---Rent per unit: {get_rent_per_unit()}")
