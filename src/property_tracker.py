@@ -3,7 +3,7 @@
 import json
 import os.path
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from src.data.calculations import write_urls, write_urls_ignore
 from src.data.colors_for_print import BAD, OK, GOOD, GREAT, END
@@ -15,22 +15,24 @@ EXIT_TIMER = 2
 DELAY_TO_GET_URLS = 5
 
 # Use for navigating through menus
-S_P_R_I, SEARCH, PROPERTY, REFRESH, IGNORE = \
-    's_p_r_i', 's', 'p', 'r', 'i'
-A_O_D, APPEND, OVERWRITE, DELETE, CANCEL, EXECUTE = \
-    'a_o_d', 'a', 'o', 'd', 'c', 'e'
+S_P_R_I, SEARCH, PROPERTY, REFRESH, IGNORE = 's_p_r_i', 's', 'p', 'r', 'i'
+A_O_D, APPEND, OVERWRITE, DELETE, CANCEL, EXECUTE = 'a_o_d', 'a', 'o', 'd', 'c', 'e'
 
 
 @dataclass
 class State:
     """Saves the state of the user choices"""
-    is_search: bool
-    to_overwrite: bool
-    to_delete: bool
-    to_ignore: bool
-    s_p_r_i: set
-    append_overwrite_delete: set
-    urls: set
+    is_search: bool = False
+    to_overwrite: bool = False
+    to_delete: bool = False
+    to_ignore: bool = False
+    s_p_r_i: set = field(default_factory=set)
+    append_overwrite_delete: set = field(default_factory=set)
+    urls: set = field(default_factory=set)
+
+    def __post_init__(self) -> None:
+        self.s_p_r_i = {SEARCH, PROPERTY, REFRESH, IGNORE, CANCEL}
+        self.append_overwrite_delete = {APPEND, OVERWRITE, DELETE, CANCEL}
 
 
 def _quit_program() -> None:
@@ -382,14 +384,5 @@ def _get_urls_from_search() -> None:
 def main() -> None:
     """Main function"""
 
-    state = State(
-        is_search=False,
-        to_overwrite=False,
-        to_delete=False,
-        to_ignore=False,
-        s_p_r_i={SEARCH, PROPERTY, REFRESH, IGNORE, CANCEL},
-        append_overwrite_delete={APPEND, OVERWRITE, DELETE, CANCEL},
-        urls=set()
-    )
-
+    state = State()
     add_link(state, mode=S_P_R_I)
