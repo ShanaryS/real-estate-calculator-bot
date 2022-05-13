@@ -98,10 +98,12 @@ def get_address() -> str:
     # Saves address into county office url in case zillow has no property taxes.
     house_number = full_address.split()[0]
     street_name = " ".join(full_address.split(",")[0].split()[1:])
+    street_name_url = "+".join(full_address.split(",")[0].split()[1:])
     city = full_address.split(",")[1].strip()
+    city_url = full_address.split(",")[1].strip().replace(" ", "+")
     state = full_address.split(",")[2].split()[0]
     zip_code = full_address.split(",")[2].split()[1]
-    _set_county_office_url(house_number, street_name, city, state)
+    _set_county_office_url(house_number, street_name_url, city_url, state)
 
     return f"{house_number} {street_name}, {city}, {state} {zip_code}"
 
