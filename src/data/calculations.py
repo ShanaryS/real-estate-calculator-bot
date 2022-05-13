@@ -15,6 +15,9 @@ from src.data.user import WebScraper, UserValues
 from src.web.get_property_info import set_page_property_info, get_url
 
 
+HYPEN_SEP = "-" * 80
+
+
 @dataclass
 class PropertyInfo:
     """Contains information about the property"""
@@ -102,22 +105,15 @@ def update_values(url=None,
         "Price/sqft ($)": WebScraper.price_per_sqft,
         "Lot Size (sqft)": WebScraper.lot_size,
         "Parking": WebScraper.parking,
-        "Down Payment (Fraction)": float(
-            f"{UserValues.down_payment_percent:.2f}"
-        ),
+        "Down Payment (Fraction)": float(f"{UserValues.down_payment_percent:.2f}"),
         "Fix Up Cost ($)": UserValues.fix_up_cost,
         "Loan ($)": int(PropertyInfo.loan),
         "Interest Rate (Fraction)": float(f"{WebScraper.interest_rate:.4f}"),
         "Loan Length (Years)": UserValues.years,
-        "Mortgage Payment [Monthly] ($)": float(
-            f"{-PropertyInfo.amortization_table['Monthly Payment'][0]:.2f}"
-        ),
-        "Property Taxes [Monthly] ($)": float(
-            f"{PropertyInfo.property_taxes_monthly:.2f}"
-        ),
-        "Insurance [Monthly] ($)": float(
-            f"{-PropertyInfo.insurance_cost / 12:.2f}"
-        ),
+        "Mortgage Payment [Monthly] ($)": float(f"{-PropertyInfo.amortization_table['Monthly Payment'][0]:.2f}"),
+        "Property Taxes [Monthly] ($)": float(f"{PropertyInfo.property_taxes_monthly:.2f}"),
+        "HOA Fee ($)": WebScraper.hoa_fee,
+        "Insurance [Monthly] ($)": float(f"{-PropertyInfo.insurance_cost / 12:.2f}"),
         "Units": WebScraper.num_units,
         "Rent Per Unit ($)": WebScraper.rent_per_unit,
         "Vacancy (Fraction)": float(f"{UserValues.vacancy_percent:.2f}")
@@ -227,13 +223,12 @@ def expenses_analysis() -> float:
 
     effective_gross_income = income_analysis()
 
-    maintenance_cost = -(
-            effective_gross_income * UserValues.maintenance_percent)
+    maintenance_cost = -(effective_gross_income * UserValues.maintenance_percent)
     management_cost = -(effective_gross_income * UserValues.management_percent)
     property_taxes_cost = -WebScraper.property_taxes
     PropertyInfo.insurance_cost = -(WebScraper.price * 0.00425)
-    total_cost = maintenance_cost + management_cost + \
-                 property_taxes_cost + PropertyInfo.insurance_cost
+    hoa_cost = -WebScraper.hoa_fee if WebScraper.hoa_fee > 0 else WebScraper.hoa_fee
+    total_cost = maintenance_cost + management_cost + property_taxes_cost + PropertyInfo.insurance_cost + hoa_cost
 
     return total_cost
 
@@ -561,10 +556,7 @@ def is_new_analyses() -> list:
 def print_sql_amortization_table() -> None:
     """Prints the amortization table from the analysis.db file"""
 
-    print(
-        "----------------------------------------"
-        "----------------------------------------"
-    )
+    print(HYPEN_SEP)
     print("Amortization Table:")
     print()
     amortization_data = {
@@ -587,20 +579,14 @@ def print_sql_amortization_table() -> None:
         print(get_amortization_table(con))
 
     print()
-    print(
-        "----------------------------------------"
-        "----------------------------------------"
-    )
+    print(HYPEN_SEP)
     print()
 
 
 def print_amortization_table() -> None:
     """Prints amortization table to terminal"""
 
-    print(
-        "----------------------------------------"
-        "----------------------------------------"
-    )
+    print(HYPEN_SEP)
     print("Amortization Table:")
     print()
     d = {
@@ -624,10 +610,7 @@ def print_amortization_table() -> None:
     ):
         print(*each_row, " ")
     print()
-    print(
-        "----------------------------------------"
-        "----------------------------------------"
-    )
+    print(HYPEN_SEP)
     print()
 
 
@@ -659,30 +642,23 @@ def print_property_info() -> None:
     print(f"Address: {WebScraper.address}")
     print(f"Price: ${WebScraper.price:,}")
     print(f"Year Built: {WebScraper.year}")
-    print(f"House Size: {WebScraper.sqft} sqft")
+    print(f"House Size: {WebScraper.sqft:,} sqft")
     print(f"Price/sqft: ${WebScraper.price_per_sqft}")
-    print(f"Lot Size: {WebScraper.lot_size} sqft")
+    print(f"Lot Size: {WebScraper.lot_size:,} sqft")
     print(f"Down Payment: {UserValues.down_payment_percent * 100:.0f}%")
     print(f"Fix Up Cost: ${UserValues.fix_up_cost:,}")
     print(f"Loan: ${int(PropertyInfo.loan):,}")
     print(f"Interest Rate: {WebScraper.interest_rate * 100:.2f}%")
     print(f"Loan Length (Years): {UserValues.years}")
-    print(
-        f"Mortgage Payment (Monthly): "
-        f"${-PropertyInfo.amortization_table['Monthly Payment'][0]:,.2f}"
-    )
-    print(
-        f"Property Taxes (Monthly): ${PropertyInfo.property_taxes_monthly:,.2f}"
-    )
+    print(f"Mortgage Payment (Monthly): ${-PropertyInfo.amortization_table['Monthly Payment'][0]:,.2f}")
+    print(f"Property Taxes (Monthly): ${PropertyInfo.property_taxes_monthly:,.2f}")
+    print(f"HOA Fee: ${WebScraper.hoa_fee:,}")
     print(f"Insurance (Monthly): ${-PropertyInfo.insurance_cost / 12:,.2f}")
     print(f"Units: {WebScraper.num_units}")
     print(f"Rent Per Unit: ${WebScraper.rent_per_unit:,}")
     print(f"Vacancy: {UserValues.vacancy_percent * 100:.0f}%")
     print()
-    print(
-        "----------------------------------------"
-        "----------------------------------------"
-    )
+    print(HYPEN_SEP)
     print()
 
 
@@ -793,8 +769,5 @@ def print_analysis(dump=False) -> any:
             if value[0] is False:
                 print(f"{OK}{item}: ??? --> {value[1]}{END}")
     print()
-    print(
-        "----------------------------------------"
-        "----------------------------------------"
-    )
+    print(HYPEN_SEP)
     print()

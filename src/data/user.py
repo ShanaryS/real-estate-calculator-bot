@@ -6,7 +6,7 @@ from src.web.get_current_interest_rates \
     import set_page_interest_rates, InterestRates
 from src.web.get_property_info \
     import get_address, get_price, get_year, get_description, \
-    get_property_taxes, get_num_units, get_rent_per_unit, get_sqft, \
+    get_property_taxes, get_hoa_fee, get_num_units, get_rent_per_unit, get_sqft, \
     get_price_per_sqft, get_lot_size, get_parking
 from values import *
 
@@ -41,6 +41,7 @@ class WebScraper:
     lot_size: int
     parking: str
     property_taxes: int
+    hoa_fee: int
     num_units: int
     rent_per_unit: int
     found_property_taxes = True
@@ -62,6 +63,7 @@ def set_info() -> None:
     WebScraper.price_per_sqft = get_price_per_sqft()
     WebScraper.lot_size = get_lot_size()
     WebScraper.parking = get_parking()
+    WebScraper.hoa_fee = get_hoa_fee()
     WebScraper.property_taxes = taxes if taxes else use_default_property_taxes()
     WebScraper.num_units = tnum[0] if tnum[1] else use_default_num_units(tnum[0])
     WebScraper.rent_per_unit = trent[0] if trent[1] else use_default_rent_per_unit()
