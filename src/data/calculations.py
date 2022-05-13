@@ -112,7 +112,7 @@ def update_values(url=None,
         "Loan Length (Years)": UserValues.years,
         "Mortgage Payment [Monthly] ($)": float(f"{-PropertyInfo.amortization_table['Monthly Payment'][0]:.2f}"),
         "Property Taxes [Monthly] ($)": float(f"{PropertyInfo.property_taxes_monthly:.2f}"),
-        "HOA Fee ($)": WebScraper.hoa_fee,
+        "HOA Fee [Monthly] ($)": WebScraper.hoa_fee,
         "Insurance [Monthly] ($)": float(f"{-PropertyInfo.insurance_cost / 12:.2f}"),
         "Units": WebScraper.num_units,
         "Rent Per Unit ($)": WebScraper.rent_per_unit,
@@ -227,7 +227,7 @@ def expenses_analysis() -> float:
     management_cost = -(effective_gross_income * UserValues.management_percent)
     property_taxes_cost = -WebScraper.property_taxes
     PropertyInfo.insurance_cost = -(WebScraper.price * 0.00425)
-    hoa_cost = -WebScraper.hoa_fee if WebScraper.hoa_fee > 0 else WebScraper.hoa_fee
+    hoa_cost = -12 * WebScraper.hoa_fee if WebScraper.hoa_fee > 0 else WebScraper.hoa_fee
     total_cost = maintenance_cost + management_cost + property_taxes_cost + PropertyInfo.insurance_cost + hoa_cost
 
     return total_cost
@@ -273,25 +273,17 @@ def returns_analysis() -> dict:
     cashflow, net_operating_income, yearly_cost = profit_analysis()
     effective_gross_income = income_analysis()
     tax_exposure_decrease = depreciation_analysis()
-    principal_paydown = -sum(
-        PropertyInfo.amortization_table['Principal Payment'][0:12]
-    )
+    principal_paydown = -sum(PropertyInfo.amortization_table['Principal Payment'][0:12])
     total_return = cashflow + tax_exposure_decrease + principal_paydown
 
-    return_on_investment_percent = round(total_return / capital_required * 100,
-                                         2
-                                         )
+    return_on_investment_percent = round(total_return / capital_required * 100, 2)
     c_on_c_return_percent = round(cashflow / capital_required * 100, 2)
     caprate_percent = round(net_operating_income / WebScraper.price * 100, 2)
     cashflow_per_month = cashflow / 12
     max_offer = (
-                        (
-                                effective_gross_income * 0.75 + -WebScraper.property_taxes - 600) *
-                        (0.37 / 0.12)) / \
-                (UserValues.closing_percent + UserValues.down_payment_percent) - \
-                UserValues.fix_up_cost
-    emergency_fund = -yearly_cost / 2 if UserValues.is_first_rental \
-        else -yearly_cost / 4
+        (effective_gross_income * 0.75 + -WebScraper.property_taxes - 600) * (0.37 / 0.12)) / \
+        (UserValues.closing_percent + UserValues.down_payment_percent) - UserValues.fix_up_cost
+    emergency_fund = -yearly_cost / 2 if UserValues.is_first_rental else -yearly_cost / 4
 
     return_on_investment_string = f"{return_on_investment_percent}%"
     c_on_c_return_string = f"{c_on_c_return_percent}%"
@@ -652,7 +644,7 @@ def print_property_info() -> None:
     print(f"Loan Length (Years): {UserValues.years}")
     print(f"Mortgage Payment (Monthly): ${-PropertyInfo.amortization_table['Monthly Payment'][0]:,.2f}")
     print(f"Property Taxes (Monthly): ${PropertyInfo.property_taxes_monthly:,.2f}")
-    print(f"HOA Fee: ${WebScraper.hoa_fee:,}")
+    print(f"HOA Fee (Monthly): ${WebScraper.hoa_fee:,}")
     print(f"Insurance (Monthly): ${-PropertyInfo.insurance_cost / 12:,.2f}")
     print(f"Units: {WebScraper.num_units}")
     print(f"Rent Per Unit: ${WebScraper.rent_per_unit:,}")
