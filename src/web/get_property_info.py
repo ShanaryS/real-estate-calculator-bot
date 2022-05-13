@@ -255,6 +255,34 @@ def get_property_taxes() -> int:
     return property_taxes
 
 
+def get_hoa_fee() -> int:
+    """Get the HOA fees. Returns -1 if not found but 0 if there is none."""
+    hoa_fee = -1
+
+    spans = PropertyPage.zillow.find_all("span")
+    temp = ""
+    for i in spans:
+        if "has hoa:" in i.text.lower():
+            temp = i.text
+            break
+    if temp:
+        yes_no = temp.split(":")[-1].strip()
+        if "no" in yes_no.lower():
+            hoa_fee = 0
+        else:
+            # Find the HOA amount
+            spans = PropertyPage.zillow.find_all("span")
+            temp = ""
+            for i in spans:
+                if "hoa fee:" in i.text.lower():
+                    temp = i.text
+                    break
+            if temp:
+                hoa_fee = int(temp.split("$")[-1].split()[0])
+
+    return hoa_fee
+
+
 def get_num_units() -> tuple:
     """Get number of units from zillow. Fall backs to hueristics if not found.
     Must call get address prior.
@@ -326,7 +354,7 @@ def get_rent_per_unit() -> tuple:
 
 
 if __name__ == '__main__':
-    set_page_property_info("https://www.zillow.com/homedetails/109-Park-Rd-Waterbury-CT-06708/58015814_zpid/")
+    set_page_property_info("https://www.zillow.com/homedetails/101-Mallard-Dr-101-Farmington-CT-06032/2089940072_zpid/")
     print(f"---Address: {get_address()}")
     print(f"---Price: {get_price()}")
     print(f"---Year: {get_year()}")
@@ -336,5 +364,6 @@ if __name__ == '__main__':
     print(f"---Parking: {get_parking()}")
     print(f"---Description: {get_description()}")
     print(f"---Property Taxes: {get_property_taxes()}")
+    print(f"---HOA: {get_hoa_fee()}")
     print(f"---Num Units: {get_num_units()}")
     print(f"---Rent per unit: {get_rent_per_unit()}")
