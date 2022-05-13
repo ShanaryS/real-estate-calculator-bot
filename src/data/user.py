@@ -114,7 +114,7 @@ def use_default_rent_per_unit() -> int:
     elif WebScraper.num_units == 3:
         return RENT_PER_UNIT_TRIPLEX
     elif WebScraper.num_units >= 4:
-        return RENT_PER_UNIT_DUPLEX
+        return RENT_PER_UNIT_QUADRUPLEX
 
 
 def set_interest_rate() -> None:
