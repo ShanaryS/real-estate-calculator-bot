@@ -90,7 +90,7 @@ def get_url(property_url=False, taxes_url=False) -> str:
 
 
 def get_address() -> str:
-    """Get the address of the house from zillow."""
+    """Get the address of the house from zillow. Raises error if not found."""
 
     # Use the title of the browser tab for address
     full_address = PropertyPage.zillow.find("title").string.split("|")[0].strip()
@@ -107,7 +107,7 @@ def get_address() -> str:
 
 
 def get_price() -> int:
-    """Get the price of the listing"""
+    """Get the price of the listing. Raises error if not found."""
 
     # House price is almost guaranteed to be first
     price_str = PropertyPage.zillow.find("span", string=re.compile("\$")).string
@@ -117,39 +117,48 @@ def get_price() -> int:
 
 
 def get_year() -> int:
-    """Get the year of the listing"""
+    """Get the year of the listing. Returns -1 if not found."""
 
     # House year typically in form of "Built in XXXX"
-    built_in_year_str = PropertyPage.zillow.find("span", string=re.compile("Built")).string
-    house_year = int(built_in_year_str.split()[-1])
+    try:
+        built_in_year_str = PropertyPage.zillow.find("span", string=re.compile("Built")).string
+        house_year = int(built_in_year_str.split()[-1])
+    except Exception:
+        house_year = -1
 
     return house_year
 
 
 def get_sqft() -> int:
-    """Get the sqft of the listing"""
+    """Get the sqft of the listing. Returns -1 if not found."""
 
     # Use price/sqft value and calculate from price
-    price_per_sqft_str = PropertyPage.zillow.find("span", string=re.compile("price/sqft")).string
-    sqft = int(get_price()/int(price_per_sqft_str.lstrip("$").split()[0]))
+    try:
+        price_per_sqft_str = PropertyPage.zillow.find("span", string=re.compile("price/sqft")).string
+        sqft = int(get_price()/int(price_per_sqft_str.lstrip("$").split()[0]))
+    except Exception:
+        sqft = -1
    
     return sqft
 
 
 def get_price_per_sqft() -> int:
-    """Get the price per sqft of the listing"""
+    """Get the price per sqft of the listing. Returns -1 if not found."""
 
     # Usually in the form "$XXX price/sqft"
-    price_per_sqft_str = PropertyPage.zillow.find("span", string=re.compile("price/sqft")).string
-    price_per_sqft = int(price_per_sqft_str.lstrip("$").split()[0])
+    try:
+        price_per_sqft_str = PropertyPage.zillow.find("span", string=re.compile("price/sqft")).string
+        price_per_sqft = int(price_per_sqft_str.lstrip("$").split()[0])
+    except Exception:
+        price_per_sqft = -1
 
     return price_per_sqft
 
 
 def get_lot_size() -> int:
-    """Get the lot size of the listing in sqft"""
+    """Get the lot size of the listing in sqft. Returns -1 if not found"""
 
-    lot_size = 0  # Some may not list a lot size
+    lot_size = -1  # Some may not list a lot size
 
     # Usually in the form "Lot size: XXX Acres" or "Lot size: X,XXX sqft"
     # The span that contains a lot size only has text not a string
@@ -172,8 +181,8 @@ def get_lot_size() -> int:
 
 
 def get_parking() -> str:
-    """Get parking of the listing"""
-    parking = "Unkown"
+    """Get parking of the listing. Returns 'Unknown' if not found."""
+    parking = "Unknown"
 
     # Only care about number of spaces
     parking_strs = PropertyPage.zillow.find_all("span")
@@ -185,7 +194,7 @@ def get_parking() -> str:
 
 
 def get_description() -> str:
-    """Get the description of listing"""
+    """Get the description of listing. Returns 'Unknown' if not found."""
     description = "Unknown"
 
     # Find description if there is a "Read More" button. Likely to fail but not important
@@ -197,13 +206,13 @@ def get_description() -> str:
 
 
 def get_property_taxes() -> int:
-    """Get property tax from zillow if it exist. Else use county_office.
+    """Get property tax from zillow if it exist. Else use county_office. Returns -1 if not found.
     Must call get_address prior.
     """
 
     # Try to find taxes on zillow page first, if not exist fall back to county office
-    property_taxes = 0
-    check_tax_records = False
+    property_taxes = -1
+    check_tax_records = True
 
     # Find on zillow
     spans = PropertyPage.zillow.find_all("span")
@@ -213,9 +222,8 @@ def get_property_taxes() -> int:
             temp = i.text
             break
     if temp:
+        check_tax_records = False
         property_taxes = int(temp.split()[-1].lstrip("$").replace(",", ""))
-    else:
-        check_tax_records = True
 
     # Find on county office
     if check_tax_records:
@@ -242,13 +250,15 @@ def get_property_taxes() -> int:
                 except (TypeError, IndexError):
                     pass
                 if i == NUM_TIMES_TO_RETRY_REQUESTS - 1:
-                    property_taxes = 0
+                    property_taxes = -1
 
     return property_taxes
 
 
 def get_num_units() -> tuple:
-    """Get number of units from zillow. Fall backs to full bathrooms."""
+    """Get number of units from zillow. Fall backs to hueristics if not found.
+    Must call get address prior.
+    """
 
     # Look for explict mention of num units otherwise fall back to hueristics
     # Assuming max num units is 4 as above is considered an apartment
@@ -299,19 +309,18 @@ def get_num_units() -> tuple:
 
 
 def get_rent_per_unit() -> tuple:
-    """Get rent per unit from zillow. If it does not exist, returns 0."""
+    """Get rent per unit from zillow. If it does not exist, returns -1."""
 
     # Scan the raw text of the document as rent listings are loaded dynamically
+    rent_per_unit = -1
+    found_rent_per_unit = False
     temp = PropertyPage.page.find('"pricePerSquareFoot\\":null')-7
-    found_rent_per_unit = True
 
     if temp > -1:
+        found_rent_per_unit = True
         rent_per_unit = int(
             PropertyPage.page[temp:temp+7].lstrip('"')
             .lstrip(':').rstrip('\\').rstrip(','))
-    else:
-        found_rent_per_unit = False
-        rent_per_unit = 0
 
     return rent_per_unit, found_rent_per_unit
 
