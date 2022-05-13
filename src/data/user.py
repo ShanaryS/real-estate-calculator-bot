@@ -52,23 +52,19 @@ class WebScraper:
 def set_info() -> None:
     """Sets the values from html pages"""
 
-    tdesc, ttaxes, tnum, trent = get_description(), get_property_taxes(), \
-        get_num_units(), get_rent_per_unit()
+    taxes, tnum, trent = get_property_taxes(), get_num_units(), get_rent_per_unit()
 
     WebScraper.address = get_address()
     WebScraper.price = get_price()
     WebScraper.year = get_year()
-    WebScraper.description = tdesc[0] if tdesc[1] else tdesc[0]
+    WebScraper.description = get_description()
     WebScraper.sqft = get_sqft()
     WebScraper.price_per_sqft = get_price_per_sqft()
     WebScraper.lot_size = get_lot_size()
     WebScraper.parking = get_parking()
-    WebScraper.property_taxes = ttaxes[0] if ttaxes[1] \
-        else use_default_property_taxes()
-    WebScraper.num_units = tnum[0] if tnum[1] \
-        else use_default_num_units(tnum[0])
-    WebScraper.rent_per_unit = trent[0] if trent[1] \
-        else use_default_rent_per_unit()
+    WebScraper.property_taxes = taxes if taxes else use_default_property_taxes()
+    WebScraper.num_units = tnum[0] if tnum[1] else use_default_num_units(tnum[0])
+    WebScraper.rent_per_unit = trent[0] if trent[1] else use_default_rent_per_unit()
 
     set_found()
 
