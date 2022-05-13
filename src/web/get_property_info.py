@@ -172,10 +172,12 @@ def get_lot_size() -> int:
         temp = temp.split()
         unit = temp[-1]
         num_string = temp[-2]
-        lot_size = float(num_string.replace(",", ""))
+        lot_size = float(num_string.replace(",", ""))  # Need float in case of acres
 
         if "acres" in unit.lower():
-            lot_size = int(lot_size * 43560)  # Convert acres to sqft
+            lot_size = lot_size * 43560  # Convert acres to sqft
+
+        lot_size = int(lot_size)  # Convert to int for cleaner look
 
     return lot_size
 
