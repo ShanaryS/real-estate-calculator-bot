@@ -11,9 +11,9 @@ from src.data.colors_for_print import OK, END
 
 
 @dataclass
-class InterestRates:
+class MortgageRates:
     """Stores current interest rates scraped from the web"""
-    loan_types = {}
+    interest_rates = {}
 
     def get_interest_rates(self) -> None:
         """Get page and stores in self.loan_types. Only ran once the per session."""
@@ -29,8 +29,8 @@ class InterestRates:
         for tr in table.find_all('tr'):
             loan_type = tr.find('th').string
             rate = float(str(tr.find('td').string).split('%')[0]) / 100
-            self.loan_types[loan_type] = rate
+            self.interest_rates[loan_type] = rate
 
 
 # Single instance that is used program wide
-interest_rates = InterestRates()
+mortgage_rates = MortgageRates()
