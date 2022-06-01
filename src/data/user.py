@@ -120,7 +120,7 @@ def use_default_rent_per_unit() -> int:
 def set_interest_rate() -> None:
     """Sets interest rate based on loan length"""
 
-    mortgage_rates.get_interest_rates()
+    mortgage_rates.set_interest_rates()
 
     if UserValues.loan_type == 'Conventional':
         if UserValues.years == 30:

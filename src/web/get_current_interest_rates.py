@@ -15,7 +15,7 @@ class MortgageRates:
     """Stores current interest rates scraped from the web"""
     interest_rates = {}
 
-    def get_interest_rates(self) -> None:
+    def set_interest_rates(self) -> None:
         """Get page and stores in self.loan_types. Only ran once the per session."""
 
         print(f"{OK}--- Getting current interest rates... ---{END}\n")
