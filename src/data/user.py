@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 
 from src.web.get_current_interest_rates \
-    import set_page_interest_rates, InterestRates
+    import interest_rates
 from src.web.get_property_info \
     import get_address, get_price, get_year, get_description, \
     get_property_taxes, get_hoa_fee, get_num_units, get_rent_per_unit, get_sqft, \
@@ -120,21 +120,21 @@ def use_default_rent_per_unit() -> int:
 def set_interest_rate() -> None:
     """Sets interest rate based on loan length"""
 
-    set_page_interest_rates()
+    interest_rates.get_interest_rates()
 
     if UserValues.loan_type == 'Conventional':
         if UserValues.years == 30:
             WebScraper.interest_rate = \
-                InterestRates.interest_rates['30-year fixed-rate']
+                interest_rates.loan_types['30-year fixed-rate']
         elif UserValues.years == 20:
             WebScraper.interest_rate = \
-                InterestRates.interest_rates['20-year fixed-rate']
+                interest_rates.loan_types['20-year fixed-rate']
         elif UserValues.years == 15:
             WebScraper.interest_rate = \
-                InterestRates.interest_rates['15-year fixed-rate']
+                interest_rates.loan_types['15-year fixed-rate']
         elif UserValues.years == 10:
             WebScraper.interest_rate = \
-                InterestRates.interest_rates['10-year fixed-rate']
+                interest_rates.loan_types['10-year fixed-rate']
         else:
             raise ValueError(f"Invalid combination of loan type "
                              f"'{UserValues.loan_type}' and years "
@@ -143,7 +143,7 @@ def set_interest_rate() -> None:
     elif UserValues.loan_type == 'FHA':
         if UserValues.years == 30:
             WebScraper.interest_rate = \
-                InterestRates.interest_rates['30-year fixed-rate FHA']
+                interest_rates.loan_types['30-year fixed-rate FHA']
         else:
             raise ValueError(f"Invalid combination of loan type "
                              f"'{UserValues.loan_type}' and years "
@@ -152,7 +152,7 @@ def set_interest_rate() -> None:
     elif UserValues.loan_type == 'VA':
         if UserValues.years == 30:
             WebScraper.interest_rate = \
-                InterestRates.interest_rates['30-year fixed-rate VA']
+                interest_rates.loan_types['30-year fixed-rate VA']
         else:
             raise ValueError(f"Invalid combination of loan type "
                              f"'{UserValues.loan_type}' and years "
