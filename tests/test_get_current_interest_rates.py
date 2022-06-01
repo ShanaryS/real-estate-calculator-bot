@@ -4,6 +4,7 @@ from src.web.get_current_interest_rates import MortgageRates
 
 @pytest.fixture(scope='session')
 def interest_rates() -> dict:
+    """Get the current interest rates once and use for all tests"""
     mortgage_rates = MortgageRates()
     mortgage_rates.set_interest_rates()
     interest_rates = mortgage_rates.interest_rates

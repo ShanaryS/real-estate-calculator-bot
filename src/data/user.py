@@ -2,12 +2,8 @@
 
 from dataclasses import dataclass
 
-from src.web.get_current_interest_rates \
-    import mortgage_rates
-from src.web.get_property_info \
-    import get_address, get_price, get_year, get_description, \
-    get_property_taxes, get_hoa_fee, get_num_units, get_rent_per_unit, get_sqft, \
-    get_price_per_sqft, get_lot_size, get_parking
+from src.web.get_current_interest_rates import mortgage_rates
+from src.web.get_property_info import property_page
 from values import *
 
 
@@ -53,17 +49,17 @@ class WebScraper:
 def set_info() -> None:
     """Sets the values from html pages"""
 
-    taxes, tnum, trent = get_property_taxes(), get_num_units(), get_rent_per_unit()
+    taxes, tnum, trent = property_page.get_property_taxes(), property_page.get_num_units(), property_page.get_rent_per_unit()
 
-    WebScraper.address = get_address()
-    WebScraper.price = get_price()
-    WebScraper.year = get_year()
-    WebScraper.description = get_description()
-    WebScraper.sqft = get_sqft()
-    WebScraper.price_per_sqft = get_price_per_sqft()
-    WebScraper.lot_size = get_lot_size()
-    WebScraper.parking = get_parking()
-    WebScraper.hoa_fee = get_hoa_fee()
+    WebScraper.address = property_page.get_address()
+    WebScraper.price = property_page.get_price()
+    WebScraper.year = property_page.get_year()
+    WebScraper.description = property_page.get_description()
+    WebScraper.sqft = property_page.get_sqft()
+    WebScraper.price_per_sqft = property_page.get_price_per_sqft()
+    WebScraper.lot_size = property_page.get_lot_size()
+    WebScraper.parking = property_page.get_parking()
+    WebScraper.hoa_fee = property_page.get_hoa_fee()
     WebScraper.property_taxes = taxes if taxes else use_default_property_taxes()
     WebScraper.num_units = tnum[0] if tnum[1] else use_default_num_units(tnum[0])
     WebScraper.rent_per_unit = trent[0] if trent[1] else use_default_rent_per_unit()
