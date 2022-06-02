@@ -204,9 +204,9 @@ class PropertyPage:
         description = "Unknown"
 
         # Find description if there is a "Read More" button. Likely to fail but not important
-        temp = self.zillow.find("button", string="Read more").previous_element
+        temp = self.zillow.find("button", string="See more")
         if temp:
-            description = temp
+            description = temp.previous_element
         
         return description
 
@@ -284,7 +284,7 @@ class PropertyPage:
                         temp = i.text
                         break
                 if temp:
-                    hoa_fee = int(temp.split("$")[-1].split()[0])
+                    hoa_fee = int(temp.split("$")[-1].split()[0].replace(",", ""))
 
         return hoa_fee
 
@@ -350,7 +350,7 @@ class PropertyPage:
         found_rent_per_unit = False
         temp = self.page.find('"pricePerSquareFoot\\":null')-7
 
-        if temp > -1:
+        if temp > -1 and "null" not in self.page[temp:temp+7]:
             found_rent_per_unit = True
             rent_per_unit = int(
                 self.page[temp:temp+7].lstrip('"')
