@@ -12,7 +12,7 @@ from src.data.colors_for_print import BAD, OK, GOOD, GREAT, END
 from src.data.database import amortization_table, drop_amortization_table, \
     create_amortization_table, add_amortization_data, get_amortization_table
 from src.data.user import WebScraper, UserValues
-from src.web.get_property_info import set_page_property_info, get_url
+from src.web.get_property_info import property_page
 
 
 HYPEN_SEP = "-" * 80
@@ -43,7 +43,7 @@ def update_values(url=None,
     # These are what gets the html pages
     if update_interest_rate:
         user.set_interest_rate()
-    set_page_property_info(url=url)
+    property_page.set_page_property_info(url=url)
 
     # Logs errors if there are any and stop analysis of this specific
     # property ONLY.
@@ -70,7 +70,7 @@ def update_values(url=None,
         # When printing analysis of a single property, url=None.
         # This allows that URL to be saved as well.
         if not url:
-            url = get_url()
+            url = property_page.get_url()
 
         # Get exception name as well as traceback info for easy debugging.
         tb_title = "Traceback (most recent call last):"
@@ -146,7 +146,7 @@ def basic_calculations() -> None:
 
 def get_property_key() -> str:
     """Get key used to hash different properties"""
-    return f"https://www.zillow.com/homedetails/{get_url().split('/')[-2]}/"
+    return f"https://www.zillow.com/homedetails/{property_page.get_url().split('/')[-2]}/"
 
 
 def mortgage_amortization() -> dict:
@@ -469,8 +469,8 @@ def get_property_analysis() -> tuple:
     key = get_property_key()
     property_analysis = {
         key: {
-            "Property URL": get_url(property_url=True),
-            "Property Taxes URL": get_url(taxes_url=True),
+            "Property URL": property_page.get_url(property_url=True),
+            "Property Taxes URL": property_page.get_url(taxes_url=True),
             "Property Info": PropertyInfo.property_info,
             "Analysis": print_analysis(dump=True),
             "Estimations": PropertyInfo.estimations
